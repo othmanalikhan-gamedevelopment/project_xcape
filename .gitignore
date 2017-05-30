@@ -69,10 +69,3 @@ target/
 # Vim
 *.swp
 *.*~
-
-# Pycharm
-.idea/
-
-# Personal bank statement files
-res/ledgers
-res/output
