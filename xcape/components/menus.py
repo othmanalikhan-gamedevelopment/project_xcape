@@ -3,8 +3,8 @@ Contains all the menus in game.
 """
 
 import pygame as pg
+import xcape.common.renderer as renderer
 from xcape.common.gameobject import GameObject
-from xcape.common.renderer import _ImageLoader
 
 
 class IMenu(GameObject):

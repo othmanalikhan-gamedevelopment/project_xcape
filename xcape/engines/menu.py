@@ -15,13 +15,11 @@ class MenuEngine(GameObject):
         - Transitioning between menus.
     """
 
-    def __init__(self, screen, resources):
+    def __init__(self, screen):
         """
         :param screen: pygame.Surface, representing the screen.
-        :param resources: Renderer object, containing loaded images.
         """
         self.screen = screen
-        self.resources = resources
 
         self.menu = menus.SplashMenu(self.screen)
         self.nameToMenu = \

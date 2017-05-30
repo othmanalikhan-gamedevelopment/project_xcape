@@ -7,7 +7,6 @@ import pygame as pg
 import xcape.common.events as events
 import xcape.common.settings as settings
 from xcape.common.gameobject import GameObject
-from xcape.common.renderer import Renderer
 from xcape.engines.menu import MenuEngine
 from xcape.engines.scene import SceneEngine
 
@@ -21,6 +20,7 @@ class CoreEngine(GameObject):
     """
 
     def __init__(self):
+        pg.init()
         pg.display.set_caption(settings.TITLE)
         self.screen = pg.display.set_mode((settings.WIDTH, settings.HEIGHT))
 
@@ -28,9 +28,8 @@ class CoreEngine(GameObject):
         self.clock.tick(settings.FPS)
         self.running = True
 
-        self.resources = Renderer()
-        self.sceneEngine = SceneEngine(self.screen, self.resources)
-        self.menuEngine = MenuEngine(self.screen, self.resources)
+        self.sceneEngine = SceneEngine(self.screen)
+        self.menuEngine = MenuEngine(self.screen)
 
     def update(self):
         self.sceneEngine.update()
