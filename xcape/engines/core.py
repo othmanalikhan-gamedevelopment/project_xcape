@@ -2,12 +2,12 @@
 The core engine of the game.
 """
 
-import configparser
-
 import pygame as pg
 
 import xcape.common.events as events
+import xcape.common.settings as settings
 from xcape.common.gameobject import GameObject
+from xcape.common.renderer import Renderer
 from xcape.engines.menu import MenuEngine
 from xcape.engines.scene import SceneEngine
 
@@ -21,23 +21,16 @@ class CoreEngine(GameObject):
     """
 
     def __init__(self):
-        pg.init()
-        pg.mixer.init()
-
-        self.settings = configparser.ConfigParser()
-        self.settings.read("settings.ini")
-        self.settings = self.settings["GENERAL"]
-
-        pg.display.set_caption(self.settings["title"])
-        self.screen = pg.display.set_mode((int(self.settings["width"]),
-                                           int(self.settings["height"])))
+        pg.display.set_caption(settings.TITLE)
+        self.screen = pg.display.set_mode((settings.WIDTH, settings.HEIGHT))
 
         self.clock = pg.time.Clock()
-        self.clock.tick(int(self.settings["FPS"]))
+        self.clock.tick(settings.FPS)
         self.running = True
 
-        self.sceneEngine = SceneEngine(self.screen)
-        self.menuEngine = MenuEngine(self.screen)
+        self.resources = Renderer()
+        self.sceneEngine = SceneEngine(self.screen, self.resources)
+        self.menuEngine = MenuEngine(self.screen, self.resources)
 
     def update(self):
         self.sceneEngine.update()
@@ -67,3 +60,4 @@ class CoreEngine(GameObject):
             self.handleEvent(None)
             self.update()
             self.draw()
+

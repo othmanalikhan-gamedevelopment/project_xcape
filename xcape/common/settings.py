@@ -1,9 +1,7 @@
 """
-Loads the settings INI file into a variable that can then be imported.
+Contains a list of basic game settings.
 """
-import configparser
-
-SETTINGS = configparser.ConfigParser()
-SETTINGS.read("settings.ini")
-
-GENERAL = SETTINGS["GENERAL"]
+WIDTH = 640
+HEIGHT = 480
+FPS = 60
+TITLE = "Prison Xcape"

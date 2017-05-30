@@ -3,9 +3,14 @@ Contains all the menus in game.
 """
 
 import pygame as pg
+from xcape.common.gameobject import GameObject
+from xcape.common.renderer import _ImageLoader
 
 
-class BlankMenu:
+class IMenu(GameObject):
+    """
+    The interface for every menu.
+    """
 
     def __init__(self, screen):
         """
@@ -27,30 +32,44 @@ class BlankMenu:
         pass
 
 
-class SplashMenu:
+class BlankMenu(IMenu):
+    """
+    A blank menu that does nothing other than display a blank (black) screen.
+    """
 
-    def __init__(self, game):
-        self.game = game
-        self.sponsor = load_image("raspberry.jpg", img_folder, alpha = False)
-        self.game.screen.blit(self.sponsor, (0, 0))
-        self.fade = CrossFade(self.game.screen)
-        self.fade_list = pygame.sprite.Group(self.fade)
-        self.done = False
-        while not self.done:
-            self.game.clock.tick(60)
-            self.start_events()
-            self.update()
+    def __init__(self, screen):
+        super().__init__(screen)
+
+
+class SplashMenu(IMenu):
+    """
+    The splash screen of the game.
+    """
+
+    def __init__(self, screen):
+        super().__init__(screen)
+
+        self.background = load_image("raspberry.jpg", img_folder)
+        self.background = None
+        self.effect = None
+
+        self.ticker = 0
+
+
+    def draw(self):
+        self.screen.blit(self.background, (0, 0))
+
 
     def update(self):
-        if self.fade.trans_value == 0:
-            pygame.time.delay(3000)
-            self.fade.fade_dir *= -1
-        if self.fade.trans_value == 258:
-            self.done = True
-        self.fade_list.clear(self.game.screen, self.sponsor)
-        self.fade_list.update()
-        self.fade_list.draw(self.game.screen)
-        pygame.display.update()
+        self.ticker += 1
+
+        # if self.ticker % self.speed == 0:
+        #     self.fade
+        #
+        # if self.fade.trans_value == 0:
+        #     self.fade.fade_dir *= -1
+        # if self.fade.trans_value == 258:
+        #     self.done = True
 
 
 
@@ -261,3 +280,13 @@ class SplashMenu:
     #     self.screen.blit(image, (0, 0))
     #
 
+
+
+    #
+    # def draw_text(self, text, size, colour, x, y):
+    #     """
+    #     Draws text on the screen.
+    #     """
+    #     font = pg.font.SysFont(self.font_name, size)
+    #     text_surface = font.render(text, True, colour)
+    #     self.screen.blit(text_surface, (x, y))
