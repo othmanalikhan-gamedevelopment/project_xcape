@@ -3,18 +3,13 @@
 Created on Thu Apr 10 00:07:42 2017
 @author: Gustavo Leon Sazo
 """
-import sys, os
+import sys
+import os
 import pygame
-#=================Constants====================
-WIDTH = 640
-HEIGHT = 480
-FPS = 60
-TITLE = "Prison xCape"
-FONT_NAME = "m04fatalfuryblack"
 
-#================Player properties=============
-PLAYER_GRAV = 0.8
-THICKNESS = 30
+
+#=================Constants====================
+FONT_NAME = "m04fatalfuryblack"
 
 #=================Colors=======================
 WHITE = (255, 255, 255)

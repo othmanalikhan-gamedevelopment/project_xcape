@@ -3,8 +3,8 @@ import configparser
 import pygame as pg
 
 import xcape.common.events as events
-from xcape.engine.menu import MenuEngine
-from xcape.engine.scene import SceneEngine
+from xcape.engines.menu import MenuEngine
+from xcape.engines.scene import SceneEngine
 
 
 class CoreEngine:
@@ -27,7 +27,7 @@ class CoreEngine:
         self.running = True
 
         self.sceneEngine = SceneEngine()
-        self.menuEngine = MenuEngine()
+        self.menuEngine = MenuEngine(self.screen)
 
     def update(self):
         self.sceneEngine.update()

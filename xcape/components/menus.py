@@ -1,8 +1,30 @@
+import pygame as pg
 
 
+class BlankMenu:
+
+    def __init__(self, screen):
+        """
+        :param screen: pygame.Surface, representing the screen.
+        """
+        self.screen = screen
+        self.background = None
+
+    def handleEvent(self, event):
+        """
+        :param event: pygame.Event, allowing event-driven programming.
+        """
+        pass
+
+    def update(self):
+        pass
+
+    def draw(self):
+        pass
+
 #
+# class SplashMenu:
 #
-# class Start:
 #     def __init__(self, game):
 #         self.game = game
 #         self.sponsor = load_image("raspberry.jpg", img_folder, alpha = False)
@@ -15,13 +37,6 @@
 #             self.start_events()
 #             self.update()
 #
-#     def start_events(self):
-#         for event in pygame.event.get():
-#             if event.type == pygame.QUIT:
-#                 pygame.quit()
-#                 quit()
-#
-#
 #     def update(self):
 #         if self.fade.trans_value == 0:
 #             pygame.time.delay(3000)
@@ -33,6 +48,9 @@
 #         self.fade_list.draw(self.game.screen)
 #         pygame.display.update()
 #
+#
+#
+
 #
 # class Menu():
 #     def __init__(self, game, player):
