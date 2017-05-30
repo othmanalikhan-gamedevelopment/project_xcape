@@ -8,6 +8,11 @@ import os
 import pygame
 
 
+def loadAssets():
+    pass
+
+
+
 #=================Constants====================
 FONT_NAME = "m04fatalfuryblack"
 

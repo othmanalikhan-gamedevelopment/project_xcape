@@ -1,3 +1,7 @@
+"""
+Contains all the menus in game.
+"""
+
 import pygame as pg
 
 
@@ -22,34 +26,34 @@ class BlankMenu:
     def draw(self):
         pass
 
-#
-# class SplashMenu:
-#
-#     def __init__(self, game):
-#         self.game = game
-#         self.sponsor = load_image("raspberry.jpg", img_folder, alpha = False)
-#         self.game.screen.blit(self.sponsor, (0, 0))
-#         self.fade = CrossFade(self.game.screen)
-#         self.fade_list = pygame.sprite.Group(self.fade)
-#         self.done = False
-#         while not self.done:
-#             self.game.clock.tick(60)
-#             self.start_events()
-#             self.update()
-#
-#     def update(self):
-#         if self.fade.trans_value == 0:
-#             pygame.time.delay(3000)
-#             self.fade.fade_dir *= -1
-#         if self.fade.trans_value == 258:
-#             self.done = True
-#         self.fade_list.clear(self.game.screen, self.sponsor)
-#         self.fade_list.update()
-#         self.fade_list.draw(self.game.screen)
-#         pygame.display.update()
-#
-#
-#
+
+class SplashMenu:
+
+    def __init__(self, game):
+        self.game = game
+        self.sponsor = load_image("raspberry.jpg", img_folder, alpha = False)
+        self.game.screen.blit(self.sponsor, (0, 0))
+        self.fade = CrossFade(self.game.screen)
+        self.fade_list = pygame.sprite.Group(self.fade)
+        self.done = False
+        while not self.done:
+            self.game.clock.tick(60)
+            self.start_events()
+            self.update()
+
+    def update(self):
+        if self.fade.trans_value == 0:
+            pygame.time.delay(3000)
+            self.fade.fade_dir *= -1
+        if self.fade.trans_value == 258:
+            self.done = True
+        self.fade_list.clear(self.game.screen, self.sponsor)
+        self.fade_list.update()
+        self.fade_list.draw(self.game.screen)
+        pygame.display.update()
+
+
+
 
 #
 # class Menu():

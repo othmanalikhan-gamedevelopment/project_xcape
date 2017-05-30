@@ -1,13 +1,24 @@
+"""
+The core engine of the game.
+"""
+
 import configparser
 
 import pygame as pg
 
 import xcape.common.events as events
+from xcape.common.gameobject import GameObject
 from xcape.engines.menu import MenuEngine
 from xcape.engines.scene import SceneEngine
 
 
-class CoreEngine:
+class CoreEngine(GameObject):
+    """
+    Responsibilities:
+        - Displaying and updating the scene engine.
+        - Displaying and updating the menu engine.
+        - Pulling out events from the event queue and passing them down.
+    """
 
     def __init__(self):
         pg.init()
@@ -26,14 +37,14 @@ class CoreEngine:
         self.clock.tick(FPS)
         self.running = True
 
-        self.sceneEngine = SceneEngine()
+        self.sceneEngine = SceneEngine(self.screen)
         self.menuEngine = MenuEngine(self.screen)
 
     def update(self):
         self.sceneEngine.update()
         self.menuEngine.update()
 
-    def handleEvent(self):
+    def handleEvent(self, _):
         for event in pg.event.get():
 
             if event.type == pg.QUIT:
@@ -54,6 +65,6 @@ class CoreEngine:
 
     def run(self):
         while self.running:
-            self.handleEvent()
+            self.handleEvent(None)
             self.update()
             self.draw()

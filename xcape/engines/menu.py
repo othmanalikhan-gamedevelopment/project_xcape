@@ -1,9 +1,19 @@
+"""
+The menu engine of the game.
+"""
+
 import pygame as pg
+from xcape.common.gameobject import GameObject
 import xcape.components.menus as menus
 import xcape.common.events as events
 
 
-class MenuEngine:
+class MenuEngine(GameObject):
+    """
+    Responsibilities:
+        - Displaying and updating the current menu.
+        - Transitioning between menus.
+    """
 
     def __init__(self, screen):
         """
@@ -31,5 +41,3 @@ class MenuEngine:
 
     def draw(self):
         self.menu.draw()
-
-

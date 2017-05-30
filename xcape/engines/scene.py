@@ -1,11 +1,19 @@
-# -*- coding: utf-8 -*-
 """
-Created on Thu Apr 20 08:23:18 2017
-@author: Gustavo León Sazo
+The scene engine of the game.
 """
 
+import pygame as pg
+from xcape.common.gameobject import GameObject
+import xcape.components.scenes as scenes
+import xcape.common.events as events
 
-class SceneEngine:
+
+class SceneEngine(GameObject):
+    """
+    Responsibilities:
+        - Displaying and updating the current scene.
+        - Transitioning between menus.
+    """
 
     def handleEvent(self, event):
         pass

@@ -1,3 +1,7 @@
+"""
+Responsible for simplifying the event-driven communication between game objects.
+"""
+
 import pygame as pg
 
 
