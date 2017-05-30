@@ -54,3 +54,14 @@ class SpriteSheet:
         image.blit(self.sprite_sheet, (0, 0), (x, y, width, height))
         image.set_colorkey(WHITE)
         return image
+
+
+
+    def draw_text(self, text, size, colour, x, y):
+        """
+        Draws text on the screen.
+        """
+        font = pg.font.SysFont(self.font_name, size)
+        text_surface = font.render(text, True, colour)
+        self.screen.blit(text_surface, (x, y))
+
