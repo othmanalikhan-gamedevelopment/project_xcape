@@ -26,15 +26,14 @@ class CoreEngine(GameObject):
 
         self.settings = configparser.ConfigParser()
         self.settings.read("settings.ini")
-        FPS = int(self.settings["GENERAL"]["fps"])
-        TITLE = self.settings["GENERAL"]["title"]
-        WIDTH = int(self.settings["GENERAL"]["width"])
-        HEIGHT = int(self.settings["GENERAL"]["height"])
+        self.settings = self.settings["GENERAL"]
 
-        pg.display.set_caption(TITLE)
-        self.screen = pg.display.set_mode((WIDTH, HEIGHT))
+        pg.display.set_caption(self.settings["title"])
+        self.screen = pg.display.set_mode((int(self.settings["width"]),
+                                           int(self.settings["height"])))
+
         self.clock = pg.time.Clock()
-        self.clock.tick(FPS)
+        self.clock.tick(int(self.settings["FPS"]))
         self.running = True
 
         self.sceneEngine = SceneEngine(self.screen)

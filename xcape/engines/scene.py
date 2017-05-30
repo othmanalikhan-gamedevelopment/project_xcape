@@ -15,6 +15,12 @@ class SceneEngine(GameObject):
         - Transitioning between menus.
     """
 
+    def __init__(self, screen):
+        """
+        :param screen: pygame.Surface, representing the screen.
+        """
+        self.screen = screen
+
     def handleEvent(self, event):
         pass
 
