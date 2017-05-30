@@ -1,4 +1,4 @@
-from xcape.engine.core import CoreEngine
+from xcape.engines.core import CoreEngine
 
 
 def main():
