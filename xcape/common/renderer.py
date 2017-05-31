@@ -6,8 +6,8 @@ import os
 
 import pygame as pg
 
-
-FONT_NAME = "m04fatalfuryblack"
+MENUS_PATH = os.path.join("images", "menus")
+SCENES_PATH = os.path.join("images", "scenes")
 
 
 COLOURS = {
@@ -23,43 +23,58 @@ COLOURS = {
 }
 
 
-def loadMenus():
+def loadContent(path):
     """
-    Loads all the images for the menus.
+    For the given path to a directory, loads all the images in its
+    subdirectories and their animations (if any). To illustrate,
+    the directory structure shown below is an example of a valid structure.
 
-    :return: 2D Dictionary, mapping dir and file name to image.
+    - RootDir
+        - SubDir1
+            - image1
+            - image2
+        - SubDir2
+            - image1
+            - image2
+            - animationDir1
+                - image1
+                - image2
+        - SubDir3
+            - image1
+
+    If animations are present in the directory structure, they should be
+    named in order (ideally each frame corresponds to an integer).
+
+    :param path: os.path, the path to a directory hosting subdirectories.
+    :return: 2D Dictionary, with the following format:
+        static images:  content[subDir1][imageName] = image
+        animations:     content[subDir1][animationDir] = {frameNum: image}
     """
-    menu = {}
-    MENUS_PATH = os.path.join("images", "menus")
+    content = {}
 
-    for d in os.listdir(MENUS_PATH):
-        menu[d] = {}
-        for f in os.listdir(os.path.join(MENUS_PATH, d)):
-            image = loadImage(os.path.join(MENUS_PATH, d, f))
-            menu[d][f] = image
+    for depth1 in os.listdir(path):
+        content[depth1] = {}
+        pathDepth1 = os.path.join(path, depth1)
 
-    return menu
+        for depth2 in os.listdir(pathDepth1):
+            pathDepth2 = os.path.join(path, depth1, depth2)
 
+            # Loading static images
+            if os.path.isfile(pathDepth2):
+                content[depth1][depth2] = loadImage(pathDepth2)
 
-def loadScenes():
-    """
-    Loads all the images for the scenes.
+            # Loading animations
+            else:
+                animation = {}
+                for i, frame in enumerate(os.listdir(pathDepth2), start=1):
+                    pathDepth3 = os.path.join(path, depth1, depth2, frame)
+                    animation[i] = loadImage(pathDepth3)
+                content[depth1][depth2] = animation
 
-    :return: 2D Dictionary, mapping dir and file name to image.
-    """
-    scene = {}
-    SCENES_PATH = os.path.join("images", "scenes")
-
-    for d in os.listdir(SCENES_PATH):
-        scene[d] = {}
-        for f in os.listdir(os.path.join(SCENES_PATH, d)):
-            image = loadImage(os.path.join(SCENES_PATH, d, f))
-            scene[d][f] = image
-
-    return scene
+    return content
 
 
-def loadImage(path, alpha=False):
+def loadImage(path, alpha=True):
     """
     Loads an image using pygame modules.
 
@@ -75,3 +90,21 @@ def loadImage(path, alpha=False):
     else:
         image = image.convert()
     return image
+
+
+def drawText(text, size, colour, x, y, surface):
+    """
+    Draws the supplied text on the given surface.
+
+    :param text: String, the text to render.
+    :param size: Integer, the size of the font.
+    :param colour: 3-Tuple, containing the RGB values of the colour.
+    :param x: Integer, the x-position of the text.
+    :param y: Integer, the y-position of the text.
+    :param surface: pygame.Surface, the surface to render the text onto.
+    """
+    FONT_NAME = "m04fatalfuryblack"
+    font = pg.font.SysFont(FONT_NAME, size)
+    textSurface = font.render(text, True, colour)
+    surface.blit(textSurface, (x, y))
+
