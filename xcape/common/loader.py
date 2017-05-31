@@ -5,22 +5,10 @@ Responsible for loading common rendering resources.
 import os
 
 import pygame as pg
+import xcape.common.settings as settings
 
 MENUS_PATH = os.path.join("images", "menus")
 SCENES_PATH = os.path.join("images", "scenes")
-
-
-COLOURS = {
-    "white": (255, 255, 255),
-    "black": (0, 0, 0),
-    "red": (255, 0, 0),
-    "green": (0, 255, 0),
-    "blue": (0, 0, 255),
-    "yellow": (255, 255, 0),
-    "cyan": (0, 255, 255),
-    "gray": (27, 27, 27),
-    "blackred": (35, 21, 21),
-}
 
 
 def loadContent(path):
@@ -85,26 +73,8 @@ def loadImage(path, alpha=True):
     image = pg.image.load(path)
 
     if alpha is True:
-        image.set_colorkey(COLOURS["white"])
+        image.set_colorkey(settings.COLOURS["white"])
         image = image.convert_alpha()
     else:
         image = image.convert()
     return image
-
-
-def drawText(text, size, colour, x, y, surface):
-    """
-    Draws the supplied text on the given surface.
-
-    :param text: String, the text to render.
-    :param size: Integer, the size of the font.
-    :param colour: 3-Tuple, containing the RGB values of the colour.
-    :param x: Integer, the x-position of the text.
-    :param y: Integer, the y-position of the text.
-    :param surface: pygame.Surface, the surface to render the text onto.
-    """
-    FONT_NAME = "m04fatalfuryblack"
-    font = pg.font.SysFont(FONT_NAME, size)
-    textSurface = font.render(text, True, colour)
-    surface.blit(textSurface, (x, y))
-
