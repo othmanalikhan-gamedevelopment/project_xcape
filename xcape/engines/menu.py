@@ -26,8 +26,9 @@ class MenuEngine(GameObject):
         self.menu = menus.SplashMenu(self.screen, self.resources)
         self.nameToMenu = \
             {
-                "blank": menus.BlankMenu,
-                "splash": None
+                "blank_menu": menus.BlankMenu,
+                "splash_menu": menus.SplashMenu,
+                "main_menu": None
             }
 
     def handleEvent(self, event):

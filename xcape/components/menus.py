@@ -4,6 +4,7 @@ Contains all the menus in game.
 
 import pygame as pg
 from xcape.common.gameobject import GameObject
+import xcape.common.events as events
 import xcape.common.renderer as renderer
 import xcape.common.settings as settings
 
@@ -54,8 +55,16 @@ class SplashMenu(IMenu):
         self.background = self.resources["screens"]["splash.jpg"]
         self.effect = FadeEffect(screen, resources)
 
+    def handleEvent(self, event):
+        if event.type == events.MENU_EVENT:
+            if event.category == "transition":
+                events.messageMenu("splash_menu", "transition", "main_menu")
+
     def update(self):
-        self.effect.update()
+        if self.effect.isComplete:
+            events.messageMenu("splash_menu", "transition", "main_menu")
+        else:
+            self.effect.update()
 
     def draw(self):
         self.screen.blit(self.background, (0, 0))
@@ -72,6 +81,7 @@ class FadeEffect(IMenu):
     def __init__(self, screen, resources):
         self.screen = screen
         self.resources = resources
+        self.isComplete = False
 
         self.background = pg.Surface((settings.WIDTH, settings.HEIGHT))
         self.background = self.background.convert()
@@ -81,36 +91,49 @@ class FadeEffect(IMenu):
         # Units are in seconds (use floats to reduce rounding errors)
         self.origin = pg.time.get_ticks()/1000
         self.time = 0.0
-        self.timeStartLighten = 2.0
-        self.timeEndLighten = 4.0
-        self.timeStartDarken = 5.0
+        self.timeStartLighten = 1.0
+        self.timeEndLighten = 3.0
+        self.timeStartDarken = 4.0
         self.timeEndDarken = 6.0
 
     def update(self):
-        self.background.set_alpha(self.transparentValue)
-        self.time = pg.time.get_ticks()/1000 - self.origin
+        if not self.isComplete:
+            self.background.set_alpha(self.transparentValue)
+            self.time = pg.time.get_ticks()/1000 - self.origin
 
-        # Lightens the screen
-        if self.timeEndLighten >= self.time >= self.timeStartLighten:
-            current = self.time - self.timeStartLighten
-            duration = self.timeEndLighten - self.timeStartLighten
-            percentComplete = current/duration
-            self.transparentValue = (1-percentComplete) * 255
+            if self.timeEndDarken >= self.time >= self.timeStartDarken:
+                self.darkenScreen()
+            if self.timeEndLighten >= self.time >= self.timeStartLighten:
+                self.lightenScreen()
 
-        # Darkens the screen
-        if self.timeEndDarken >= self.time >= self.timeStartDarken:
-            current = self.time - self.timeStartDarken
-            duration = self.timeEndDarken - self.timeStartDarken
-            percentComplete = current/duration
-            self.transparentValue = percentComplete * 255
+            if self.time > self.timeEndDarken:
+                self.isComplete = True
 
     def draw(self):
         self.screen.blit(self.background, (0, 0))
 
+    def lightenScreen(self):
+        """
+        Increases the transparency of the background.
+        """
+        current = self.time - self.timeStartLighten
+        duration = self.timeEndLighten - self.timeStartLighten
+        percentComplete = current/duration
+        self.transparentValue = (1-percentComplete) * 255
+
+    def darkenScreen(self):
+        """
+        Reduces the transparency of the background.
+        """
+        current = self.time - self.timeStartDarken
+        duration = self.timeEndDarken - self.timeStartDarken
+        percentComplete = current/duration
+        self.transparentValue = percentComplete * 255
 
 
 
-#
+
+pass
 # class Menu():
 #     def __init__(self, game, player):
 #         self.game = game
@@ -244,6 +267,8 @@ class FadeEffect(IMenu):
 #
 
 
+
+
     #
     # def showGameOverScreen(self):
     #     """
@@ -293,3 +318,4 @@ class FadeEffect(IMenu):
     #     font = pg.font.SysFont(self.font_name, size)
     #     text_surface = font.render(text, True, colour)
     #     self.screen.blit(text_surface, (x, y))
+
