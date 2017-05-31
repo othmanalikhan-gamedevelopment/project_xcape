@@ -21,20 +21,22 @@ class MenuEngine(GameObject):
         :param screen: pygame.Surface, representing the screen.
         """
         self.screen = screen
-        self.resources = renderer.loadMenus()
+        self.resources = renderer.loadContent(renderer.MENUS_PATH)
 
-        self.menu = menus.SplashMenu(self.screen, self.resources)
+        self.menu = menus.MainMenu(self.screen, self.resources)
         self.nameToMenu = \
             {
                 "blank_menu": menus.BlankMenu,
                 "splash_menu": menus.SplashMenu,
-                "main_menu": None
+                "main_menu": menus.MainMenu
             }
 
     def handleEvent(self, event):
         """
         :param event: pygame.Event, allowing event-driven programming.
         """
+        self.menu.handleEvent(event)
+
         if event.type == events.MENU_EVENT:
             if event.category == "transition":
                 self.menu = self.nameToMenu[event.data](self.screen, self.resources)

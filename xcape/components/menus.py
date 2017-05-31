@@ -3,15 +3,16 @@ Contains all the menus in game.
 """
 
 import pygame as pg
-from xcape.common.gameobject import GameObject
+
 import xcape.common.events as events
 import xcape.common.renderer as renderer
 import xcape.common.settings as settings
+from xcape.common.gameobject import GameObject
 
 
-class IMenu(GameObject):
+class StaticMenu(GameObject):
     """
-    The interface for every menu.
+    A base menu for any non-interactive menus.
     """
 
     def __init__(self, screen, resources):
@@ -36,7 +37,34 @@ class IMenu(GameObject):
         pass
 
 
-class BlankMenu(IMenu):
+class InteractiveMenu(GameObject):
+    """
+    A base menu for any menus that the user can interact with.
+    """
+
+    def __init__(self, screen, resources):
+        """
+        :param screen: pygame.Surface, representing the screen.
+        :param resources: 2D Dictionary, mapping dir and file name to image.
+        """
+        self.screen = screen
+        self.resources = resources
+        self.background = None
+
+    def handleEvent(self, event):
+        """
+        :param event: pygame.Event, allowing event-driven programming.
+        """
+        pass
+
+    def update(self):
+        pass
+
+    def draw(self):
+        pass
+
+
+class BlankMenu(StaticMenu):
     """
     A blank menu that does nothing other than display a blank (black) screen.
     """
@@ -45,7 +73,7 @@ class BlankMenu(IMenu):
         super().__init__(screen, resources)
 
 
-class SplashMenu(IMenu):
+class SplashMenu(StaticMenu):
     """
     The splash screen of the game.
     """
@@ -71,7 +99,230 @@ class SplashMenu(IMenu):
         self.effect.draw()
 
 
-class FadeEffect(IMenu):
+class MainMenu(InteractiveMenu):
+    """
+    The main menu of the game.
+    """
+
+    def __init__(self, screen, resources):
+        super().__init__(screen, resources)
+        self.background = self.resources["screens"]["main.jpg"]
+        self.title = self.resources["assets"]["title.png"]
+
+        self.fontSize = 22
+        self.fontColour = renderer.COLOURS["white"]
+        self.x = 250
+        self.y = 155
+        self.dx = 0
+        self.dy = 38
+
+        self.totalOptions = 4
+        self.arrow = Arrow(self.x-40, self.y+28, self.dx, self.dy,
+                           self.totalOptions, self.screen, self.resources)
+
+    def handleEvent(self, event):
+        if event.type == pg.KEYDOWN:
+
+            if event.key == pg.K_UP:
+                self.arrow.moveUp()
+            if event.key == pg.K_DOWN:
+                self.arrow.moveDown()
+
+            if event.key == pg.K_RETURN:
+                if self.arrow.optionNum == 1:
+                    pass
+                if self.arrow.optionNum == 2:
+                    pass
+                if self.arrow.optionNum == 3:
+                    pass
+                if self.arrow.optionNum == 4:
+                    quit()
+
+    def update(self):
+        self.arrow.update()
+
+    def draw(self):
+        self.screen.blit(self.background, (0, 0))
+        self.screen.blit(self.title, (60, 55))
+        self.drawOptions()
+        self.arrow.draw()
+
+    def drawOptions(self):
+        """
+        Draws the text of the options in the main menu.
+        """
+        renderer.drawText("1 Jugador", self.fontSize, self.fontColour,
+                          self.x, self.y + 1*self.dy, self.screen)
+        renderer.drawText("2 Jugadores", self.fontSize, self.fontColour,
+                          self.x, self.y + 2*self.dy, self.screen)
+        renderer.drawText("Opciones", self.fontSize, self.fontColour,
+                          self.x, self.y + 3*self.dy, self.screen)
+        renderer.drawText("Salir", self.fontSize, self.fontColour,
+                          self.x, self.y + 4*self.dy, self.screen)
+
+
+class Arrow(GameObject):
+    """
+    An arrow that highlights the option that the user is hovering over.
+    """
+
+    def __init__(self, x, y, dx, dy, totalOptions, screen, resources):
+        """
+        :param x: Integer, the x-position of the arrow.
+        :param y: Integer, the y-position of the arrow.
+        :param dx: Integer, the change in x-position per movement.
+        :param dy: Integer, the change in y-position per moevement.
+        :param totalOptions: Integer, the total number of options.
+        :param screen: pygame.Surface, representing the screen.
+        :param resources: 2D Dictionary, mapping dir and file name to image.
+        """
+        self.x = x
+        self.y = y
+        self.dx = dx
+        self.dy = dy
+        self.totalOptions = totalOptions
+        self.screen = screen
+
+        self.optionNum = 1
+        self.image = resources["assets"]["coin"]
+
+        self.cont_coin = 0
+        self.i_coin = 1
+        self.velocidad = 3
+
+
+    def update(self):
+        if self.cont_coin == self.velocidad:
+            self.i_coin = 1
+        elif self.cont_coin == self.velocidad*2:
+            self.i_coin = 1
+        elif self.cont_coin == self.velocidad*3:
+            self.i_coin = 2
+        elif self.cont_coin == self.velocidad*4:
+            self.i_coin = 3
+        elif self.cont_coin == self.velocidad*5:
+            self.i_coin = 4
+        elif self.cont_coin == self.velocidad*6:
+            self.i_coin = 5
+            self.cont_coin = 0
+
+        self.cont_coin += 1
+
+    def draw(self):
+        self.screen.blit(self.image[self.i_coin], (self.x, self.y))
+
+    def moveUp(self):
+        """
+        Moves the arrow to the previous option number.
+        """
+        self.optionNum -= 1
+        self.y -= self.dy
+
+        if self.optionNum < 1:
+            self.y += self.totalOptions * self.dy
+            self.optionNum = self.totalOptions
+
+    def moveDown(self):
+        """
+        Moves the arrow to the next option number.
+        """
+        self.optionNum += 1
+        self.y += self.dy
+
+        if self.optionNum > self.totalOptions:
+            self.y -= self.totalOptions * self.dy
+            self.optionNum = 1
+
+
+
+
+
+
+
+
+
+# class Opciones():
+#     def __init__(self, game):
+#         self.game = game
+#         self.fondo = load_image("option.jpg", img_folder, alpha = False)
+#         self.esc = load_image("esc.png", img_folder, alpha = True)
+#         self.font_color = WHITE
+#         self.fade = CrossFade(self.game.screen)
+#         self.fade_list = pygame.sprite.Group(self.fade)
+#         self.finished = False
+#         while not self.finished:
+#             self.game.clock.tick(60)
+#             self.opciones_events()
+#             self.opciones_update()
+#
+#     def opciones_events(self):
+#         for event in pygame.event.get():
+#             if event.type == pygame.QUIT:
+#                 pygame.quit()
+#                 quit()
+#             if event.type == pygame.KEYDOWN:
+#                 if event.key == K_ESCAPE:
+#                     if self.fade.trans_value == 0:
+#                         self.fade.fade_dir *= -1
+#
+#     def opciones_update(self):
+#         if self.fade.trans_value == 258:
+#             self.finished = True
+#         self.game.screen.blit(self.fondo, (0, 0))
+#         self.fade_list.clear(self.game.screen, self.fondo)
+#         self.game.screen.blit(self.esc, (10, HEIGHT - 40))
+#         self.back = self.game.draw_text("ESC para volver", 10, self.font_color, 35, HEIGHT - 35)
+#         self.fade_list.update()
+#         self.fade_list.draw(self.game.screen)
+#         pygame.display.update()
+#
+
+
+
+
+    #
+    # def showGameOverScreen(self):
+    #     """
+    #     Shows the game over screen.
+    #     """
+    #     #raise NotImplementedError("Game Over!")
+    #
+    #     self.gameover = False
+    #     while not self.gameover:
+    #         self.fondo = load_image("game_over.png", img_folder, alpha = True)
+    #         self.image = pg.transform.scale(self.fondo, (640, 480))
+    #         self.screen.blit(self.image, (0, 0))
+    #         self.end = False
+    #         while not self.end:
+    #             for event in pg.event.get():
+    #                 if event.type == pg.QUIT:
+    #                     self.end = True
+    #                     self.gameover = True
+    #                     self.kill()
+    #                 if event.type == pg.KEYDOWN:
+    #                     if event.key == pg.K_RETURN:
+    #                         self.end = True
+    #                         self.gameover = True
+    #                         self.playing = False
+    #             self.text2 = self.draw_text("Enter para salir", 18, WHITE, 150, HEIGHT*2/3)
+    #             pg.display.update()
+    #
+    #
+    #
+    # def drawPauseScreen(self):
+    #     """
+    #     Draws the pause screen.
+    #     """
+    #     fondo = load_image("black_fade.png", img_folder, alpha=True)
+    #     image = pg.transform.scale(fondo, (640, 480))
+    #     self.draw_text("Pause", 32, WHITE, WIDTH/2 - 70, HEIGHT/2)
+    #     self.screen.blit(image, (0, 0))
+    #
+
+
+
+
+class FadeEffect(StaticMenu):
     """
     Responsible for applying a transitioning fade of as follows:
 
@@ -129,193 +380,4 @@ class FadeEffect(IMenu):
         duration = self.timeEndDarken - self.timeStartDarken
         percentComplete = current/duration
         self.transparentValue = percentComplete * 255
-
-
-
-
-pass
-# class Menu():
-#     def __init__(self, game, player):
-#         self.game = game
-#         self.player = player
-#         self.indent = 250
-#         self.coin = Coin(155, self.indent, self.game)
-#         self.fondo = load_image("background.jpg", img_folder, alpha=False)
-#         self.title = load_image("title.png", img_folder, alpha = True)
-#         self.font_color = WHITE
-#         while True:
-#             self.game.clock.tick(60)
-#             self.menu_events()
-#             self.menu_update()
-#             self.coin.update()
-#             pygame.display.update()
-#
-#     def menu_events(self):
-#         for event in pygame.event.get():
-#             if event.type == pygame.QUIT:
-#                 pygame.quit()
-#                 quit()
-#             if event.type == pygame.KEYDOWN:
-#                 if event.key == K_UP:
-#                     self.coin.posicion -= 38
-#                 if event.key == K_DOWN:
-#                     self.coin.posicion += 38
-#                 if event.key == K_RETURN:
-#                     if self.coin.posicion == 155:
-#                         self.game.playing = True
-#                         self.player.physics.velocity.x = 0
-#                         self.player.stop()
-#                         self.player.lives = 3
-#                         self.game.lives = 3
-#                         self.game.startGame()
-#                     elif self.coin.posicion == 193:
-#                         pass
-#                     elif self.coin.posicion == 231:
-#                         self.opciones = Opciones(self.game)
-#                     elif self.coin.posicion == 269:
-#                         pygame.quit()
-#                         quit()
-#             if event.type == pygame.KEYUP:
-#                 if event.key == K_UP:
-#                     self.coin.posicion += 0
-#                 elif event.key == K_DOWN:
-#                     self.coin.posicion -= 0
-#
-#             if self.coin.posicion > 269:
-#                 self.coin.posicion = 155
-#             elif self.coin.posicion < 155:
-#                 self.coin.posicion = 269
-#
-#     def menu_update(self):
-#         self.game.screen.blit(self.fondo, (0, 0))
-#         self.game.screen.blit(self.title, (60, 55))
-#         self.one_player = self.game.draw_text("1 Jugador", 22, self.font_color, self.indent, 160)
-#         self.two_players = self.game.draw_text("2 Jugadores", 22, self.font_color, self.indent, 198)
-#         self.options = self.game.draw_text("Opciones", 22, self.font_color, self.indent, 236)
-#         self.exit = self.game.draw_text("Salir", 22, self.font_color, self.indent, 274)
-#
-# class Opciones():
-#     def __init__(self, game):
-#         self.game = game
-#         self.fondo = load_image("option.jpg", img_folder, alpha = False)
-#         self.esc = load_image("esc.png", img_folder, alpha = True)
-#         self.font_color = WHITE
-#         self.fade = CrossFade(self.game.screen)
-#         self.fade_list = pygame.sprite.Group(self.fade)
-#         self.finished = False
-#         while not self.finished:
-#             self.game.clock.tick(60)
-#             self.opciones_events()
-#             self.opciones_update()
-#
-#     def opciones_events(self):
-#         for event in pygame.event.get():
-#             if event.type == pygame.QUIT:
-#                 pygame.quit()
-#                 quit()
-#             if event.type == pygame.KEYDOWN:
-#                 if event.key == K_ESCAPE:
-#                     if self.fade.trans_value == 0:
-#                         self.fade.fade_dir *= -1
-#
-#     def opciones_update(self):
-#         if self.fade.trans_value == 258:
-#             self.finished = True
-#         self.game.screen.blit(self.fondo, (0, 0))
-#         self.fade_list.clear(self.game.screen, self.fondo)
-#         self.game.screen.blit(self.esc, (10, HEIGHT - 40))
-#         self.back = self.game.draw_text("ESC para volver", 10, self.font_color, 35, HEIGHT - 35)
-#         self.fade_list.update()
-#         self.fade_list.draw(self.game.screen)
-#         pygame.display.update()
-#
-# class Coin():
-#     def __init__(self, posicion, indent, game):
-#         self.coin = load_image("coin.png", img_folder, alpha = True)
-#         self.game = game
-#         self.cont_coin = 0
-#         self.i_coin = 0
-#         self.velocidad = 3
-#         self.posicion = posicion
-#         self.indent = indent
-#         self.xixf_coin = {}
-#         self.xixf_coin[0] = (0, 0, 32, 32)
-#         self.xixf_coin[1] = (32, 0, 32, 32)
-#         self.xixf_coin[2] = (64, 0, 32, 32)
-#         self.xixf_coin[3] = (96, 0, 32, 32)
-#         self.xixf_coin[4] = (128, 0, 32, 32)
-#         self.xixf_coin[5] = (160, 0, 32, 32)
-#
-#     def update(self):
-#         if self.cont_coin == self.velocidad:
-#             self.i_coin = 0
-#         elif self.cont_coin == self.velocidad*2:
-#             self.i_coin = 1
-#         elif self.cont_coin == self.velocidad*3:
-#             self.i_coin = 2
-#         elif self.cont_coin == self.velocidad*4:
-#             self.i_coin = 3
-#         elif self.cont_coin == self.velocidad*5:
-#             self.i_coin = 4
-#         elif self.cont_coin == self.velocidad*6:
-#             self.i_coin = 5
-#             self.cont_coin = 0
-#
-#         self.cont_coin += 1
-#
-#         self.game.screen.blit(self.coin, ((self.indent - 40), self.posicion), (self.xixf_coin[self.i_coin]))
-#
-
-
-
-
-    #
-    # def showGameOverScreen(self):
-    #     """
-    #     Shows the game over screen.
-    #     """
-    #     #raise NotImplementedError("Game Over!")
-    #
-    #     self.gameover = False
-    #     while not self.gameover:
-    #         self.fondo = load_image("game_over.png", img_folder, alpha = True)
-    #         self.image = pg.transform.scale(self.fondo, (640, 480))
-    #         self.screen.blit(self.image, (0, 0))
-    #         self.end = False
-    #         while not self.end:
-    #             for event in pg.event.get():
-    #                 if event.type == pg.QUIT:
-    #                     self.end = True
-    #                     self.gameover = True
-    #                     self.kill()
-    #                 if event.type == pg.KEYDOWN:
-    #                     if event.key == pg.K_RETURN:
-    #                         self.end = True
-    #                         self.gameover = True
-    #                         self.playing = False
-    #             self.text2 = self.draw_text("Enter para salir", 18, WHITE, 150, HEIGHT*2/3)
-    #             pg.display.update()
-    #
-    #
-    #
-    # def drawPauseScreen(self):
-    #     """
-    #     Draws the pause screen.
-    #     """
-    #     fondo = load_image("black_fade.png", img_folder, alpha=True)
-    #     image = pg.transform.scale(fondo, (640, 480))
-    #     self.draw_text("Pause", 32, WHITE, WIDTH/2 - 70, HEIGHT/2)
-    #     self.screen.blit(image, (0, 0))
-    #
-
-
-
-    #
-    # def draw_text(self, text, size, colour, x, y):
-    #     """
-    #     Draws text on the screen.
-    #     """
-    #     font = pg.font.SysFont(self.font_name, size)
-    #     text_surface = font.render(text, True, colour)
-    #     self.screen.blit(text_surface, (x, y))
 

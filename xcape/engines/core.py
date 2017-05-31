@@ -44,7 +44,7 @@ class CoreEngine(GameObject):
                 if event.key == pg.K_F4:
                     quit()
 
-            if event.type == events.MENU_EVENT:
+            if event.type == events.MENU_EVENT or event.type == pg.KEYDOWN:
                 self.menuEngine.handleEvent(event)
             if event.type == events.SCENE_EVENT:
                 self.sceneEngine.handleEvent(event)
