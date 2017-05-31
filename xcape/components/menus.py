@@ -3,8 +3,9 @@ Contains all the menus in game.
 """
 
 import pygame as pg
-import xcape.common.renderer as renderer
 from xcape.common.gameobject import GameObject
+import xcape.common.renderer as renderer
+import xcape.common.settings as settings
 
 
 class IMenu(GameObject):
@@ -12,11 +13,13 @@ class IMenu(GameObject):
     The interface for every menu.
     """
 
-    def __init__(self, screen):
+    def __init__(self, screen, resources):
         """
         :param screen: pygame.Surface, representing the screen.
+        :param resources: 2D Dictionary, mapping dir and file name to image.
         """
         self.screen = screen
+        self.resources = resources
         self.background = None
 
     def handleEvent(self, event):
@@ -37,8 +40,8 @@ class BlankMenu(IMenu):
     A blank menu that does nothing other than display a blank (black) screen.
     """
 
-    def __init__(self, screen):
-        super().__init__(screen)
+    def __init__(self, screen, resources):
+        super().__init__(screen, resources)
 
 
 class SplashMenu(IMenu):
@@ -46,30 +49,63 @@ class SplashMenu(IMenu):
     The splash screen of the game.
     """
 
-    def __init__(self, screen):
-        super().__init__(screen)
+    def __init__(self, screen, resources):
+        super().__init__(screen, resources)
+        self.background = self.resources["screens"]["splash.jpg"]
+        self.effect = FadeEffect(screen, resources)
 
-        self.background = load_image("raspberry.jpg", img_folder)
-        self.background = None
-        self.effect = None
-
-        self.ticker = 0
-
+    def update(self):
+        self.effect.update()
 
     def draw(self):
         self.screen.blit(self.background, (0, 0))
+        self.effect.draw()
 
+
+class FadeEffect(IMenu):
+    """
+    Responsible for applying a transitioning fade of as follows:
+
+    Black screen --> Normal screen --> Black screen
+    """
+
+    def __init__(self, screen, resources):
+        self.screen = screen
+        self.resources = resources
+
+        self.background = pg.Surface((settings.WIDTH, settings.HEIGHT))
+        self.background = self.background.convert()
+        self.background.fill(renderer.COLOURS["black"])
+        self.transparentValue = 255
+
+        # Units are in seconds (use floats to reduce rounding errors)
+        self.origin = pg.time.get_ticks()/1000
+        self.time = 0.0
+        self.timeStartLighten = 2.0
+        self.timeEndLighten = 4.0
+        self.timeStartDarken = 5.0
+        self.timeEndDarken = 6.0
 
     def update(self):
-        self.ticker += 1
+        self.background.set_alpha(self.transparentValue)
+        self.time = pg.time.get_ticks()/1000 - self.origin
 
-        # if self.ticker % self.speed == 0:
-        #     self.fade
-        #
-        # if self.fade.trans_value == 0:
-        #     self.fade.fade_dir *= -1
-        # if self.fade.trans_value == 258:
-        #     self.done = True
+        # Lightens the screen
+        if self.timeEndLighten >= self.time >= self.timeStartLighten:
+            current = self.time - self.timeStartLighten
+            duration = self.timeEndLighten - self.timeStartLighten
+            percentComplete = current/duration
+            self.transparentValue = (1-percentComplete) * 255
+
+        # Darkens the screen
+        if self.timeEndDarken >= self.time >= self.timeStartDarken:
+            current = self.time - self.timeStartDarken
+            duration = self.timeEndDarken - self.timeStartDarken
+            percentComplete = current/duration
+            self.transparentValue = percentComplete * 255
+
+    def draw(self):
+        self.screen.blit(self.background, (0, 0))
 
 
 
@@ -206,39 +242,6 @@ class SplashMenu(IMenu):
 #
 #         self.game.screen.blit(self.coin, ((self.indent - 40), self.posicion), (self.xixf_coin[self.i_coin]))
 #
-# class CrossFade(pygame.sprite.Sprite):
-#     def __init__(self, screen):
-#         pygame.sprite.Sprite.__init__(self)
-#         self.image = pygame.Surface(screen.get_size())
-#         self.image = self.image.convert()
-#         self.image.fill(BLACK)
-#         self.rect = self.image.get_rect()
-#         self.fade_dir = 1
-#         self.trans_value = 255
-#         self.fade_speed = 6
-#         self.delay = 1
-#         self.increment = 0
-#         self.image.set_alpha(self.trans_value)
-#         self.rect.centerx = 320
-#         self.rect.centery = 240
-#
-#     def update(self):
-#         self.image.set_alpha(self.trans_value)
-#         self.increment += 1
-#
-#         if self.increment >= self.delay:
-#             self.increment = 0
-#             if self.fade_dir > 0:
-#                 if self.trans_value - self.fade_speed < 0:
-#                     self.trans_value = 0
-#                 else:
-#                     self.trans_value -= self.fade_speed
-#
-#             elif self.fade_dir < 0:
-#                 if self.trans_value + self.delay > 255:
-#                     self.trans_value = 255
-#                 else:
-#                     self.trans_value += self.fade_speed
 
 
     #

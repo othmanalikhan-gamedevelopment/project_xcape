@@ -32,10 +32,10 @@ def loadMenus():
     menu = {}
     MENUS_PATH = os.path.join("images", "menus")
 
-    for d in os.listdir(MENU_PATH):
+    for d in os.listdir(MENUS_PATH):
         menu[d] = {}
-        for f in os.listdir(os.path.join(MENU_PATH, d)):
-            image = loadImage(os.path.join(MENU_PATH, d, f))
+        for f in os.listdir(os.path.join(MENUS_PATH, d)):
+            image = loadImage(os.path.join(MENUS_PATH, d, f))
             menu[d][f] = image
 
     return menu

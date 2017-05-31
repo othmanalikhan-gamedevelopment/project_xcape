@@ -1,16 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="2942e340-afdc-4c22-9f9a-96926b7bcbcc" name="Default" comment="Added resources.py module that loads game resources">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/settings.ini" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/xcape/common/renderer.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/xcape/common/settings.py" afterPath="" />
+    <list default="true" id="2942e340-afdc-4c22-9f9a-96926b7bcbcc" name="Default" comment="">
+      <change type="DELETED" beforePath="$PROJECT_DIR$/images/menus/assets/raspberry.jpg" afterPath="" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/xcape/entities/character.py" afterPath="$PROJECT_DIR$/xcape/entities/characters.py" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/xcape/entities/player.py" afterPath="$PROJECT_DIR$/xcape/entities/players.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main.py" afterPath="$PROJECT_DIR$/main.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/xcape/common/renderer.py" afterPath="$PROJECT_DIR$/xcape/common/renderer.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/xcape/components/menus.py" afterPath="$PROJECT_DIR$/xcape/components/menus.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/xcape/engines/core.py" afterPath="$PROJECT_DIR$/xcape/engines/core.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/xcape/engines/menu.py" afterPath="$PROJECT_DIR$/xcape/engines/menu.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/xcape/engines/scene.py" afterPath="$PROJECT_DIR$/xcape/engines/scene.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -30,49 +28,19 @@
     <splitter split-orientation="horizontal" split-proportion="0.5">
       <split-first>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file leaf-file-name="core.py" pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/xcape/engines/core.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="238">
-                  <caret line="14" column="29" lean-forward="false" selection-start-line="14" selection-start-column="29" selection-end-line="14" selection-end-column="29" />
-                  <folding>
-                    <element signature="e#38#57#0" expanded="true" />
-                    <element signature="e#349#1757#0" expanded="false" />
-                    <element signature="e#592#982#0" expanded="false" />
-                    <element signature="e#1014#1072#0" expanded="false" />
-                    <element signature="e#1112#1512#0" expanded="false" />
-                    <element signature="e#1542#1624#0" expanded="false" />
-                    <element signature="e#1653#1757#0" expanded="false" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="main.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/main.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="34">
-                  <caret line="2" column="0" lean-forward="false" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
-                  <folding>
-                    <element signature="e#0#13#0" expanded="true" />
-                    <element signature="e#74#161#0" expanded="false" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="menu.py" pinned="false" current-in-tab="false">
+          <file leaf-file-name="menu.py" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/xcape/engines/menu.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="340">
-                  <caret line="24" column="0" lean-forward="false" selection-start-line="24" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
+                <state relative-caret-position="51">
+                  <caret line="3" column="0" lean-forward="true" selection-start-line="3" selection-start-column="0" selection-end-line="3" selection-end-column="0" />
                   <folding>
                     <element signature="e#38#57#0" expanded="true" />
-                    <element signature="e#217#341#1" expanded="false" />
-                    <element signature="e#831#1077#0" expanded="false" />
-                    <element signature="e#831#917#1" expanded="false" />
-                    <element signature="e#1109#1127#0" expanded="false" />
-                    <element signature="e#1157#1173#0" expanded="false" />
+                    <element signature="e#258#382#1" expanded="false" />
+                    <element signature="e#424#774#0" expanded="false" />
+                    <element signature="e#818#1080#0" expanded="false" />
+                    <element signature="e#818#904#1" expanded="false" />
+                    <element signature="e#1112#1130#0" expanded="false" />
+                    <element signature="e#1160#1176#0" expanded="false" />
                   </folding>
                 </state>
               </provider>
@@ -82,49 +50,43 @@
       </split-first>
       <split-second>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file leaf-file-name="menus.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/xcape/components/menus.py">
+          <file leaf-file-name="core.py" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/xcape/engines/core.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="204">
-                  <caret line="51" column="64" lean-forward="false" selection-start-line="51" selection-start-column="64" selection-end-line="51" selection-end-column="64" />
+                <state relative-caret-position="119">
+                  <caret line="7" column="27" lean-forward="true" selection-start-line="7" selection-start-column="27" selection-end-line="7" selection-end-column="27" />
                   <folding>
-                    <element signature="e#41#60#0" expanded="true" />
-                    <element signature="e#186#625#0" expanded="false" />
-                    <element signature="e#186#231#1" expanded="false" />
-                    <element signature="e#273#412#0" expanded="false" />
-                    <element signature="e#273#352#1" expanded="false" />
-                    <element signature="e#456#555#0" expanded="false" />
-                    <element signature="e#456#542#1" expanded="false" />
-                    <element signature="e#587#591#0" expanded="false" />
-                    <element signature="e#621#625#0" expanded="false" />
-                    <element signature="e#656#811#0" expanded="false" />
-                    <element signature="e#656#745#1" expanded="false" />
-                    <element signature="e#843#889#1" expanded="false" />
+                    <element signature="e#921#979#0" expanded="false" />
+                    <element signature="e#1019#1419#0" expanded="false" />
+                    <element signature="e#1449#1531#0" expanded="false" />
+                    <element signature="e#1560#1664#0" expanded="false" />
                   </folding>
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="renderer.py" pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/xcape/common/renderer.py">
+          <file leaf-file-name="menus.py" pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/xcape/components/menus.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="272">
-                  <caret line="134" column="0" lean-forward="true" selection-start-line="134" selection-start-column="0" selection-end-line="134" selection-end-column="0" />
+                <state relative-caret-position="238">
+                  <caret line="44" column="0" lean-forward="true" selection-start-line="44" selection-start-column="0" selection-end-line="44" selection-end-column="0" />
                   <folding>
-                    <element signature="e#61#70#0" expanded="true" />
-                    <element signature="e#114#1335#0" expanded="false" />
-                    <element signature="e#114#179#1" expanded="false" />
-                    <element signature="e#213#346#0" expanded="false" />
-                    <element signature="e#387#568#0" expanded="false" />
-                    <element signature="e#611#1108#0" expanded="false" />
-                    <element signature="e#1150#1335#0" expanded="false" />
-                    <element signature="e#1362#3140#0" expanded="false" />
-                    <element signature="e#1630#1728#0" expanded="false" />
-                    <element signature="e#1764#2189#0" expanded="false" />
-                    <element signature="e#1764#1892#1" expanded="false" />
-                    <element signature="e#2226#2657#0" expanded="false" />
-                    <element signature="e#2712#3140#0" expanded="false" />
-                    <element signature="e#3168#3530#0" expanded="false" />
+                    <element signature="e#41#60#0" expanded="true" />
+                    <element signature="e#221#783#0" expanded="false" />
+                    <element signature="e#221#266#1" expanded="false" />
+                    <element signature="e#319#570#0" expanded="false" />
+                    <element signature="e#319#475#1" expanded="false" />
+                    <element signature="e#614#713#0" expanded="false" />
+                    <element signature="e#614#700#1" expanded="false" />
+                    <element signature="e#745#749#0" expanded="false" />
+                    <element signature="e#779#783#0" expanded="false" />
+                    <element signature="e#814#991#0" expanded="false" />
+                    <element signature="e#814#903#1" expanded="false" />
+                    <element signature="e#1023#1425#0" expanded="false" />
+                    <element signature="e#1122#1275#0" expanded="false" />
+                    <element signature="e#1307#1327#0" expanded="false" />
+                    <element signature="e#1357#1425#0" expanded="false" />
+                    <element signature="e#1457#10174#0" expanded="false" />
                   </folding>
                 </state>
               </provider>
@@ -162,16 +124,16 @@
         <option value="$PROJECT_DIR$/xcape/common/gameobject.py" />
         <option value="$PROJECT_DIR$/xcape/common/events.py" />
         <option value="$PROJECT_DIR$/xcape/common/resource.py" />
-        <option value="$PROJECT_DIR$/xcape/components/menus.py" />
         <option value="$PROJECT_DIR$/xcape/common/_resources.py" />
         <option value="$PROJECT_DIR$/xcape/common/resources.py" />
         <option value="$PROJECT_DIR$/settings.ini" />
         <option value="$PROJECT_DIR$/xcape/common/settings.py" />
         <option value="$PROJECT_DIR$/main.py" />
-        <option value="$PROJECT_DIR$/xcape/common/renderer.py" />
         <option value="$PROJECT_DIR$/xcape/engines/core.py" />
         <option value="$PROJECT_DIR$/xcape/engines/scene.py" />
         <option value="$PROJECT_DIR$/xcape/engines/menu.py" />
+        <option value="$PROJECT_DIR$/xcape/common/renderer.py" />
+        <option value="$PROJECT_DIR$/xcape/components/menus.py" />
       </list>
     </option>
   </component>
@@ -225,6 +187,10 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="xcape" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="entities" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -295,10 +261,6 @@
               <option name="myItemId" value="images" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="scenes" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
           </PATH>
           <PATH>
             <PATH_ELEMENT>
@@ -315,24 +277,6 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="menus" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="prison_xcape" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="prison_xcape" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="images" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="characters" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -615,7 +559,21 @@
       <option name="project" value="LOCAL" />
       <updated>1496154899542</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="Added renderer.py module that loads game images">
+      <created>1496166313987</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1496166313987</updated>
+    </task>
+    <task id="LOCAL-00011" summary="Replaced Renderer class with functions to resolve dependencies">
+      <created>1496167170324</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1496167170324</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -624,10 +582,10 @@
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.20562293" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2665975" sideWeight="0.5088203" order="6" side_tool="true" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32883817" sideWeight="0.4911797" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32883817" sideWeight="0.48897463" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32883817" sideWeight="0.51102537" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32883817" sideWeight="0.51323044" order="6" side_tool="true" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32883817" sideWeight="0.48897463" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32883817" sideWeight="0.48676956" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32883817" sideWeight="0.51323044" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32987553" sideWeight="0.49338478" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2665975" sideWeight="0.48676956" order="9" side_tool="false" content_ui="tabs" />
@@ -659,11 +617,13 @@
     <MESSAGE value="Refactored core.py constructor code to be simpler" />
     <MESSAGE value="Added settings.py module to load settings.ini" />
     <MESSAGE value="Refactored events.py to simplify code (and correct docstrings)" />
-    <option name="LAST_COMMIT_MESSAGE" value="Refactored events.py to simplify code (and correct docstrings)" />
+    <MESSAGE value="Added renderer.py module that loads game images" />
+    <MESSAGE value="Replaced Renderer class with functions to resolve dependencies" />
+    <option name="LAST_COMMIT_MESSAGE" value="Replaced Renderer class with functions to resolve dependencies" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="3" />
+      <option name="time" value="5" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -673,13 +633,10 @@
         <state relative-caret-position="204">
           <caret line="12" column="0" lean-forward="true" selection-start-line="12" selection-start-column="0" selection-end-line="12" selection-end-column="0" />
           <folding>
-            <element signature="e#38#57#0" expanded="true" />
-            <element signature="e#349#1757#0" expanded="false" />
-            <element signature="e#592#982#0" expanded="false" />
-            <element signature="e#1014#1072#0" expanded="false" />
-            <element signature="e#1112#1512#0" expanded="false" />
-            <element signature="e#1542#1624#0" expanded="false" />
-            <element signature="e#1653#1757#0" expanded="false" />
+            <element signature="e#921#979#0" expanded="false" />
+            <element signature="e#1019#1419#0" expanded="false" />
+            <element signature="e#1449#1531#0" expanded="false" />
+            <element signature="e#1560#1664#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -690,11 +647,12 @@
           <caret line="4" column="18" lean-forward="false" selection-start-line="4" selection-start-column="18" selection-end-line="4" selection-end-column="18" />
           <folding>
             <element signature="e#38#57#0" expanded="true" />
-            <element signature="e#217#341#1" expanded="false" />
-            <element signature="e#831#1077#0" expanded="false" />
-            <element signature="e#831#917#1" expanded="false" />
-            <element signature="e#1109#1127#0" expanded="false" />
-            <element signature="e#1157#1173#0" expanded="false" />
+            <element signature="e#258#382#1" expanded="false" />
+            <element signature="e#424#774#0" expanded="false" />
+            <element signature="e#818#1080#0" expanded="false" />
+            <element signature="e#818#904#1" expanded="false" />
+            <element signature="e#1112#1130#0" expanded="false" />
+            <element signature="e#1160#1176#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -705,17 +663,21 @@
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="e#41#60#0" expanded="true" />
-            <element signature="e#186#625#0" expanded="false" />
-            <element signature="e#186#231#1" expanded="false" />
-            <element signature="e#273#412#0" expanded="false" />
-            <element signature="e#273#352#1" expanded="false" />
-            <element signature="e#456#555#0" expanded="false" />
-            <element signature="e#456#542#1" expanded="false" />
-            <element signature="e#587#591#0" expanded="false" />
-            <element signature="e#621#625#0" expanded="false" />
-            <element signature="e#656#811#0" expanded="false" />
-            <element signature="e#656#745#1" expanded="false" />
-            <element signature="e#843#889#1" expanded="false" />
+            <element signature="e#221#783#0" expanded="false" />
+            <element signature="e#221#266#1" expanded="false" />
+            <element signature="e#319#570#0" expanded="false" />
+            <element signature="e#319#475#1" expanded="false" />
+            <element signature="e#614#713#0" expanded="false" />
+            <element signature="e#614#700#1" expanded="false" />
+            <element signature="e#745#749#0" expanded="false" />
+            <element signature="e#779#783#0" expanded="false" />
+            <element signature="e#814#991#0" expanded="false" />
+            <element signature="e#814#903#1" expanded="false" />
+            <element signature="e#1023#1425#0" expanded="false" />
+            <element signature="e#1122#1275#0" expanded="false" />
+            <element signature="e#1307#1327#0" expanded="false" />
+            <element signature="e#1357#1425#0" expanded="false" />
+            <element signature="e#1457#10174#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -725,20 +687,14 @@
         <state relative-caret-position="306">
           <caret line="21" column="0" lean-forward="false" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
           <folding>
-            <element signature="e#61#70#0" expanded="true" />
-            <element signature="e#114#1335#0" expanded="false" />
-            <element signature="e#114#179#1" expanded="false" />
-            <element signature="e#213#346#0" expanded="false" />
-            <element signature="e#387#568#0" expanded="false" />
-            <element signature="e#611#1108#0" expanded="false" />
-            <element signature="e#1150#1335#0" expanded="false" />
-            <element signature="e#1362#3140#0" expanded="false" />
-            <element signature="e#1630#1728#0" expanded="false" />
-            <element signature="e#1764#2189#0" expanded="false" />
-            <element signature="e#1764#1892#1" expanded="false" />
-            <element signature="e#2226#2657#0" expanded="false" />
-            <element signature="e#2712#3140#0" expanded="false" />
-            <element signature="e#3168#3530#0" expanded="false" />
+            <element signature="e#138#382#0" expanded="false" />
+            <element signature="e#406#812#0" expanded="false" />
+            <element signature="e#406#522#1" expanded="false" />
+            <element signature="e#837#1253#0" expanded="false" />
+            <element signature="e#837#954#1" expanded="false" />
+            <element signature="e#1294#1723#0" expanded="false" />
+            <element signature="e#1294#1526#1" expanded="false" />
+            <element signature="e#1590#1664#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -822,98 +778,94 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/main.py">
+    <entry file="file://$PROJECT_DIR$/xcape/engines/scene.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="2" column="0" lean-forward="false" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
+        <state relative-caret-position="238">
+          <caret line="17" column="29" lean-forward="false" selection-start-line="17" selection-start-column="29" selection-end-line="17" selection-end-column="29" />
           <folding>
-            <element signature="e#0#13#0" expanded="true" />
-            <element signature="e#74#161#0" expanded="false" />
+            <element signature="e#39#58#0" expanded="false" />
+            <element signature="e#388#496#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/xcape/engines/scene.py">
+    <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="289">
-          <caret line="20" column="67" lean-forward="false" selection-start-line="20" selection-start-column="67" selection-end-line="20" selection-end-column="67" />
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#39#58#0" expanded="true" />
+            <element signature="e#60#129#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/xcape/engines/menu.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="340">
-          <caret line="24" column="0" lean-forward="false" selection-start-line="24" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
+        <state relative-caret-position="51">
+          <caret line="3" column="0" lean-forward="true" selection-start-line="3" selection-start-column="0" selection-end-line="3" selection-end-column="0" />
           <folding>
             <element signature="e#38#57#0" expanded="true" />
-            <element signature="e#217#341#1" expanded="false" />
-            <element signature="e#831#1077#0" expanded="false" />
-            <element signature="e#831#917#1" expanded="false" />
-            <element signature="e#1109#1127#0" expanded="false" />
-            <element signature="e#1157#1173#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/xcape/engines/core.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="238">
-          <caret line="14" column="29" lean-forward="false" selection-start-line="14" selection-start-column="29" selection-end-line="14" selection-end-column="29" />
-          <folding>
-            <element signature="e#38#57#0" expanded="true" />
-            <element signature="e#349#1757#0" expanded="false" />
-            <element signature="e#592#982#0" expanded="false" />
-            <element signature="e#1014#1072#0" expanded="false" />
-            <element signature="e#1112#1512#0" expanded="false" />
-            <element signature="e#1542#1624#0" expanded="false" />
-            <element signature="e#1653#1757#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/xcape/components/menus.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="204">
-          <caret line="51" column="64" lean-forward="false" selection-start-line="51" selection-start-column="64" selection-end-line="51" selection-end-column="64" />
-          <folding>
-            <element signature="e#41#60#0" expanded="true" />
-            <element signature="e#186#625#0" expanded="false" />
-            <element signature="e#186#231#1" expanded="false" />
-            <element signature="e#273#412#0" expanded="false" />
-            <element signature="e#273#352#1" expanded="false" />
-            <element signature="e#456#555#0" expanded="false" />
-            <element signature="e#456#542#1" expanded="false" />
-            <element signature="e#587#591#0" expanded="false" />
-            <element signature="e#621#625#0" expanded="false" />
-            <element signature="e#656#811#0" expanded="false" />
-            <element signature="e#656#745#1" expanded="false" />
-            <element signature="e#843#889#1" expanded="false" />
+            <element signature="e#258#382#1" expanded="false" />
+            <element signature="e#424#774#0" expanded="false" />
+            <element signature="e#818#1080#0" expanded="false" />
+            <element signature="e#818#904#1" expanded="false" />
+            <element signature="e#1112#1130#0" expanded="false" />
+            <element signature="e#1160#1176#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/xcape/common/renderer.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="134" column="0" lean-forward="true" selection-start-line="134" selection-start-column="0" selection-end-line="134" selection-end-column="0" />
+        <state relative-caret-position="204">
+          <caret line="24" column="0" lean-forward="true" selection-start-line="24" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
           <folding>
-            <element signature="e#61#70#0" expanded="true" />
-            <element signature="e#114#1335#0" expanded="false" />
-            <element signature="e#114#179#1" expanded="false" />
-            <element signature="e#213#346#0" expanded="false" />
-            <element signature="e#387#568#0" expanded="false" />
-            <element signature="e#611#1108#0" expanded="false" />
-            <element signature="e#1150#1335#0" expanded="false" />
-            <element signature="e#1362#3140#0" expanded="false" />
-            <element signature="e#1630#1728#0" expanded="false" />
-            <element signature="e#1764#2189#0" expanded="false" />
-            <element signature="e#1764#1892#1" expanded="false" />
-            <element signature="e#2226#2657#0" expanded="false" />
-            <element signature="e#2712#3140#0" expanded="false" />
-            <element signature="e#3168#3530#0" expanded="false" />
+            <element signature="e#138#382#0" expanded="false" />
+            <element signature="e#406#812#0" expanded="false" />
+            <element signature="e#406#522#1" expanded="false" />
+            <element signature="e#837#1253#0" expanded="false" />
+            <element signature="e#837#954#1" expanded="false" />
+            <element signature="e#1294#1723#0" expanded="false" />
+            <element signature="e#1294#1526#1" expanded="false" />
+            <element signature="e#1590#1664#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/xcape/engines/core.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="119">
+          <caret line="7" column="27" lean-forward="true" selection-start-line="7" selection-start-column="27" selection-end-line="7" selection-end-column="27" />
+          <folding>
+            <element signature="e#921#979#0" expanded="false" />
+            <element signature="e#1019#1419#0" expanded="false" />
+            <element signature="e#1449#1531#0" expanded="false" />
+            <element signature="e#1560#1664#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/xcape/components/menus.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="238">
+          <caret line="44" column="0" lean-forward="true" selection-start-line="44" selection-start-column="0" selection-end-line="44" selection-end-column="0" />
+          <folding>
+            <element signature="e#41#60#0" expanded="true" />
+            <element signature="e#221#783#0" expanded="false" />
+            <element signature="e#221#266#1" expanded="false" />
+            <element signature="e#319#570#0" expanded="false" />
+            <element signature="e#319#475#1" expanded="false" />
+            <element signature="e#614#713#0" expanded="false" />
+            <element signature="e#614#700#1" expanded="false" />
+            <element signature="e#745#749#0" expanded="false" />
+            <element signature="e#779#783#0" expanded="false" />
+            <element signature="e#814#991#0" expanded="false" />
+            <element signature="e#814#903#1" expanded="false" />
+            <element signature="e#1023#1425#0" expanded="false" />
+            <element signature="e#1122#1275#0" expanded="false" />
+            <element signature="e#1307#1327#0" expanded="false" />
+            <element signature="e#1357#1425#0" expanded="false" />
+            <element signature="e#1457#10174#0" expanded="false" />
           </folding>
         </state>
       </provider>
