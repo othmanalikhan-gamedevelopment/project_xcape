@@ -83,3 +83,27 @@ class AnimationComponent(GameObject):
         """
         self.stateToStatic[state] = image
         self.stateToType[state] = "static"
+
+    def flip(self, isVertical, isHorizontal):
+        """
+        Reflects vertically the images of the current animation.
+        """
+        effect = pg.transform.flip
+        args = (isVertical, isHorizontal)
+        self._applyEffect(effect, args)
+
+    def _applyEffect(self, effect, args):
+        """
+        Applies the given effect on the current animation.
+
+        :param effect: Function, the effect to apply on the current animation.
+        :param args: Tuple, containing the arguments of the effect function.
+        """
+        stateType = self.stateToType[self.gameObject.state]
+
+        if stateType == "dynamic":
+            flipped = [effect(frame, *args) for frame in self.animation]
+            self.stateToDynamic[self.gameObject.state] = flipped
+
+        if stateType == "static":
+            self.stateToStatic[self.gameObject.state] = effect(self.image, *args)

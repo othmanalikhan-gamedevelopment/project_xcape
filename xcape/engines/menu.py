@@ -22,12 +22,13 @@ class MenuEngine(GameObject):
         self.screen = screen
         self.resources = loader.loadContent(loader.MENUS_PATH)
 
-        self.menu = menus.MainMenu(self.screen, self.resources)
+        self.menu = menus.SplashMenu(self.screen, self.resources)
         self.nameToMenu = \
             {
                 "blank_menu": menus.BlankMenu,
                 "splash_menu": menus.SplashMenu,
-                "main_menu": menus.MainMenu
+                "main_menu": menus.MainMenu,
+                "options_menu": menus.OptionsMenu
             }
 
     def handleEvent(self, event):

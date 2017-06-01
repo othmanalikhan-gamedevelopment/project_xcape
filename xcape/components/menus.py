@@ -38,7 +38,7 @@ class IMenu(GameObject):
 
 class BlankMenu(IMenu):
     """
-    A blank menu that does nothing other than display a blank (black) screen.
+    A blank menu that does nothing except display a blank screen.
     """
 
     def __init__(self, screen, resources):
@@ -100,17 +100,41 @@ class MainMenu(IMenu):
         self.dx = 0
         self.dy = 38
 
-        self.option1 = Label("1 Jugador", self.fontSize, self.fontColour,
-                             self.x, self.y + 1*self.dy, self.screen)
-        self.option2 = Label("2 Jugadores", self.fontSize, self.fontColour,
-                             self.x, self.y + 2*self.dy, self.screen)
-        self.option3 = Label("Opciones", self.fontSize, self.fontColour,
-                             self.x, self.y + 3*self.dy, self.screen)
-        self.option4 = Label("Salir", self.fontSize, self.fontColour,
-                             self.x, self.y + 4*self.dy, self.screen)
-        self.arrow = Arrow(self.x-40, self.y+28, self.dx, self.dy,
-                           self.totalOptions, self.screen, self.resources)
-        self.title = self.resources["assets"]["title.png"]
+        self.option1 = TextLabel("1 Jugador",
+                                 self.fontSize,
+                                 self.fontColour,
+                                 self.x,
+                                 self.y + 1 * self.dy,
+                                 self.screen)
+        self.option2 = TextLabel("2 Jugadores",
+                                 self.fontSize,
+                                 self.fontColour,
+                                 self.x,
+                                 self.y + 2 * self.dy,
+                                 self.screen)
+        self.option3 = TextLabel("Opciones",
+                                 self.fontSize,
+                                 self.fontColour,
+                                 self.x,
+                                 self.y + 3 * self.dy,
+                                 self.screen)
+        self.option4 = TextLabel("Salir",
+                                 self.fontSize,
+                                 self.fontColour,
+                                 self.x,
+                                 self.y + 4 * self.dy,
+                                 self.screen)
+        self.title = ImageLabel(self.resources["assets"]["title.png"],
+                                60,
+                                55,
+                                self.screen)
+        self.arrow = Arrow(self.x-40,
+                           self.y+28,
+                           self.dx,
+                           self.dy,
+                           self.totalOptions,
+                           self.screen,
+                           self.resources)
 
     def handleEvent(self, event):
         if event.type == pg.KEYDOWN:
@@ -126,12 +150,13 @@ class MainMenu(IMenu):
                 if self.arrow.optionNum == 2:
                     pass
                 if self.arrow.optionNum == 3:
-                    pass
+                    events.messageMenu("main_menu", "transition", "options_menu")
                 if self.arrow.optionNum == 4:
                     quit()
 
     def update(self):
         self.animation.update()
+        self.title.update()
         self.option1.update()
         self.option2.update()
         self.option3.update()
@@ -140,7 +165,7 @@ class MainMenu(IMenu):
 
     def draw(self):
         self.animation.draw()
-        self.screen.blit(self.title, (60, 55))
+        self.title.draw()
         self.option1.draw()
         self.option2.draw()
         self.option3.draw()
@@ -148,46 +173,108 @@ class MainMenu(IMenu):
         self.arrow.draw()
 
 
+class OptionsMenu(IMenu):
+    """
+    The options menu of the game.
+    """
+
+    def __init__(self, screen, resources):
+        super().__init__(screen, resources)
+        self.rect = pg.Rect(0, 0, 0, 0)
+
+        self.state = "idle"
+        self.animation = AnimationComponent(self)
+        self.animation.addStatic("idle", self.resources["screens"]["options.jpg"])
+
+        self.totalOptions = 2
+        self.fontSize = 22
+        self.fontColour = settings.COLOURS["white"]
+        self.x = 230
+        self.y = 155
+        self.dx = 0
+        self.dy = 50
+
+        self.option1 = TextLabel("Background: Flip Vertically",
+                                 self.fontSize,
+                                 self.fontColour,
+                                 self.x,
+                                 self.y + 1 * self.dy,
+                                 self.screen)
+        self.option2 = TextLabel("Background: Flip Horizontally",
+                                 self.fontSize,
+                                 self.fontColour,
+                                 self.x,
+                                 self.y + 2 * self.dy,
+                                 self.screen)
+        self.arrow = Arrow(self.x-40,
+                           self.y+40,
+                           self.dx,
+                           self.dy,
+                           self.totalOptions,
+                           self.screen,
+                           self.resources)
+        self.escapeImage = ImageLabel(self.resources["assets"]["esc.png"],
+                                      25,
+                                      440,
+                                      self.screen)
+        self.escapeText = TextLabel("Esc para volver",
+                                    14,
+                                    self.fontColour,
+                                    50,
+                                    445,
+                                    self.screen)
+
+        self.effect = FadeEffect(self.screen, self.resources)
+        self.effectDuration = (self.effect.timeEndDarken -
+                               self.effect.timeStartDarken)
+        self.effect.timeStartDarken = float('inf')
+        self.effect.timeEndDarken = float('inf')
+
+    def handleEvent(self, event):
+        if event.type == pg.KEYDOWN:
+
+            if event.key == pg.K_ESCAPE:
+                self.effect.timeStartDarken = self.effect.time
+                self.effect.timeEndDarken = (self.effect.time +
+                                             self.effectDuration)
+
+            if event.key == pg.K_UP:
+                self.arrow.moveUp()
+            if event.key == pg.K_DOWN:
+                self.arrow.moveDown()
+
+            if event.key == pg.K_RETURN:
+                if self.arrow.optionNum == 1:
+                    self.animation.flip(True, False)
+                if self.arrow.optionNum == 2:
+                    self.animation.flip(False, True)
+
+    def update(self):
+        self.animation.update()
+        self.escapeImage.update()
+        self.escapeText.update()
+        self.option1.update()
+        self.option2.update()
+        self.arrow.update()
+        self.effect.update()
+
+        if self.effect.isComplete:
+            events.messageMenu("options_menu", "transition", "main_menu")
+
+    def draw(self):
+        self.animation.draw()
+        self.escapeImage.draw()
+        self.escapeText.draw()
+        self.option1.draw()
+        self.option2.draw()
+        self.arrow.draw()
+        self.effect.draw()
+
+
+
+
 
 pass
-# class Opciones():
-#     def __init__(self, game):
-#         self.game = game
-#         self.fondo = load_image("option.jpg", img_folder, alpha = False)
-#         self.esc = load_image("esc.png", img_folder, alpha = True)
-#         self.font_color = WHITE
-#         self.fade = CrossFade(self.game.screen)
-#         self.fade_list = pygame.sprite.Group(self.fade)
-#         self.finished = False
-#         while not self.finished:
-#             self.game.clock.tick(60)
-#             self.opciones_events()
-#             self.opciones_update()
-#
-#     def opciones_events(self):
-#         for event in pygame.event.get():
-#             if event.type == pygame.QUIT:
-#                 pygame.quit()
-#                 quit()
-#             if event.type == pygame.KEYDOWN:
-#                 if event.key == K_ESCAPE:
-#                     if self.fade.trans_value == 0:
-#                         self.fade.fade_dir *= -1
-#
-#     def opciones_update(self):
-#         if self.fade.trans_value == 258:
-#             self.finished = True
-#         self.game.screen.blit(self.fondo, (0, 0))
-#         self.fade_list.clear(self.game.screen, self.fondo)
-#         self.game.screen.blit(self.esc, (10, HEIGHT - 40))
-#         self.back = self.game.draw_text("ESC para volver", 10, self.font_color, 35, HEIGHT - 35)
-#         self.fade_list.update()
-#         self.fade_list.draw(self.game.screen)
-#         pygame.display.update()
-#
-
-
-
 
     #
     # def showGameOverScreen(self):
@@ -262,10 +349,10 @@ class FadeEffect(IMenu):
         if not self.isComplete:
             self.time = pg.time.get_ticks()/1000 - self.origin
 
-            if self.timeEndDarken >= self.time >= self.timeStartDarken:
-                self.darkenScreen()
             if self.timeEndLighten >= self.time >= self.timeStartLighten:
                 self.lightenScreen()
+            if self.timeEndDarken >= self.time >= self.timeStartDarken:
+                self.darkenScreen()
 
             if self.time > self.timeEndDarken:
                 self.isComplete = True
@@ -296,7 +383,7 @@ class FadeEffect(IMenu):
         self.animation.image.set_alpha(self.transparentValue)
 
 
-class Label(GameObject):
+class TextLabel(GameObject):
     """
     Represents text that can be drawn on screen.
     """
@@ -316,6 +403,32 @@ class Label(GameObject):
 
         font = pg.font.SysFont(font, size)
         image = font.render(text, True, colour)
+
+        self.state = "idle"
+        self.animation = AnimationComponent(self)
+        self.animation.addStatic("idle", image)
+
+    def update(self):
+        self.animation.update()
+
+    def draw(self):
+        self.animation.draw()
+
+
+class ImageLabel(GameObject):
+    """
+    Represents text that can be drawn on screen.
+    """
+
+    def __init__(self, image, x, y, screen):
+        """
+        :param image: pygame.Surface, representing the image to display.
+        :param x: Integer, the x-position of the text.
+        :param y: Integer, the y-position of the text.
+        :param screen: pygame.Surface, representing the screen.
+        """
+        self.rect = pg.Rect(x, y, 0, 0)
+        self.screen = screen
 
         self.state = "idle"
         self.animation = AnimationComponent(self)
@@ -381,5 +494,3 @@ class Arrow(GameObject):
         if self.optionNum > self.totalOptions:
             self.rect.y -= self.totalOptions * self.dy
             self.optionNum = 1
-
-
