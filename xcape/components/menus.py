@@ -1,43 +1,17 @@
 """
-Contains all the menus in game.
+Responsible for containing all the menus in game.
 """
 
 import pygame as pg
 
 import xcape.common.events as events
-import xcape.common.renderer as renderer
 import xcape.common.settings as settings
-from xcape.common.gameobject import GameObject
+import xcape.common.render as render
+from xcape.common.object import GameObject
+from xcape.components.animation import AnimationComponent
 
 
-class StaticMenu(GameObject):
-    """
-    A base menu for any non-interactive menus.
-    """
-
-    def __init__(self, screen, resources):
-        """
-        :param screen: pygame.Surface, representing the screen.
-        :param resources: 2D Dictionary, mapping dir and file name to image.
-        """
-        self.screen = screen
-        self.resources = resources
-        self.background = None
-
-    def handleEvent(self, event):
-        """
-        :param event: pygame.Event, allowing event-driven programming.
-        """
-        pass
-
-    def update(self):
-        pass
-
-    def draw(self):
-        pass
-
-
-class InteractiveMenu(GameObject):
+class IMenu(GameObject):
     """
     A base menu for any menus that the user can interact with.
     """
@@ -49,12 +23,10 @@ class InteractiveMenu(GameObject):
         """
         self.screen = screen
         self.resources = resources
+        self.rect = pg.Rect(0, 0, 0, 0)
         self.background = None
 
     def handleEvent(self, event):
-        """
-        :param event: pygame.Event, allowing event-driven programming.
-        """
         pass
 
     def update(self):
@@ -64,7 +36,7 @@ class InteractiveMenu(GameObject):
         pass
 
 
-class BlankMenu(StaticMenu):
+class BlankMenu(IMenu):
     """
     A blank menu that does nothing other than display a blank (black) screen.
     """
@@ -73,14 +45,21 @@ class BlankMenu(StaticMenu):
         super().__init__(screen, resources)
 
 
-class SplashMenu(StaticMenu):
+class SplashMenu(IMenu):
     """
     The splash screen of the game.
     """
 
     def __init__(self, screen, resources):
         super().__init__(screen, resources)
-        self.background = self.resources["screens"]["splash.jpg"]
+        self.rect = pg.Rect(0, 0, 0, 0)
+
+        background = self.resources["screens"]["splash.jpg"]
+        background = render.addBackground(background)
+        self.state = "idle"
+        self.animation = AnimationComponent(self)
+        self.animation.addStatic("idle", background)
+
         self.effect = FadeEffect(screen, resources)
 
     def handleEvent(self, event):
@@ -92,33 +71,46 @@ class SplashMenu(StaticMenu):
         if self.effect.isComplete:
             events.messageMenu("splash_menu", "transition", "main_menu")
         else:
+            self.animation.update()
             self.effect.update()
 
     def draw(self):
-        self.screen.blit(self.background, (0, 0))
+        self.animation.draw()
         self.effect.draw()
 
 
-class MainMenu(InteractiveMenu):
+class MainMenu(IMenu):
     """
     The main menu of the game.
     """
 
     def __init__(self, screen, resources):
         super().__init__(screen, resources)
-        self.background = self.resources["screens"]["main.jpg"]
-        self.title = self.resources["assets"]["title.png"]
+        self.rect = pg.Rect(0, 0, 0, 0)
 
+        self.state = "idle"
+        self.animation = AnimationComponent(self)
+        self.animation.addStatic("idle", self.resources["screens"]["main.jpg"])
+
+        self.totalOptions = 4
         self.fontSize = 22
-        self.fontColour = renderer.COLOURS["white"]
+        self.fontColour = settings.COLOURS["white"]
         self.x = 250
         self.y = 155
         self.dx = 0
         self.dy = 38
 
-        self.totalOptions = 4
+        self.option1 = Label("1 Jugador", self.fontSize, self.fontColour,
+                             self.x, self.y + 1*self.dy, self.screen)
+        self.option2 = Label("2 Jugadores", self.fontSize, self.fontColour,
+                             self.x, self.y + 2*self.dy, self.screen)
+        self.option3 = Label("Opciones", self.fontSize, self.fontColour,
+                             self.x, self.y + 3*self.dy, self.screen)
+        self.option4 = Label("Salir", self.fontSize, self.fontColour,
+                             self.x, self.y + 4*self.dy, self.screen)
         self.arrow = Arrow(self.x-40, self.y+28, self.dx, self.dy,
                            self.totalOptions, self.screen, self.resources)
+        self.title = self.resources["assets"]["title.png"]
 
     def handleEvent(self, event):
         if event.type == pg.KEYDOWN:
@@ -139,108 +131,25 @@ class MainMenu(InteractiveMenu):
                     quit()
 
     def update(self):
+        self.animation.update()
+        self.option1.update()
+        self.option2.update()
+        self.option3.update()
+        self.option4.update()
         self.arrow.update()
 
     def draw(self):
-        self.screen.blit(self.background, (0, 0))
+        self.animation.draw()
         self.screen.blit(self.title, (60, 55))
-        self.drawOptions()
+        self.option1.draw()
+        self.option2.draw()
+        self.option3.draw()
+        self.option4.draw()
         self.arrow.draw()
 
-    def drawOptions(self):
-        """
-        Draws the text of the options in the main menu.
-        """
-        renderer.drawText("1 Jugador", self.fontSize, self.fontColour,
-                          self.x, self.y + 1*self.dy, self.screen)
-        renderer.drawText("2 Jugadores", self.fontSize, self.fontColour,
-                          self.x, self.y + 2*self.dy, self.screen)
-        renderer.drawText("Opciones", self.fontSize, self.fontColour,
-                          self.x, self.y + 3*self.dy, self.screen)
-        renderer.drawText("Salir", self.fontSize, self.fontColour,
-                          self.x, self.y + 4*self.dy, self.screen)
 
 
-class Arrow(GameObject):
-    """
-    An arrow that highlights the option that the user is hovering over.
-    """
-
-    def __init__(self, x, y, dx, dy, totalOptions, screen, resources):
-        """
-        :param x: Integer, the x-position of the arrow.
-        :param y: Integer, the y-position of the arrow.
-        :param dx: Integer, the change in x-position per movement.
-        :param dy: Integer, the change in y-position per moevement.
-        :param totalOptions: Integer, the total number of options.
-        :param screen: pygame.Surface, representing the screen.
-        :param resources: 2D Dictionary, mapping dir and file name to image.
-        """
-        self.x = x
-        self.y = y
-        self.dx = dx
-        self.dy = dy
-        self.totalOptions = totalOptions
-        self.screen = screen
-
-        self.optionNum = 1
-        self.image = resources["assets"]["coin"]
-
-        self.cont_coin = 0
-        self.i_coin = 1
-        self.velocidad = 3
-
-
-    def update(self):
-        if self.cont_coin == self.velocidad:
-            self.i_coin = 1
-        elif self.cont_coin == self.velocidad*2:
-            self.i_coin = 1
-        elif self.cont_coin == self.velocidad*3:
-            self.i_coin = 2
-        elif self.cont_coin == self.velocidad*4:
-            self.i_coin = 3
-        elif self.cont_coin == self.velocidad*5:
-            self.i_coin = 4
-        elif self.cont_coin == self.velocidad*6:
-            self.i_coin = 5
-            self.cont_coin = 0
-
-        self.cont_coin += 1
-
-    def draw(self):
-        self.screen.blit(self.image[self.i_coin], (self.x, self.y))
-
-    def moveUp(self):
-        """
-        Moves the arrow to the previous option number.
-        """
-        self.optionNum -= 1
-        self.y -= self.dy
-
-        if self.optionNum < 1:
-            self.y += self.totalOptions * self.dy
-            self.optionNum = self.totalOptions
-
-    def moveDown(self):
-        """
-        Moves the arrow to the next option number.
-        """
-        self.optionNum += 1
-        self.y += self.dy
-
-        if self.optionNum > self.totalOptions:
-            self.y -= self.totalOptions * self.dy
-            self.optionNum = 1
-
-
-
-
-
-
-
-
-
+pass
 # class Opciones():
 #     def __init__(self, game):
 #         self.game = game
@@ -320,9 +229,7 @@ class Arrow(GameObject):
     #
 
 
-
-
-class FadeEffect(StaticMenu):
+class FadeEffect(IMenu):
     """
     Responsible for applying a transitioning fade of as follows:
 
@@ -332,12 +239,16 @@ class FadeEffect(StaticMenu):
     def __init__(self, screen, resources):
         self.screen = screen
         self.resources = resources
+        self.rect = pg.Rect(0, 0, 0, 0)
+        self.transparentValue = 255
         self.isComplete = False
 
-        self.background = pg.Surface((settings.WIDTH, settings.HEIGHT))
-        self.background = self.background.convert()
-        self.background.fill(renderer.COLOURS["black"])
-        self.transparentValue = 255
+        background = pg.Surface((settings.WIDTH, settings.HEIGHT))
+        background = background.convert()
+        background.fill(settings.COLOURS["black"])
+        self.state = "idle"
+        self.animation = AnimationComponent(self)
+        self.animation.addStatic("idle", background)
 
         # Units are in seconds (use floats to reduce rounding errors)
         self.origin = pg.time.get_ticks()/1000
@@ -349,7 +260,6 @@ class FadeEffect(StaticMenu):
 
     def update(self):
         if not self.isComplete:
-            self.background.set_alpha(self.transparentValue)
             self.time = pg.time.get_ticks()/1000 - self.origin
 
             if self.timeEndDarken >= self.time >= self.timeStartDarken:
@@ -360,8 +270,10 @@ class FadeEffect(StaticMenu):
             if self.time > self.timeEndDarken:
                 self.isComplete = True
 
+            self.animation.update()
+
     def draw(self):
-        self.screen.blit(self.background, (0, 0))
+        self.animation.draw()
 
     def lightenScreen(self):
         """
@@ -371,6 +283,7 @@ class FadeEffect(StaticMenu):
         duration = self.timeEndLighten - self.timeStartLighten
         percentComplete = current/duration
         self.transparentValue = (1-percentComplete) * 255
+        self.animation.image.set_alpha(self.transparentValue)
 
     def darkenScreen(self):
         """
@@ -380,4 +293,93 @@ class FadeEffect(StaticMenu):
         duration = self.timeEndDarken - self.timeStartDarken
         percentComplete = current/duration
         self.transparentValue = percentComplete * 255
+        self.animation.image.set_alpha(self.transparentValue)
+
+
+class Label(GameObject):
+    """
+    Represents text that can be drawn on screen.
+    """
+
+    def __init__(self, text, size, colour, x, y, screen, font="m04fatalfuryblack"):
+        """
+        :param text: String, the text to render.
+        :param size: Integer, the size of the font.
+        :param colour: 3-Tuple, containing the RGB values of the colour.
+        :param x: Integer, the x-position of the text.
+        :param y: Integer, the y-position of the text.
+        :param screen: pygame.Surface, representing the screen.
+        :param font: String, the name of the font to use.
+        """
+        self.rect = pg.Rect(x, y, 0, 0)
+        self.screen = screen
+
+        font = pg.font.SysFont(font, size)
+        image = font.render(text, True, colour)
+
+        self.state = "idle"
+        self.animation = AnimationComponent(self)
+        self.animation.addStatic("idle", image)
+
+    def update(self):
+        self.animation.update()
+
+    def draw(self):
+        self.animation.draw()
+
+
+class Arrow(GameObject):
+    """
+    An arrow that highlights the option that the user is hovering over.
+    """
+
+    def __init__(self, x, y, dx, dy, totalOptions, screen, resources):
+        """
+        :param x: Integer, the x-position of the arrow.
+        :param y: Integer, the y-position of the arrow.
+        :param dx: Integer, the change in x-position per movement.
+        :param dy: Integer, the change in y-position per moevement.
+        :param totalOptions: Integer, the total number of options.
+        :param screen: pygame.Surface, representing the screen.
+        :param resources: 2D Dictionary, mapping dir and file name to image.
+        """
+        self.rect = pg.Rect(x, y, 0, 0)
+        self.dx = dx
+        self.dy = dy
+        self.totalOptions = totalOptions
+        self.screen = screen
+        self.optionNum = 1
+
+        self.state = "idle"
+        self.animation = AnimationComponent(self)
+        self.animation.addDynamic("idle", resources["assets"]["coin"], 350)
+
+    def update(self):
+        self.animation.update()
+
+    def draw(self):
+        self.animation.draw()
+
+    def moveUp(self):
+        """
+        Moves the arrow to the previous option number.
+        """
+        self.optionNum -= 1
+        self.rect.y -= self.dy
+
+        if self.optionNum < 1:
+            self.rect.y += self.totalOptions * self.dy
+            self.optionNum = self.totalOptions
+
+    def moveDown(self):
+        """
+        Moves the arrow to the next option number.
+        """
+        self.optionNum += 1
+        self.rect.y += self.dy
+
+        if self.optionNum > self.totalOptions:
+            self.rect.y -= self.totalOptions * self.dy
+            self.optionNum = 1
+
 

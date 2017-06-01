@@ -2,11 +2,10 @@
 The menu engine of the game.
 """
 
-import pygame as pg
-from xcape.common.gameobject import GameObject
-import xcape.components.menus as menus
 import xcape.common.events as events
-import xcape.common.renderer as renderer
+import xcape.common.loader as loader
+import xcape.components.menus as menus
+from xcape.common.object import GameObject
 
 
 class MenuEngine(GameObject):
@@ -21,7 +20,7 @@ class MenuEngine(GameObject):
         :param screen: pygame.Surface, representing the screen.
         """
         self.screen = screen
-        self.resources = renderer.loadContent(renderer.MENUS_PATH)
+        self.resources = loader.loadContent(loader.MENUS_PATH)
 
         self.menu = menus.MainMenu(self.screen, self.resources)
         self.nameToMenu = \

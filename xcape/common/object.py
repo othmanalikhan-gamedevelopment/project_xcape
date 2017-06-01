@@ -1,6 +1,5 @@
 """
-The main purpose of this module is to reduce duplicate documentation by
-inheriting docstrings.
+Responsible for reducing duplicate documentation by inheriting docstrings.
 """
 
 

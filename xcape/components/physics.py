@@ -1,5 +1,5 @@
 """
-Responsible for applying physics on game objects.
+Responsible for applying physics on a game object.
 """
 from pygame.math import Vector2
 

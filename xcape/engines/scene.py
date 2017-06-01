@@ -3,7 +3,7 @@ The scene engine of the game.
 """
 
 import pygame as pg
-from xcape.common.gameobject import GameObject
+from xcape.common.object import GameObject
 import xcape.components.scenes as scenes
 import xcape.common.events as events
 

@@ -35,8 +35,8 @@ def loadContent(path):
 
     :param path: os.path, the path to a directory hosting subdirectories.
     :return: 2D Dictionary, with the following format:
-        static images:  content[subDir1][imageName] = image
-        animations:     content[subDir1][animationDir] = {frameNum: image}
+        static animations:    content[subDir1][imageName] = image
+        dynamic animations:   content[subDir1][animationDir] = [image1, image2]
     """
     content = {}
 
@@ -47,16 +47,16 @@ def loadContent(path):
         for depth2 in os.listdir(pathDepth1):
             pathDepth2 = os.path.join(path, depth1, depth2)
 
-            # Loading static images
+            # Loading static animations
             if os.path.isfile(pathDepth2):
                 content[depth1][depth2] = loadImage(pathDepth2)
 
-            # Loading animations
+            # Loading dynamic animations
             else:
-                animation = {}
-                for i, frame in enumerate(os.listdir(pathDepth2), start=1):
+                animation = []
+                for frame in os.listdir(pathDepth2):
                     pathDepth3 = os.path.join(path, depth1, depth2, frame)
-                    animation[i] = loadImage(pathDepth3)
+                    animation.append(loadImage(pathDepth3))
                 content[depth1][depth2] = animation
 
     return content

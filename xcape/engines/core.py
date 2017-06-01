@@ -6,7 +6,7 @@ import pygame as pg
 
 import xcape.common.events as events
 import xcape.common.settings as settings
-from xcape.common.gameobject import GameObject
+from xcape.common.object import GameObject
 from xcape.engines.menu import MenuEngine
 from xcape.engines.scene import SceneEngine
 
