@@ -22,14 +22,15 @@ class MenuEngine(GameObject):
         self.screen = screen
         self.resources = loader.loadContent(loader.MENUS_PATH)
 
-        self.menu = menus.GameOverMenu(self.screen, self.resources)
+        self.menu = menus.PauseMenu(self.screen, self.resources)
         self.nameToMenu = \
             {
                 "blank_menu": menus.BlankMenu,
                 "splash_menu": menus.SplashMenu,
                 "main_menu": menus.MainMenu,
                 "options_menu": menus.OptionsMenu,
-                "game_over_menu": menus.GameOverMenu
+                "game_over_menu": menus.GameOverMenu,
+                "pause_menu": menus.PauseMenu
             }
 
     def handleEvent(self, event):

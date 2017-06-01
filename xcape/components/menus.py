@@ -285,7 +285,6 @@ class GameOverMenu(IMenu):
         self.animation.addStatic("idle",
                                  self.resources["screens"]["game_over.png"])
 
-        self.totalOptions = 2
         self.fontSize = 18
         self.fontColour = settings.COLOURS["white"]
         self.x = 150
@@ -313,22 +312,44 @@ class GameOverMenu(IMenu):
         self.enterText.draw()
 
 
+class PauseMenu(IMenu):
+    """
+    The pause menu of the game.
+    """
 
+    def __init__(self, screen, resources):
+        super().__init__(screen, resources)
+        self.rect = pg.Rect(0, 0, 0, 0)
 
+        self.state = "idle"
+        self.animation = AnimationComponent(self)
+        self.animation.addStatic("idle",
+                                 self.resources["screens"]["fade.png"])
 
+        self.fontSize = 40
+        self.fontColour = settings.COLOURS["white"]
+        self.x = 270
+        self.y = 225
 
+        self.pauseText = TextLabel("Pause",
+                                   self.fontSize,
+                                   self.fontColour,
+                                   self.x,
+                                   self.y,
+                                   self.screen)
 
+    def handleEvent(self, event):
+        if event.type == pg.KEYDOWN:
+            if event.key == pg.K_RETURN:
+                events.messageMenu("pause_menu", "transition", "blank_menu")
 
-pass
-    # def drawPauseScreen(self):
-    #     """
-    #     Draws the pause screen.
-    #     """
-    #     fondo = load_image("black_fade.png", img_folder, alpha=True)
-    #     image = pg.transform.scale(fondo, (640, 480))
-    #     self.draw_text("Pause", 32, WHITE, WIDTH/2 - 70, HEIGHT/2)
-    #     self.screen.blit(image, (0, 0))
-    #
+    def update(self):
+        self.animation.update()
+        self.pauseText.update()
+
+    def draw(self):
+        self.animation.draw()
+        self.pauseText.draw()
 
 
 class FadeEffect(IMenu):
