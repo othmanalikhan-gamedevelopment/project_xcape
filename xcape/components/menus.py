@@ -271,40 +271,55 @@ class OptionsMenu(IMenu):
         self.effect.draw()
 
 
+class GameOverMenu(IMenu):
+    """
+    The game over menu of the game.
+    """
+
+    def __init__(self, screen, resources):
+        super().__init__(screen, resources)
+        self.rect = pg.Rect(0, 0, 0, 0)
+
+        self.state = "idle"
+        self.animation = AnimationComponent(self)
+        self.animation.addStatic("idle",
+                                 self.resources["screens"]["game_over.png"])
+
+        self.totalOptions = 2
+        self.fontSize = 18
+        self.fontColour = settings.COLOURS["white"]
+        self.x = 150
+        self.y = 320
+
+        self.enterText = TextLabel("Enter para salir",
+                                   self.fontSize,
+                                   self.fontColour,
+                                   self.x,
+                                   self.y,
+                                   self.screen)
+
+    def handleEvent(self, event):
+        if event.type == pg.KEYDOWN:
+            if event.key == pg.K_RETURN:
+                events.messageMenu("game_over_menu", "transition", "main_menu")
+                events.messageScene("game_over_menu", "transition", "blank_scene")
+
+    def update(self):
+        self.animation.update()
+        self.enterText.update()
+
+    def draw(self):
+        self.animation.draw()
+        self.enterText.draw()
+
+
+
+
+
 
 
 
 pass
-
-    #
-    # def showGameOverScreen(self):
-    #     """
-    #     Shows the game over screen.
-    #     """
-    #     #raise NotImplementedError("Game Over!")
-    #
-    #     self.gameover = False
-    #     while not self.gameover:
-    #         self.fondo = load_image("game_over.png", img_folder, alpha = True)
-    #         self.image = pg.transform.scale(self.fondo, (640, 480))
-    #         self.screen.blit(self.image, (0, 0))
-    #         self.end = False
-    #         while not self.end:
-    #             for event in pg.event.get():
-    #                 if event.type == pg.QUIT:
-    #                     self.end = True
-    #                     self.gameover = True
-    #                     self.kill()
-    #                 if event.type == pg.KEYDOWN:
-    #                     if event.key == pg.K_RETURN:
-    #                         self.end = True
-    #                         self.gameover = True
-    #                         self.playing = False
-    #             self.text2 = self.draw_text("Enter para salir", 18, WHITE, 150, HEIGHT*2/3)
-    #             pg.display.update()
-    #
-    #
-    #
     # def drawPauseScreen(self):
     #     """
     #     Draws the pause screen.
