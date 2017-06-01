@@ -5,8 +5,8 @@ Responsible for containing all the menus in game.
 import pygame as pg
 
 import xcape.common.events as events
-import xcape.common.settings as settings
 import xcape.common.render as render
+import xcape.common.settings as settings
 from xcape.common.object import GameObject
 from xcape.components.animation import AnimationComponent
 
@@ -63,8 +63,8 @@ class SplashMenu(IMenu):
         self.effect = FadeEffect(screen, resources)
 
     def handleEvent(self, event):
-        if event.type == events.MENU_EVENT:
-            if event.category == "transition":
+        if event.type == pg.KEYDOWN:
+            if event.key == pg.K_RETURN:
                 events.messageMenu("splash_menu", "transition", "main_menu")
 
     def update(self):
