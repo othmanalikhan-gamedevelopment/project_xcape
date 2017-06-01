@@ -59,6 +59,10 @@ class AnimationComponent(GameObject):
             self.image = self.stateToStatic[self.gameObject.state]
             self.frameNum = 0
 
+        width, height = self.image.get_size()
+        self.gameObject.rect.width = width
+        self.gameObject.rect.height = height
+
     def draw(self):
         self.gameObject.screen.blit(self.image, self.gameObject.rect)
 

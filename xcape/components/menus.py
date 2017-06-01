@@ -145,13 +145,13 @@ class MainMenu(IMenu):
                 self.arrow.moveDown()
 
             if event.key == pg.K_RETURN:
-                if self.arrow.optionNum == 1:
-                    pass
-                if self.arrow.optionNum == 2:
-                    pass
-                if self.arrow.optionNum == 3:
+                if self.arrow.index == 0:
                     events.messageMenu("main_menu", "transition", "options_menu")
-                if self.arrow.optionNum == 4:
+                if self.arrow.index == 1:
+                    pass
+                if self.arrow.index == 2:
+                    events.messageMenu("main_menu", "transition", "options_menu")
+                if self.arrow.index == 3:
                     quit()
 
     def update(self):
@@ -186,47 +186,34 @@ class OptionsMenu(IMenu):
         self.animation = AnimationComponent(self)
         self.animation.addStatic("idle", self.resources["screens"]["options.jpg"])
 
-        self.totalOptions = 2
-        self.fontSize = 22
-        self.fontColour = settings.COLOURS["white"]
-        self.x = 230
-        self.y = 155
-        self.dx = 0
-        self.dy = 50
+        fontSize = 22
+        fontColour = settings.COLOURS["white"]
+        x, y = 230, 155
+        dx, dy = 0, 50
 
-        self.option1 = TextLabel("Background: Flip Vertically",
-                                 self.fontSize,
-                                 self.fontColour,
-                                 self.x,
-                                 self.y + 1 * self.dy,
-                                 self.screen)
-        self.option2 = TextLabel("Background: Flip Horizontally",
-                                 self.fontSize,
-                                 self.fontColour,
-                                 self.x,
-                                 self.y + 2 * self.dy,
-                                 self.screen)
-        self.arrow = Arrow(self.x-40,
-                           self.y+40,
-                           self.dx,
-                           self.dy,
-                           self.totalOptions,
-                           self.screen,
-                           self.resources)
+        self.arrow = Arrow(x-40, y-10,
+                           dx, dy,
+                           1,
+                           screen,
+                           resources)
+
+        self.backgroundSetting = SettingsLabel("Background Flip: ",
+                                               ["Vertical", "Horizontal"],
+                                               fontSize, fontColour,
+                                               x, y,
+                                               130,
+                                               screen)
+
         self.escapeImage = ImageLabel(self.resources["assets"]["esc.png"],
-                                      25,
-                                      440,
-                                      self.screen)
+                                      25, 440,
+                                      screen)
         self.escapeText = TextLabel("Esc para volver",
-                                    14,
-                                    self.fontColour,
-                                    50,
-                                    445,
-                                    self.screen)
+                                    14, fontColour,
+                                    50, 445,
+                                    screen)
 
         self.effect = FadeEffect(self.screen, self.resources)
-        self.effectDuration = (self.effect.timeEndDarken -
-                               self.effect.timeStartDarken)
+        self.dt = self.effect.timeEndDarken - self.effect.timeStartDarken
         self.effect.timeStartDarken = float('inf')
         self.effect.timeEndDarken = float('inf')
 
@@ -235,27 +222,30 @@ class OptionsMenu(IMenu):
 
             if event.key == pg.K_ESCAPE:
                 self.effect.timeStartDarken = self.effect.time
-                self.effect.timeEndDarken = (self.effect.time +
-                                             self.effectDuration)
+                self.effect.timeEndDarken = self.effect.time + self.dt
 
             if event.key == pg.K_UP:
                 self.arrow.moveUp()
             if event.key == pg.K_DOWN:
                 self.arrow.moveDown()
+            if event.key == pg.K_RIGHT:
+                self.backgroundSetting.next()
+            if event.key == pg.K_LEFT:
+                self.backgroundSetting.previous()
 
             if event.key == pg.K_RETURN:
-                if self.arrow.optionNum == 1:
-                    self.animation.flip(True, False)
-                if self.arrow.optionNum == 2:
-                    self.animation.flip(False, True)
+                if self.arrow.index == 0:
+                    if self.backgroundSetting.index == 0:
+                        self.animation.flip(True, False)
+                    if self.backgroundSetting.index == 1:
+                        self.animation.flip(False, True)
 
     def update(self):
         self.animation.update()
+        self.backgroundSetting.update()
+        self.arrow.update()
         self.escapeImage.update()
         self.escapeText.update()
-        self.option1.update()
-        self.option2.update()
-        self.arrow.update()
         self.effect.update()
 
         if self.effect.isComplete:
@@ -263,11 +253,10 @@ class OptionsMenu(IMenu):
 
     def draw(self):
         self.animation.draw()
+        self.backgroundSetting.draw()
+        self.arrow.draw()
         self.escapeImage.draw()
         self.escapeText.draw()
-        self.option1.draw()
-        self.option2.draw()
-        self.arrow.draw()
         self.effect.draw()
 
 
@@ -419,12 +408,66 @@ class FadeEffect(IMenu):
         self.animation.image.set_alpha(self.transparentValue)
 
 
+class SettingsLabel(GameObject):
+    """
+    Represents an option that the user can change.
+    """
+
+    def __init__(self, settingName, settingChoices, size, colour, x, y,
+                 spacing, screen):
+        """
+        :param settingName: String, the name of the setting.
+        :param settingChoices: List, containing string options choices.
+        :param size: Integer, the size of the font.
+        :param colour: 3-Tuple, containing the RGB values of the colour.
+        :param x: Integer, the x-position of the text.
+        :param y: Integer, the y-position of the text.
+        :param spacing: Integer, the gap between the setting name and choice.
+        :param screen: pygame.Surface, representing the screen.
+        """
+        self.rect = pg.Rect(x, y, 0, 0)
+        self.screen = screen
+
+        self.index = 0
+        self.optionChosen = None
+        self.name = TextLabel(settingName, size, colour, x, y, self.screen)
+        self.options = [TextLabel(choice, size, colour, x+spacing, y, self.screen)
+                        for choice in settingChoices]
+
+    def update(self):
+        self.name.update()
+        self.optionChosen = self.options[self.index]
+        self.optionChosen.update()
+
+    def draw(self):
+        self.name.draw()
+        self.optionChosen.draw()
+
+    def next(self):
+        """
+        Increments the selected option to the next option.
+        """
+        self.index += 1
+
+        if self.index > len(self.options)-1:
+            self.index = 0
+
+    def previous(self):
+        """
+        Decrements the selected option to the previous option.
+        """
+        self.index -= 1
+
+        if self.index < 0:
+            self.index = len(self.options)-1
+
+
 class TextLabel(GameObject):
     """
     Represents text that can be drawn on screen.
     """
 
-    def __init__(self, text, size, colour, x, y, screen, font="m04fatalfuryblack"):
+    def __init__(self, text, size, colour, x, y, screen):
         """
         :param text: String, the text to render.
         :param size: Integer, the size of the font.
@@ -432,12 +475,11 @@ class TextLabel(GameObject):
         :param x: Integer, the x-position of the text.
         :param y: Integer, the y-position of the text.
         :param screen: pygame.Surface, representing the screen.
-        :param font: String, the name of the font to use.
         """
         self.rect = pg.Rect(x, y, 0, 0)
         self.screen = screen
 
-        font = pg.font.SysFont(font, size)
+        font = pg.font.SysFont(settings.FONT, size)
         image = font.render(text, True, colour)
 
         self.state = "idle"
@@ -497,7 +539,7 @@ class Arrow(GameObject):
         self.dy = dy
         self.totalOptions = totalOptions
         self.screen = screen
-        self.optionNum = 1
+        self.index = 0
 
         self.state = "idle"
         self.animation = AnimationComponent(self)
@@ -513,20 +555,20 @@ class Arrow(GameObject):
         """
         Moves the arrow to the previous option number.
         """
-        self.optionNum -= 1
+        self.index -= 1
         self.rect.y -= self.dy
 
-        if self.optionNum < 1:
+        if self.index < 0:
             self.rect.y += self.totalOptions * self.dy
-            self.optionNum = self.totalOptions
+            self.index = (self.totalOptions-1)
 
     def moveDown(self):
         """
         Moves the arrow to the next option number.
         """
-        self.optionNum += 1
+        self.index += 1
         self.rect.y += self.dy
 
-        if self.optionNum > self.totalOptions:
+        if self.index > self.totalOptions-1:
             self.rect.y -= self.totalOptions * self.dy
-            self.optionNum = 1
+            self.index = 0

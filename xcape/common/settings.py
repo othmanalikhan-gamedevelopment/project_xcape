@@ -7,6 +7,8 @@ HEIGHT = 480
 FPS = 60
 TITLE = "Prison Xcape"
 
+FONT = "m04fatalfuryblack"
+
 COLOURS = {
     "black": (0, 0, 0),
     "blue": (0, 0, 255),
