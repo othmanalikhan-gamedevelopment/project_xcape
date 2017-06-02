@@ -34,9 +34,6 @@ class MenuEngine(GameObject):
             }
 
     def handleEvent(self, event):
-        """
-        :param event: pygame.Event, allowing event-driven programming.
-        """
         self.menu.handleEvent(event)
 
         if event.type == events.MENU_EVENT:

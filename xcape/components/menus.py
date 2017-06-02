@@ -24,7 +24,6 @@ class IMenu(GameObject):
         self.screen = screen
         self.resources = resources
         self.rect = pg.Rect(0, 0, 0, 0)
-        self.background = None
 
     def handleEvent(self, event):
         pass
@@ -100,41 +99,41 @@ class MainMenu(IMenu):
         self.dx = 0
         self.dy = 38
 
-        self.option1 = TextLabel("1 Jugador",
-                                 self.fontSize,
-                                 self.fontColour,
-                                 self.x,
-                                 self.y + 1 * self.dy,
+        self.option1 = _TextLabel("1 Jugador",
+                                  self.fontSize,
+                                  self.fontColour,
+                                  self.x,
+                                  self.y + 1 * self.dy,
+                                  self.screen)
+        self.option2 = _TextLabel("2 Jugadores",
+                                  self.fontSize,
+                                  self.fontColour,
+                                  self.x,
+                                  self.y + 2 * self.dy,
+                                  self.screen)
+        self.option3 = _TextLabel("Opciones",
+                                  self.fontSize,
+                                  self.fontColour,
+                                  self.x,
+                                  self.y + 3 * self.dy,
+                                  self.screen)
+        self.option4 = _TextLabel("Salir",
+                                  self.fontSize,
+                                  self.fontColour,
+                                  self.x,
+                                  self.y + 4 * self.dy,
+                                  self.screen)
+        self.title = _ImageLabel(self.resources["assets"]["title.png"],
+                                 60,
+                                 55,
                                  self.screen)
-        self.option2 = TextLabel("2 Jugadores",
-                                 self.fontSize,
-                                 self.fontColour,
-                                 self.x,
-                                 self.y + 2 * self.dy,
-                                 self.screen)
-        self.option3 = TextLabel("Opciones",
-                                 self.fontSize,
-                                 self.fontColour,
-                                 self.x,
-                                 self.y + 3 * self.dy,
-                                 self.screen)
-        self.option4 = TextLabel("Salir",
-                                 self.fontSize,
-                                 self.fontColour,
-                                 self.x,
-                                 self.y + 4 * self.dy,
-                                 self.screen)
-        self.title = ImageLabel(self.resources["assets"]["title.png"],
-                                60,
-                                55,
-                                self.screen)
-        self.arrow = Arrow(self.x-40,
-                           self.y+28,
-                           self.dx,
-                           self.dy,
-                           self.totalOptions,
-                           self.screen,
-                           self.resources)
+        self.arrow = _Arrow(self.x - 40,
+                            self.y + 28,
+                            self.dx,
+                            self.dy,
+                            self.totalOptions,
+                            self.screen,
+                            self.resources)
 
     def handleEvent(self, event):
         if event.type == pg.KEYDOWN:
@@ -146,7 +145,8 @@ class MainMenu(IMenu):
 
             if event.key == pg.K_RETURN:
                 if self.arrow.index == 0:
-                    events.messageMenu("main_menu", "transition", "options_menu")
+                    events.messageMenu("main_menu", "transition", "blank_menu")
+                    events.messageCutScene("main_menu", "transition", "office_cutscene")
                 if self.arrow.index == 1:
                     pass
                 if self.arrow.index == 2:
@@ -191,11 +191,11 @@ class OptionsMenu(IMenu):
         x, y = 230, 155
         dx, dy = 0, 50
 
-        self.arrow = Arrow(x-40, y-10,
-                           dx, dy,
-                           1,
-                           screen,
-                           resources)
+        self.arrow = _Arrow(x - 40, y - 10,
+                            dx, dy,
+                            1,
+                            screen,
+                            resources)
 
         self.backgroundSetting = SettingsLabel("Background Flip: ",
                                                ["Vertical", "Horizontal"],
@@ -204,13 +204,13 @@ class OptionsMenu(IMenu):
                                                130,
                                                screen)
 
-        self.escapeImage = ImageLabel(self.resources["assets"]["esc.png"],
-                                      25, 440,
-                                      screen)
-        self.escapeText = TextLabel("Esc para volver",
-                                    14, fontColour,
-                                    50, 445,
-                                    screen)
+        self.escapeImage = _ImageLabel(self.resources["assets"]["esc.png"],
+                                       25, 440,
+                                       screen)
+        self.escapeText = _TextLabel("Esc para volver",
+                                     14, fontColour,
+                                     50, 445,
+                                     screen)
 
         self.effect = FadeEffect(self.screen, self.resources)
         self.dt = self.effect.timeEndDarken - self.effect.timeStartDarken
@@ -279,12 +279,12 @@ class GameOverMenu(IMenu):
         self.x = 150
         self.y = 320
 
-        self.enterText = TextLabel("Enter para salir",
-                                   self.fontSize,
-                                   self.fontColour,
-                                   self.x,
-                                   self.y,
-                                   self.screen)
+        self.enterText = _TextLabel("Enter para salir",
+                                    self.fontSize,
+                                    self.fontColour,
+                                    self.x,
+                                    self.y,
+                                    self.screen)
 
     def handleEvent(self, event):
         if event.type == pg.KEYDOWN:
@@ -320,12 +320,12 @@ class PauseMenu(IMenu):
         self.x = 270
         self.y = 225
 
-        self.pauseText = TextLabel("Pause",
-                                   self.fontSize,
-                                   self.fontColour,
-                                   self.x,
-                                   self.y,
-                                   self.screen)
+        self.pauseText = _TextLabel("Pause",
+                                    self.fontSize,
+                                    self.fontColour,
+                                    self.x,
+                                    self.y,
+                                    self.screen)
 
     def handleEvent(self, event):
         if event.type == pg.KEYDOWN:
@@ -430,8 +430,8 @@ class SettingsLabel(GameObject):
 
         self.index = 0
         self.optionChosen = None
-        self.name = TextLabel(settingName, size, colour, x, y, self.screen)
-        self.options = [TextLabel(choice, size, colour, x+spacing, y, self.screen)
+        self.name = _TextLabel(settingName, size, colour, x, y, self.screen)
+        self.options = [_TextLabel(choice, size, colour, x + spacing, y, self.screen)
                         for choice in settingChoices]
 
     def update(self):
@@ -462,7 +462,7 @@ class SettingsLabel(GameObject):
             self.index = len(self.options)-1
 
 
-class TextLabel(GameObject):
+class _TextLabel(GameObject):
     """
     Represents text that can be drawn on screen.
     """
@@ -493,9 +493,9 @@ class TextLabel(GameObject):
         self.animation.draw()
 
 
-class ImageLabel(GameObject):
+class _ImageLabel(GameObject):
     """
-    Represents text that can be drawn on screen.
+    Represents an image that can be drawn on screen.
     """
 
     def __init__(self, image, x, y, screen):
@@ -519,7 +519,7 @@ class ImageLabel(GameObject):
         self.animation.draw()
 
 
-class Arrow(GameObject):
+class _Arrow(GameObject):
     """
     An arrow that highlights the option that the user is hovering over.
     """

@@ -9,6 +9,7 @@ import xcape.common.settings as settings
 from xcape.common.object import GameObject
 from xcape.engines.menu import MenuEngine
 from xcape.engines.scene import SceneEngine
+from xcape.engines.cutscene import CutSceneEngine
 
 
 class CoreEngine(GameObject):
@@ -30,10 +31,12 @@ class CoreEngine(GameObject):
 
         self.sceneEngine = SceneEngine(self.screen)
         self.menuEngine = MenuEngine(self.screen)
+        self.cutsceneEngine = CutSceneEngine(self.screen)
 
     def update(self):
         self.sceneEngine.update()
         self.menuEngine.update()
+        self.cutsceneEngine.update()
 
     def handleEvent(self, _):
         for event in pg.event.get():
@@ -46,12 +49,15 @@ class CoreEngine(GameObject):
 
             if event.type == events.MENU_EVENT or event.type == pg.KEYDOWN:
                 self.menuEngine.handleEvent(event)
-            if event.type == events.SCENE_EVENT:
+            if event.type == events.SCENE_EVENT or event.type == pg.KEYDOWN:
                 self.sceneEngine.handleEvent(event)
+            if event.type == events.CUTSCENE_EVENT or event.type == pg.KEYDOWN:
+                self.cutsceneEngine.handleEvent(event)
 
     def draw(self):
         self.sceneEngine.draw()
         self.menuEngine.draw()
+        self.cutsceneEngine.draw()
         pg.display.update()
 
     def run(self):
