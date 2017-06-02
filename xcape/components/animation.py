@@ -92,6 +92,13 @@ class AnimationComponent(GameObject):
         args = (isVertical, isHorizontal)
         self._applyEffect(effect, args)
 
+    def reverse(self):
+        """
+        Reverses the animation sequence for dynamic animations only.
+        """
+        self.stateToDynamic[self.gameObject.state] = \
+            list(reversed(self.animation))
+
     def _applyEffect(self, effect, args):
         """
         Applies the given effect on the current animation.
@@ -104,7 +111,7 @@ class AnimationComponent(GameObject):
         if stateType == "dynamic":
             print(self.stateToDynamic[self.gameObject.state])
             flipped = [effect(frame, *args) for frame in self.animation]
-            # self.stateToDynamic[self.gameObject.state] = flipped
+            self.stateToDynamic[self.gameObject.state] = flipped
             print(self.stateToDynamic[self.gameObject.state])
 
         if stateType == "static":
