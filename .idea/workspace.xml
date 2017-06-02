@@ -2,10 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2942e340-afdc-4c22-9f9a-96926b7bcbcc" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/images/cutscenes/assets/globe_7.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/LICENSE" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/README" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/xcape/components/cutscenes.py" afterPath="$PROJECT_DIR$/xcape/components/cutscenes.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/xcape/engines/cutscene.py" afterPath="$PROJECT_DIR$/xcape/engines/cutscene.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -98,7 +97,7 @@
           <file leaf-file-name="cutscene.py" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/xcape/engines/cutscene.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="171">
+                <state relative-caret-position="425">
                   <caret line="25" column="47" lean-forward="false" selection-start-line="25" selection-start-column="47" selection-end-line="25" selection-end-column="47" />
                   <folding>
                     <element signature="e#42#88#0" expanded="true" />
@@ -113,7 +112,7 @@
       </split-first>
       <split-second>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file leaf-file-name="cutscenes.py" pinned="false" current-in-tab="true">
+          <file leaf-file-name="cutscenes.py" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/xcape/components/cutscenes.py">
               <provider selected="true" editor-type-id="text-editor">
                 <state relative-caret-position="51">
@@ -163,18 +162,22 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="animation.py" pinned="false" current-in-tab="false">
+          <file leaf-file-name="animation.py" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/xcape/components/animation.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="205">
+                <state relative-caret-position="408">
                   <caret line="94" column="21" lean-forward="false" selection-start-line="94" selection-start-column="21" selection-end-line="94" selection-end-column="21" />
                   <folding>
                     <element signature="e#65#84#0" expanded="true" />
                     <element signature="e#173#264#1" expanded="false" />
+                    <element signature="e#310#821#0" expanded="false" />
+                    <element signature="e#853#1807#0" expanded="false" />
                     <element signature="e#1837#1898#0" expanded="false" />
                     <element signature="e#1959#2381#0" expanded="false" />
                     <element signature="e#2430#2727#0" expanded="false" />
+                    <element signature="e#2783#2980#0" expanded="false" />
                     <element signature="e#3013#3195#0" expanded="false" />
+                    <element signature="e#3247#3953#0" expanded="false" />
                   </folding>
                 </state>
               </provider>
@@ -370,7 +373,7 @@
     <property name="options.lastSelected" value="preferences.sourceCode" />
     <property name="options.splitter.main.proportions" value="0.3" />
     <property name="options.splitter.details.proportions" value="0.2" />
-    <property name="settings.editor.selected.configurable" value="com.maddyhome.idea.vim.ui.VimEmulationConfigurable" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="last_opened_file_path" value="$USER_HOME$/Desktop/PrisonxCape" />
   </component>
@@ -750,7 +753,14 @@
       <option name="project" value="LOCAL" />
       <updated>1496419486201</updated>
     </task>
-    <option name="localTasksCounter" value="25" />
+    <task id="LOCAL-00025" summary="Added jail cutscene that is hooked to office telephone cutscene">
+      <created>1496421548840</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1496421548840</updated>
+    </task>
+    <option name="localTasksCounter" value="26" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -835,7 +845,8 @@
     <MESSAGE value="Added enter key now skips splash menu" />
     <MESSAGE value="Updated the options menu to have left/right option selection" />
     <MESSAGE value="Added telephone cutscene that is hooked up to office cutscene" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added telephone cutscene that is hooked up to office cutscene" />
+    <MESSAGE value="Added jail cutscene that is hooked to office telephone cutscene" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added jail cutscene that is hooked to office telephone cutscene" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1206,24 +1217,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/xcape/components/animation.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="205">
-          <caret line="94" column="21" lean-forward="false" selection-start-line="94" selection-start-column="21" selection-end-line="94" selection-end-column="21" />
-          <folding>
-            <element signature="e#65#84#0" expanded="true" />
-            <element signature="e#173#264#1" expanded="false" />
-            <element signature="e#1837#1898#0" expanded="false" />
-            <element signature="e#1959#2381#0" expanded="false" />
-            <element signature="e#2430#2727#0" expanded="false" />
-            <element signature="e#3013#3195#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/xcape/engines/cutscene.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="171">
+        <state relative-caret-position="425">
           <caret line="25" column="47" lean-forward="false" selection-start-line="25" selection-start-column="47" selection-end-line="25" selection-end-column="47" />
           <folding>
             <element signature="e#42#88#0" expanded="true" />
@@ -1277,6 +1273,25 @@
             <element signature="e#9026#9288#1" expanded="false" />
             <element signature="e#9614#9637#0" expanded="false" />
             <element signature="e#9667#9688#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/xcape/components/animation.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="408">
+          <caret line="94" column="21" lean-forward="false" selection-start-line="94" selection-start-column="21" selection-end-line="94" selection-end-column="21" />
+          <folding>
+            <element signature="e#65#84#0" expanded="true" />
+            <element signature="e#173#264#1" expanded="false" />
+            <element signature="e#310#821#0" expanded="false" />
+            <element signature="e#853#1807#0" expanded="false" />
+            <element signature="e#1837#1898#0" expanded="false" />
+            <element signature="e#1959#2381#0" expanded="false" />
+            <element signature="e#2430#2727#0" expanded="false" />
+            <element signature="e#2783#2980#0" expanded="false" />
+            <element signature="e#3013#3195#0" expanded="false" />
+            <element signature="e#3247#3953#0" expanded="false" />
           </folding>
         </state>
       </provider>
