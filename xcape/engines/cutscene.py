@@ -23,12 +23,13 @@ class CutSceneEngine(GameObject):
         self.screen = screen
         self.resources = loader.loadContent(loader.CUTSCENES_PATH)
 
-        self.cutscene = cutscenes.TelephoneCutscene(self.screen, self.resources)
+        self.cutscene = cutscenes.OfficeCutscene(self.screen, self.resources)
         self.nameToCutscene = \
             {
                 "blank_cutscene": cutscenes.BlankCutscene,
                 "office_cutscene": cutscenes.OfficeCutscene,
                 "telephone_cutscene": cutscenes.TelephoneCutscene,
+                "jail_cutscene": cutscenes.JailCutscene
             }
 
     def handleEvent(self, event):
