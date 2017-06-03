@@ -8,12 +8,13 @@ import xcape.common.events as events
 import xcape.common.render as render
 import xcape.common.settings as settings
 from xcape.common.object import GameObject
+from xcape.common.render import TextLabel, ImageLabel
 from xcape.components.animation import AnimationComponent
 
 
 class IMenu(GameObject):
     """
-    A base menu for any menus that the user can interact with.
+    The interface for a menu.
     """
 
     def __init__(self, screen, resources):
@@ -24,6 +25,7 @@ class IMenu(GameObject):
         self.screen = screen
         self.resources = resources
         self.rect = pg.Rect(0, 0, 0, 0)
+        self.state = "idle"
 
     def handleEvent(self, event):
         pass
@@ -55,7 +57,6 @@ class SplashMenu(IMenu):
 
         background = self.resources["screens"]["splash.jpg"]
         background = render.addBackground(background)
-        self.state = "idle"
         self.animation = AnimationComponent(self)
         self.animation.addStatic("idle", background)
 
@@ -87,7 +88,6 @@ class MainMenu(IMenu):
         super().__init__(screen, resources)
         self.rect = pg.Rect(0, 0, 0, 0)
 
-        self.state = "idle"
         self.animation = AnimationComponent(self)
         self.animation.addStatic("idle", self.resources["screens"]["main.jpg"])
 
@@ -99,34 +99,34 @@ class MainMenu(IMenu):
         self.dx = 0
         self.dy = 38
 
-        self.option1 = _TextLabel("1 Jugador",
-                                  self.fontSize,
-                                  self.fontColour,
-                                  self.x,
-                                  self.y + 1 * self.dy,
-                                  self.screen)
-        self.option2 = _TextLabel("2 Jugadores",
-                                  self.fontSize,
-                                  self.fontColour,
-                                  self.x,
-                                  self.y + 2 * self.dy,
-                                  self.screen)
-        self.option3 = _TextLabel("Opciones",
-                                  self.fontSize,
-                                  self.fontColour,
-                                  self.x,
-                                  self.y + 3 * self.dy,
-                                  self.screen)
-        self.option4 = _TextLabel("Salir",
-                                  self.fontSize,
-                                  self.fontColour,
-                                  self.x,
-                                  self.y + 4 * self.dy,
-                                  self.screen)
-        self.title = _ImageLabel(self.resources["assets"]["title.png"],
-                                 60,
-                                 55,
+        self.option1 = TextLabel("1 Jugador",
+                                 self.fontSize,
+                                 self.fontColour,
+                                 self.x,
+                                 self.y + 1 * self.dy,
                                  self.screen)
+        self.option2 = TextLabel("2 Jugadores",
+                                 self.fontSize,
+                                 self.fontColour,
+                                 self.x,
+                                 self.y + 2 * self.dy,
+                                 self.screen)
+        self.option3 = TextLabel("Opciones",
+                                 self.fontSize,
+                                 self.fontColour,
+                                 self.x,
+                                 self.y + 3 * self.dy,
+                                 self.screen)
+        self.option4 = TextLabel("Salir",
+                                 self.fontSize,
+                                 self.fontColour,
+                                 self.x,
+                                 self.y + 4 * self.dy,
+                                 self.screen)
+        self.title = ImageLabel(self.resources["assets"]["title.png"],
+                                60,
+                                55,
+                                self.screen)
         self.arrow = _Arrow(self.x - 40,
                             self.y + 28,
                             self.dx,
@@ -182,7 +182,6 @@ class OptionsMenu(IMenu):
         super().__init__(screen, resources)
         self.rect = pg.Rect(0, 0, 0, 0)
 
-        self.state = "idle"
         self.animation = AnimationComponent(self)
         self.animation.addStatic("idle", self.resources["screens"]["options.jpg"])
 
@@ -197,20 +196,20 @@ class OptionsMenu(IMenu):
                             screen,
                             resources)
 
-        self.backgroundSetting = SettingsLabel("Background Flip: ",
-                                               ["Vertical", "Horizontal"],
-                                               fontSize, fontColour,
-                                               x, y,
-                                               130,
-                                               screen)
+        self.backgroundSetting = _SettingsLabel("Background Flip: ",
+                                                ["Vertical", "Horizontal"],
+                                                fontSize, fontColour,
+                                                x, y,
+                                                130,
+                                                screen)
 
-        self.escapeImage = _ImageLabel(self.resources["assets"]["esc.png"],
-                                       25, 440,
-                                       screen)
-        self.escapeText = _TextLabel("Esc para volver",
-                                     14, fontColour,
-                                     50, 445,
-                                     screen)
+        self.escapeImage = ImageLabel(self.resources["assets"]["esc.png"],
+                                      25, 440,
+                                      screen)
+        self.escapeText = TextLabel("Esc para volver",
+                                    14, fontColour,
+                                    50, 445,
+                                    screen)
 
         self.effect = FadeEffect(self.screen, self.resources)
         self.dt = self.effect.timeEndDarken - self.effect.timeStartDarken
@@ -269,7 +268,6 @@ class GameOverMenu(IMenu):
         super().__init__(screen, resources)
         self.rect = pg.Rect(0, 0, 0, 0)
 
-        self.state = "idle"
         self.animation = AnimationComponent(self)
         self.animation.addStatic("idle",
                                  self.resources["screens"]["game_over.png"])
@@ -279,12 +277,12 @@ class GameOverMenu(IMenu):
         self.x = 150
         self.y = 320
 
-        self.enterText = _TextLabel("Enter para salir",
-                                    self.fontSize,
-                                    self.fontColour,
-                                    self.x,
-                                    self.y,
-                                    self.screen)
+        self.enterText = TextLabel("Enter para salir",
+                                   self.fontSize,
+                                   self.fontColour,
+                                   self.x,
+                                   self.y,
+                                   self.screen)
 
     def handleEvent(self, event):
         if event.type == pg.KEYDOWN:
@@ -310,7 +308,6 @@ class PauseMenu(IMenu):
         super().__init__(screen, resources)
         self.rect = pg.Rect(0, 0, 0, 0)
 
-        self.state = "idle"
         self.animation = AnimationComponent(self)
         self.animation.addStatic("idle",
                                  self.resources["screens"]["fade.png"])
@@ -320,12 +317,12 @@ class PauseMenu(IMenu):
         self.x = 270
         self.y = 225
 
-        self.pauseText = _TextLabel("Pause",
-                                    self.fontSize,
-                                    self.fontColour,
-                                    self.x,
-                                    self.y,
-                                    self.screen)
+        self.pauseText = TextLabel("Pause",
+                                   self.fontSize,
+                                   self.fontColour,
+                                   self.x,
+                                   self.y,
+                                   self.screen)
 
     def handleEvent(self, event):
         if event.type == pg.KEYDOWN:
@@ -358,7 +355,6 @@ class FadeEffect(IMenu):
         background = pg.Surface((settings.WIDTH, settings.HEIGHT))
         background = background.convert()
         background.fill(settings.COLOURS["black"])
-        self.state = "idle"
         self.animation = AnimationComponent(self)
         self.animation.addStatic("idle", background)
 
@@ -408,7 +404,55 @@ class FadeEffect(IMenu):
         self.animation.image.set_alpha(self.transparentValue)
 
 
-class SettingsLabel(GameObject):
+class UIMenu(IMenu):
+    """
+    The UI in a scene.
+    """
+
+    def __init__(self, screen, resources):
+        super().__init__(screen, resources)
+        self.rect = pg.Rect(0, 0, 0, 0)
+
+        self.x = 50
+        self.y = 50
+        self.dx = 30
+        self.lives = []
+
+    def handleEvent(self, event):
+        if event.type == events.MENU_EVENT:
+            if event.category == "health":
+                currentHP = event.data
+
+                for heart in self.lives:
+                    heart.state = "no_life"
+
+                for heart in range(currentHP):
+                    self.lives[heart].state = "life"
+
+    def update(self):
+        for live in self.lives:
+            live.update()
+
+    def draw(self):
+        for live in self.lives:
+            live.draw()
+
+    def setLives(self, numLives):
+        """
+        Adds lives to the health bar.
+
+        :param numLives: Integer, the number of lives.
+        """
+        assets = self.resources["assets"]
+        for i in range(numLives):
+            label = ImageLabel(None, self.x + i*self.dx, self.y, self.screen)
+            label.animation.addStatic("no_life", assets["no_life.png"])
+            label.animation.addStatic("life", assets["life.png"])
+            label.state = "life"
+            self.lives.append(label)
+
+
+class _SettingsLabel(GameObject):
     """
     Represents an option that the user can change.
     """
@@ -430,9 +474,10 @@ class SettingsLabel(GameObject):
 
         self.index = 0
         self.optionChosen = None
-        self.name = _TextLabel(settingName, size, colour, x, y, self.screen)
-        self.options = [_TextLabel(choice, size, colour, x + spacing, y, self.screen)
-                        for choice in settingChoices]
+        self.name = TextLabel(settingName, size, colour, x, y, self.screen)
+        self.options = [
+            TextLabel(choice, size, colour, x + spacing, y, self.screen)
+            for choice in settingChoices]
 
     def update(self):
         self.name.update()
@@ -460,63 +505,6 @@ class SettingsLabel(GameObject):
 
         if self.index < 0:
             self.index = len(self.options)-1
-
-
-class _TextLabel(GameObject):
-    """
-    Represents text that can be drawn on screen.
-    """
-
-    def __init__(self, text, size, colour, x, y, screen):
-        """
-        :param text: String, the text to render.
-        :param size: Integer, the size of the font.
-        :param colour: 3-Tuple, containing the RGB values of the colour.
-        :param x: Integer, the x-position of the text.
-        :param y: Integer, the y-position of the text.
-        :param screen: pygame.Surface, representing the screen.
-        """
-        self.rect = pg.Rect(x, y, 0, 0)
-        self.screen = screen
-
-        font = pg.font.SysFont(settings.FONT, size)
-        image = font.render(text, True, colour)
-
-        self.state = "idle"
-        self.animation = AnimationComponent(self)
-        self.animation.addStatic("idle", image)
-
-    def update(self):
-        self.animation.update()
-
-    def draw(self):
-        self.animation.draw()
-
-
-class _ImageLabel(GameObject):
-    """
-    Represents an image that can be drawn on screen.
-    """
-
-    def __init__(self, image, x, y, screen):
-        """
-        :param image: pygame.Surface, representing the image to display.
-        :param x: Integer, the x-position of the text.
-        :param y: Integer, the y-position of the text.
-        :param screen: pygame.Surface, representing the screen.
-        """
-        self.rect = pg.Rect(x, y, 0, 0)
-        self.screen = screen
-
-        self.state = "idle"
-        self.animation = AnimationComponent(self)
-        self.animation.addStatic("idle", image)
-
-    def update(self):
-        self.animation.update()
-
-    def draw(self):
-        self.animation.draw()
 
 
 class _Arrow(GameObject):

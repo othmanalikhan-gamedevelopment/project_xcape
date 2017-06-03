@@ -1,5 +1,6 @@
 """
-Responsible for reducing duplicate documentation by inheriting docstrings.
+Responsible for mainly reducing duplicate documentation by inheriting
+docstrings.
 """
 
 

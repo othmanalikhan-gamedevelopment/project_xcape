@@ -13,7 +13,7 @@ from xcape.components.animation import AnimationComponent
 
 class ICutscene(GameObject):
     """
-    A base cutscene for any cutscenes.
+    The interface for a cutscene.
     """
 
     def __init__(self, screen, resources):
@@ -24,6 +24,7 @@ class ICutscene(GameObject):
         self.screen = screen
         self.resources = resources
         self.rect = pg.Rect(0, 0, 0, 0)
+        self.state = "idle"
 
     def handleEvent(self, event):
         pass
@@ -307,7 +308,6 @@ class _Bubble(GameObject):
 
         image = render.addBackground(image)
         image.set_colorkey(settings.COLOURS["blue"])
-
         self.state = "idle"
         self.animation = AnimationComponent(self)
         self.animation.addStatic("idle", image)

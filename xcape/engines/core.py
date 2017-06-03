@@ -33,11 +33,6 @@ class CoreEngine(GameObject):
         self.menuEngine = MenuEngine(self.screen)
         self.cutsceneEngine = CutSceneEngine(self.screen)
 
-    def update(self):
-        self.sceneEngine.update()
-        self.menuEngine.update()
-        self.cutsceneEngine.update()
-
     def handleEvent(self, _):
         for event in pg.event.get():
 
@@ -54,10 +49,15 @@ class CoreEngine(GameObject):
             if event.type == events.CUTSCENE_EVENT or event.type == pg.KEYDOWN:
                 self.cutsceneEngine.handleEvent(event)
 
+    def update(self):
+        self.sceneEngine.update()
+        self.menuEngine.update()
+        self.cutsceneEngine.update()
+
     def draw(self):
-        self.sceneEngine.draw()
+        # self.sceneEngine.draw()
         self.menuEngine.draw()
-        self.cutsceneEngine.draw()
+        # self.cutsceneEngine.draw()
         pg.display.update()
 
     def run(self):

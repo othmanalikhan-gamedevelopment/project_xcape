@@ -19,10 +19,12 @@ class MenuEngine(GameObject):
         """
         :param screen: pygame.Surface, representing the screen.
         """
+        super().__init__()
         self.screen = screen
         self.resources = loader.loadContent(loader.MENUS_PATH)
 
-        self.menu = menus.MainMenu(self.screen, self.resources)
+        self.menu = menus.UIMenu(self.screen, self.resources)
+        self.menu.setLives(3)
         self.nameToMenu = \
             {
                 "blank_menu": menus.BlankMenu,
@@ -30,7 +32,8 @@ class MenuEngine(GameObject):
                 "main_menu": menus.MainMenu,
                 "options_menu": menus.OptionsMenu,
                 "game_over_menu": menus.GameOverMenu,
-                "pause_menu": menus.PauseMenu
+                "pause_menu": menus.PauseMenu,
+                "ui_menu": menus.UIMenu
             }
 
     def handleEvent(self, event):
@@ -38,7 +41,8 @@ class MenuEngine(GameObject):
 
         if event.type == events.MENU_EVENT:
             if event.category == "transition":
-                self.menu = self.nameToMenu[event.data](self.screen, self.resources)
+                menu = self.nameToMenu[event.data]
+                self.menu = menu(self.screen, self.resources)
 
     def update(self):
         self.menu.update()

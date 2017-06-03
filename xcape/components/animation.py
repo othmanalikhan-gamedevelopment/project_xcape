@@ -59,6 +59,15 @@ class AnimationComponent(GameObject):
             self.image = self.stateToStatic[self.gameObject.state]
             self.frameNum = 0
 
+    def drawWithCamera(self, camera):
+        """
+        Draws the animation on the screen, shifted by the camera.
+
+        :param camera: Camera class, shifts the position of the drawn animation.
+        """
+        self.gameObject.screen.blit(self.image,
+                                    camera.apply(self.gameObject.rect))
+
     def draw(self):
         self.gameObject.screen.blit(self.image, self.gameObject.rect)
 

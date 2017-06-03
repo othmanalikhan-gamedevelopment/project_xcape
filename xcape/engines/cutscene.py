@@ -2,10 +2,9 @@
 The cutscene engine of the game.
 """
 
-import xcape.components.cutscenes as cutscenes
-
 import xcape.common.events as events
 import xcape.common.loader as loader
+import xcape.components.cutscenes as cutscenes
 from xcape.common.object import GameObject
 
 
@@ -23,7 +22,7 @@ class CutSceneEngine(GameObject):
         self.screen = screen
         self.resources = loader.loadContent(loader.CUTSCENES_PATH)
 
-        self.cutscene = cutscenes.OfficeCutscene(self.screen, self.resources)
+        self.cutscene = cutscenes.BlankCutscene(self.screen, self.resources)
         self.nameToCutscene = \
             {
                 "blank_cutscene": cutscenes.BlankCutscene,

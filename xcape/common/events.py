@@ -18,7 +18,7 @@ def messageMenu(sender, category, data=None):
     :param category: String, the category of the message.
     :param data: N-Tuple, containing the data for the relevant category.
     """
-    CATEGORIES = ["transition"]
+    CATEGORIES = ["transition", "health"]
     _messageEngine(CATEGORIES, MENU_EVENT, sender, category, data)
 
 
