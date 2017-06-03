@@ -26,7 +26,7 @@ class PhysicsComponent:
         """
         Applies the physics on the game object.
         """
-        self.applyGravity()
+        # self.applyGravity()
         self.limitSpeed()
 
         self.gameObject.rect.x += self.velocity.x * self.TIME_STEP

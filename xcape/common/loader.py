@@ -10,6 +10,7 @@ import xcape.common.settings as settings
 MENUS_PATH = os.path.join("images", "menus")
 SCENES_PATH = os.path.join("images", "scenes")
 CUTSCENES_PATH = os.path.join("images", "cutscenes")
+CHARACTERS_PATH = os.path.join("images", "characters")
 
 
 def loadContent(path):

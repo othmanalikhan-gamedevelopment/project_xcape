@@ -55,9 +55,9 @@ class CoreEngine(GameObject):
         self.cutsceneEngine.update()
 
     def draw(self):
-        # self.sceneEngine.draw()
+        self.sceneEngine.draw()
         self.menuEngine.draw()
-        # self.cutsceneEngine.draw()
+        self.cutsceneEngine.draw()
         pg.display.update()
 
     def run(self):

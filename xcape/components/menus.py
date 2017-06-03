@@ -423,6 +423,9 @@ class UIMenu(IMenu):
             if event.category == "health":
                 currentHP = event.data
 
+                if not self.lives:
+                    self.setLives(currentHP)
+
                 for heart in self.lives:
                     heart.state = "no_life"
 

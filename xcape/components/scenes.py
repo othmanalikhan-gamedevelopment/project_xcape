@@ -54,12 +54,10 @@ class SoloScene01(IScene):
     """
 
     def __init__(self, screen, resources):
-        """
-        :param spawn: 2-Tuple, containing the player spawn coordinates.
-        """
         super().__init__(screen, resources)
         self.rect = pg.Rect(0, 0, 0, 0)
-        self.spawn = (70, 70)
+        # self.spawn = (70, 70)
+        self.spawn = (70, 400)
         self.levelNum = 1
 
         background = self.resources["screens"]["scene_01.png"]

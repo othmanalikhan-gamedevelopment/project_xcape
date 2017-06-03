@@ -7,8 +7,7 @@ import xcape.common.events as events
 import xcape.common.loader as loader
 import xcape.components.scenes as scenes
 from xcape.common.object import GameObject
-from xcape.common.render import ImageLabel
-# from xcape.entities.characters import PlayerOne
+from xcape.entities.characters import Player
 
 
 class SceneEngine(GameObject):
@@ -23,8 +22,7 @@ class SceneEngine(GameObject):
         :param screen: pygame.Surface, representing the screen.
         """
         self.screen = screen
-        self.resources = loader.loadContent(loader.SCENES_PATH)
-        self.mode = SinglePlayer(self.screen, self.resources)
+        self.mode = SinglePlayer(self.screen)
 
     def handleEvent(self, event):
         self.mode.handleEvent(event)
@@ -32,7 +30,7 @@ class SceneEngine(GameObject):
         if event.type == events.SCENE_EVENT:
             if event.category == "start_game":
                 if event.data == "solo":
-                    self.mode = SinglePlayer(self.screen, self.resources)
+                    self.mode = SinglePlayer(self.screen)
                     self.mode.startGame()
                 if event.data == "coop":
                     self.mode = None
@@ -47,36 +45,35 @@ class SceneEngine(GameObject):
 
 class SinglePlayer(GameObject):
 
-    def __init__(self, screen, resources):
+    def __init__(self, screen):
         """
         :param screen: pygame.Surface, representing the screen.
-        :param resources: 2D Dictionary, containing the images for the scenes.
         """
         self.screen = screen
-        self.resources = resources
-        self.pause = True
+        self.resourcesScene = loader.loadContent(loader.SCENES_PATH)
+        self.resourcesChar = loader.loadContent(loader.CHARACTERS_PATH)
+        self.pause = False
 
+        self.levelNum = 0
         self.camera = None
         self.collisionEngine = None
-        # self.player = PlayerOne(self.screen)
-        self.scene = scenes.SoloScene01(self.screen, self.resources)
-        self.nameToscene = \
+        self.player = Player(self.screen, self.resourcesChar)
+        self.scene = self.loadScene(scenes.SoloScene01)
+        self.nameToScene = \
             {
                 "blank_scene": scenes.BlankScene,
                 "scene_01": scenes.SoloScene01,
             }
-
+        self.numToScene = \
+            {
+                1: scenes.SoloScene01
+            }
 
     def handleEvent(self, event):
         # self.collisionEngine.eventHandler(event)
-        # self.player.eventHandler(event)
+        self.player.handleEvent(event)
 
         if event.type == pg.KEYDOWN:
-            if event.key == pg.K_RETURN:
-                events.messageMenu("single_player",
-                                   "health",
-                                   2)
-
             if event.key == pg.K_ESCAPE:
                 self.pause = not self.pause
                 if self.pause:
@@ -90,52 +87,49 @@ class SinglePlayer(GameObject):
 
         if event.type == events.SCENE_EVENT:
             if event.category == "transition":
-                scene = self.nameToscene[event.data]
-                self.scene = scene(self.screen, self.resources)
+                self.loadScene(self.nameToScene[event.data])
 
     def update(self):
-        """
-        Updates the game every frame.
-        """
         if not self.pause:
-
-            self.player.update()
             self.scene.update()
-            self.collisionEngine.update()
-            self.camera.update()
+            self.player.update()
+            # self.collisionEngine.update()
+            # self.camera.update()
 
-            # Change level
+            # Progress level
             if self.scene.isEnd:
-                pass
+                self.levelNum += 1
+                self.loadScene(self.numToScene[self.levelNum])
 
-            if self.player.isHit:
-                self.scene.restart()
+            # # Restart level
+            # if self.player.isHit:
+            #     self.scene.restart()
 
-            # Ends game if player loses
-            if self.player.lives == 0:
-                events.messageScene("", "transition", "game_over")
+            # # Game over
+            # if self.player.lives == 0:
+            #     self.pause = True
+            #     events.messageMenu("single_player", "transition", "game_over")
 
     def draw(self):
-        """
-        Draws all game objects on the screen.
-        """
-        # self.scene.draw()
-        # self.player.draw()
+        self.scene.draw()
+        self.player.draw()
 
     def startGame(self):
         """
         Starts a new game.
         """
-        self.loadScenario01()
+        self.loadScene(self.numToScene[1])
 
-    def loadScenario01(self):
+    def loadScene(self, scene):
         """
-        Loads the first level of the game.
+        Loads the given scene.
         """
-        spawn = (70, 70)
-        self.player.rect.center = spawn
-        self.scene = Scenario01(self.screen, spawn)
-        self.collisionEngine = CollisionEngine(self.scene, self.player)
-        events.messageMenu("single_player", "transition", "ui")
+        scene = scene(self.screen, self.resourcesScene)
+        self.player.rect.center = scene.spawn
+        # self.collisionEngine = CollisionEngine(self.scene, self.player)
+        events.messageMenu("single_player", "transition", "ui_menu")
+        events.messageMenu("single_player", "health", 3)
+        return scene
+
 
 
