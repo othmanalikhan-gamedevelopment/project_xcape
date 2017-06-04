@@ -2,102 +2,52 @@
 Responsible for the camera in a scene.
 """
 
-import xcape.common.events as events
-import xcape.common.render as render
-import xcape.common.settings as settings
+import pygame as pg
+
 from xcape.common.object import GameObject
-from xcape.components.animation import AnimationComponent
 
 
-class Camera(GameObject):
-    pass
+class SimpleCamera(GameObject):
+    """
+    A camera that follows around an entity in a scene.
 
+    A special thanks to Sloth from StackOverflow:
+        https://stackoverflow.com/questions/14354171/add-scrolling-to-a-platformer-in-pygame
+    """
 
-#
-# def updateCameraX(self):
-#     """
-#     Updates the camera view in the x-axis.
-#     """
-#     maxCamera_x = int(WIDTH * 2 / 3)
-#     minCamera_x = int(WIDTH / 3)
-#
-#     if self.playerOne.rect.right >= maxCamera_x:
-#         diff = maxCamera_x - self.playerOne.rect.right
-#         self.playerOne.rect.right = maxCamera_x
-#         self.scenario.shiftWorldX(diff)
-#
-#     if self.playerOne.rect.left <= minCamera_x:
-#         diff = minCamera_x - self.playerOne.rect.left
-#         self.playerOne.rect.left = minCamera_x
-#         self.scenario.shiftWorldX(diff)
-#
-# def updateCameraY(self):
-#     """
-#     Updates the camera view in the y-axis.
-#     """
-#     maxCamera_y = int(HEIGHT * 2 / 3)
-#     minCamera_y = int(HEIGHT / 3)
-#
-#     if self.playerOne.rect.top <= minCamera_y:
-#         diff = minCamera_y - self.playerOne.rect.top
-#         self.playerOne.rect.top = minCamera_y
-#         self.scenario.shiftWorldY(diff)
-#
-#     if self.playerOne.rect.bottom >= maxCamera_y:
-#         diff = maxCamera_y - self.playerOne.rect.bottom
-#         self.playerOne.rect.bottom = maxCamera_y
-#         self.scenario.shiftWorldY(diff)
-#
-#
-#
-#     def showLives(self, file_name, range_number):
-#         self.life_icon = load_image(file_name, img_folder, alpha=True)
-#         self.space = 25
-#         for x in range(range_number):
-#             self.screen.blit(self.life_icon, (self.space, 40))
-#             self.space += 25
-#
-#
-#
-#             if event.key == pygame.K_ESCAPE:
-#                 self.pause = not self.pause
-#
-#
-#
-#
-#             # Ends game if playerOne loses
-#             if self.playerOne.lives == 0:
-#                 print("game over")
-#                 self.showGameOverScreen()
-#                 #raise Exception("GAME OVER")
-#
-#
-#
-#
-#             # Restarts level upon being hit
-#             if self.playerOne.isHit:
-#                 self.playerOne.lives -= 1
-#                 self.playerOne.isHit = False
-#                 if self.level == 2:
-#                     self.loadScenario02()
-#                 if self.level == 3:
-#                     self.loadScenario03()
-#
-#
-#
-#
-#
-#             # Changes level if complete
-#             if self.scenario.isEnd:
-#                 self.level += 1
-#                 if self.level == 2:
-#                     self.loadScenario02()
-#                 if self.level == 3:
-#                     self.loadScenario03()
-#
-#
-#
-#         spawn = (70, 70)
-#         spawn = (70, 510)
-#         spawn = (315, 180)
+    def __init__(self, WIDTH, HEIGHT):
+        """
+        :param WIDTH: Integer, number of pixels the camera covers horizontally.
+        :param HEIGHT: Integer, number of pixels the camera covers vertically.
+        """
+        self.WIDTH = WIDTH
+        self.HEIGHT = HEIGHT
+        self.HALF_WIDTH = WIDTH/2
+        self.HALF_HEIGHT = HEIGHT/2
+
+        self.following = None
+        self.view = pg.Rect(0, 0, self.WIDTH, self.HEIGHT)
+
+    def update(self):
+        x, y, _, _ = self.following.rect
+        _, _, w, h = self.view
+        self.view = pg.Rect(-x + self.HALF_WIDTH, -y + self.HALF_HEIGHT, w, h)
+
+    def follow(self, gameobject):
+        """
+        Sets the camera to follow a game object.
+
+        :param gameobject: GameObject Class, the game object to follow.
+        """
+        self.following = gameobject
+
+    def apply(self, gameobject):
+        """
+        Returns a shifted rectangle of the given object so such that it
+        is within the bounds of the camera view.
+
+        :param gameobject: GameObject Class, the game object to follow.
+        :return: pg.Rect, the shifted rectangle into the camera's view.
+        """
+        return gameobject.rect.move(self.view.topleft)
 

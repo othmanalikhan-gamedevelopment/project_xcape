@@ -12,12 +12,15 @@ class AnimationComponent(GameObject):
     Attaches to a game object to allow rendering of static and animated images.
     """
 
-    def __init__(self, gameObject):
+    def __init__(self, gameObject, enableOrientation=False):
         """
         :param gameObject: GameObject Class, representing any object inheriting
         from the GameObject class.
+        :param enableOrientation: Boolean, causing animations to take into
+        account direction of the gameobject.
         """
         self.gameObject = gameObject
+        self.enableOrientation = enableOrientation
 
         self.stateToType = {}
         self.stateToStatic = {}
@@ -25,7 +28,6 @@ class AnimationComponent(GameObject):
         self.stateToDuration = {}
         self.animation = []
         self.image = None
-        self.enableOrientation = False
 
         # Units are in milliseconds
         self.origin = pg.time.get_ticks()
@@ -46,8 +48,7 @@ class AnimationComponent(GameObject):
             if self.gameObject.orientation == "left":
                 self.image = pg.transform.flip(self.image, True, False)
 
-    def draw(self):
-        self.gameObject.screen.blit(self.image, self.gameObject.rect)
+        self.gameObject.rect.size = self.image.get_size()
 
     def updateDynamic(self, currentFrame):
         """
@@ -88,14 +89,16 @@ class AnimationComponent(GameObject):
         image = self.stateToStatic[self.gameObject.state]
         return image, frameNum
 
+    def draw(self):
+        self.gameObject.screen.blit(self.image, self.gameObject.rect)
+
     def drawWithCamera(self, camera):
         """
         Draws the animation on the screen, shifted by the camera.
 
         :param camera: Camera class, shifts the position of the drawn animation.
         """
-        self.gameObject.screen.blit(self.image,
-                                    camera.apply(self.gameObject.rect))
+        self.gameObject.screen.blit(self.image, camera.apply(self.gameObject))
 
     def addDynamic(self, state, images, duration):
         """
@@ -118,6 +121,14 @@ class AnimationComponent(GameObject):
         """
         self.stateToStatic[state] = image
         self.stateToType[state] = "static"
+
+    def scaleAll(self, DIMENSIONS):
+        for state, frames in self.stateToDynamic.items():
+            frames = [pg.transform.scale(f, DIMENSIONS) for f in frames]
+            self.stateToDynamic[state] = frames
+
+        for state, f in self.stateToStatic.items():
+            self.stateToStatic[state] = pg.transform.scale(f, DIMENSIONS)
 
     def flip(self, isVertical, isHorizontal):
         """

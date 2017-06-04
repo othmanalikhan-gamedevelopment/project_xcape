@@ -35,7 +35,12 @@ class IScene(GameObject):
     def update(self):
         pass
 
-    def draw(self):
+    def drawWithCamera(self, camera):
+        """
+        Draws the scene on the screen, shifted by the camera.
+
+        :param camera: Camera class, shifts the position of the drawn animation.
+        """
         pass
 
 
@@ -81,9 +86,8 @@ class SoloScene01(IScene):
     def update(self):
         self.animation.update()
 
-    def draw(self):
-        self.animation.draw()
-
+    def drawWithCamera(self, camera):
+        self.animation.drawWithCamera(camera)
 
     def x(self, screen, spawn):
         # Defining position of all sprites on the scenario (width, height, x, y)
@@ -370,5 +374,8 @@ class SoloScene01(IScene):
 #
 
 
-        # spawn = (70, 510)
-        # spawn = (315, 180)
+
+#
+#         spawn = (70, 70)
+#         spawn = (70, 510)
+#         spawn = (315, 180)

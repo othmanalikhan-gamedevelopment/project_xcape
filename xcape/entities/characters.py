@@ -24,7 +24,7 @@ class Player(GameObject, pg.sprite.Sprite):
         super().__init__()
         self.screen = screen
         self.resources = resources
-        self.rect = pg.Rect(0, 0, 0, 0)
+        self.rect = pg.Rect(0, 0, 50, 48)
 
         self.state = "idle"
         self.orientation = "right"
@@ -32,12 +32,11 @@ class Player(GameObject, pg.sprite.Sprite):
         self.lives = 3
 
         cat = self.resources["cat"]
-        self.animation = AnimationComponent(self)
-        self.animation.enableOrientation = True
+        self.animation = AnimationComponent(self, enableOrientation=True)
         self.animation.addStatic("idle", cat["idle.png"])
         self.animation.addStatic("jumping", cat["idle.png"])
         self.animation.addDynamic("running", cat["running"], 1000)
-        self.DIMENSIONS = (50, 48)
+        self.animation.scaleAll(self.rect.size)
 
         self.physics = PhysicsComponent(self)
         self.jumpSpeed = -1
@@ -71,8 +70,13 @@ class Player(GameObject, pg.sprite.Sprite):
                     and self.physics.velocity.x > 0):
                 self.stop()
 
-    def draw(self):
-        self.animation.draw()
+    def drawWithCamera(self, camera):
+        """
+        Draws the player on the screen, shifted by the camera.
+
+        :param camera: Camera class, shifts the position of the drawn animation.
+        """
+        self.animation.drawWithCamera(camera)
 
     def jump(self):
         """

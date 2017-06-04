@@ -5,8 +5,10 @@ import pygame as pg
 
 import xcape.common.events as events
 import xcape.common.loader as loader
+import xcape.common.settings as settings
 import xcape.components.scenes as scenes
 from xcape.common.object import GameObject
+from xcape.components.camera import SimpleCamera
 from xcape.entities.characters import Player
 
 
@@ -57,6 +59,7 @@ class SinglePlayer(GameObject):
         self.levelNum = 0
         self.camera = None
         self.collisionEngine = None
+
         self.player = Player(self.screen, self.resourcesChar)
         self.scene = self.loadScene(scenes.SoloScene01)
         self.nameToScene = \
@@ -94,7 +97,7 @@ class SinglePlayer(GameObject):
             self.scene.update()
             self.player.update()
             # self.collisionEngine.update()
-            # self.camera.update()
+            self.camera.update()
 
             # Progress level
             if self.scene.isEnd:
@@ -111,8 +114,8 @@ class SinglePlayer(GameObject):
             #     events.messageMenu("single_player", "transition", "game_over")
 
     def draw(self):
-        self.scene.draw()
-        self.player.draw()
+        self.scene.drawWithCamera(self.camera)
+        self.player.drawWithCamera(self.camera)
 
     def startGame(self):
         """
@@ -126,6 +129,8 @@ class SinglePlayer(GameObject):
         """
         scene = scene(self.screen, self.resourcesScene)
         self.player.rect.center = scene.spawn
+        self.camera = SimpleCamera(settings.WIDTH, settings.HEIGHT)
+        self.camera.follow(self.player)
         # self.collisionEngine = CollisionEngine(self.scene, self.player)
         events.messageMenu("single_player", "transition", "ui_menu")
         events.messageMenu("single_player", "health", 3)
