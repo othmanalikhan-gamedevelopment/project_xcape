@@ -25,11 +25,14 @@ class PhysicsComponent:
         self.gameObject = gameObject
         self.velocity = Vector2(0, 0)
         self.gravity = Vector2(0, 0.8)
-        self.jumpSpeed = -15
-        self.moveSpeed = 10
+        self.jumpSpeed = -12
+        self.moveSpeed = 5
         self.maxSpeed = 20
-        self.TIME_STEP = 60
         self.counter = 0
+
+        # Increasing this variable too much can cause choppiness!
+        # This variable needs to be tweaked until it feels smooth enough
+        self.TIME_STEP = 10
 
     def update(self):
         """
@@ -38,7 +41,7 @@ class PhysicsComponent:
         self.counter += 1
 
         if self.counter % self.TIME_STEP == 0:
-            # self.applyGravity()
+            self.applyGravity()
             self.limitSpeed()
 
             self.gameObject.rect.x += self.velocity.x

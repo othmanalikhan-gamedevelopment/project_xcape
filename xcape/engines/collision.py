@@ -1,46 +1,62 @@
 """
-Responsible for handling the collisions in the game.
+The collision engine of the game.
 """
 import pygame as pg
 from pygame.math import Vector2
 
-from sprites import MovingPlatform, TransparentPlatform
+# from sprites import MovingPlatform, TransparentPlatform
+from xcape.common.object import GameObject
 
 
-class CollisionEngine:
+class CollisionEngine(GameObject):
     """
-    Represents the collision engine that handles collisions between a
-    player and the scenario.
+    A specialised collision engine that handles collisions between all
+    entities in a scene, including the player collisions.
     """
 
-    def __init__(self, player, scenario):
+    def __init__(self, player, scene):
         """
-        A simple constructor.
-
-        :param player: Player Class, representing the playerOne game object.
-        :param scenario: Scenario Class, representing a level game object.
+        :param player: Player Class, representing the player.
+        :param scene: Scene Class, representing a level.
         """
         self.player = player
-        self.scenario = scenario
-
-    def update(self):
-        """
-        Checks for collisions and handles appropriately.
-        """
-        self.checkPlatformCollision()
-        self.checkButtonCollision()
-        self.checkEnemyCollision()
-        self.checkScenarioBoundaryCollision()
+        self.scene = scene
 
     def eventHandler(self, event):
-        """
-        Handles the supplied event.
-
-        :param event: pygame.event, representing an triggered event.
-        """
         if event.type == pg.KEYDOWN:
             if event.key == pg.K_SPACE or event.key == pg.K_UP:
                 self.checkDoorCollision()
+
+    def update(self):
+        self.ResolveWallCollision()
+        # self.checkPlatformCollision()
+        # self.checkButtonCollision()
+        # self.checkEnemyCollision()
+        # self.checkScenarioBoundaryCollision()
+
+    def ResolveWallCollision(self):
+        """
+        Resolves any wall collisions by obstructing the player.
+        """
+        hits = pg.sprite.spritecollide(self.player, self.scene.walls, False)
+        for wall in hits:
+            direction = self.CheckCollisionDirection(self.player, wall)
+
+            if direction == "bottom":
+                self.player.rect.bottom = wall.rect.top
+                self.player.physics.velocity.y = 0
+                self.player.canJump = True
+
+            elif direction == "left":
+                self.player.rect.left = wall.rect.right
+
+            elif direction == "bottom":
+                self.player.rect.top = wall.rect.bottom
+
+            elif direction == "right":
+                self.player.rect.right = wall.rect.left
+
+
 
     def checkPlatformCollision(self):
         """
@@ -48,13 +64,13 @@ class CollisionEngine:
         updates accordingly.
         """
         hitStatic = pg.sprite.spritecollide(self.player,
-                                            self.scenario.platStatic,
+                                            self.scene.platStatic,
                                             False)
         hitMoving = pg.sprite.spritecollide(self.player,
-                                            self.scenario.platMoving,
+                                            self.scene.platMoving,
                                             False)
         hitTransparent = pg.sprite.spritecollide(self.player,
-                                                 self.scenario.platTransparent,
+                                                 self.scene.platTransparent,
                                                  False)
         hits = hitStatic + hitMoving + hitTransparent
 
@@ -134,19 +150,82 @@ class CollisionEngine:
                     self.player.rect.x += plat.moveX * 2
                     self.player.rect.y += plat.moveY
 
+    def CheckCollisionDirection(self, moving, static):
+        """
+        Checks if the moving game object has collided with the static game
+        object, and determines the direciton of collision.
+
+        :param moving: GameObject class, representing a moving game object.
+        :param static: GameObject class, representing a static game object.
+        :return: String, whether 'bottom', 'left', 'top', or 'right'.
+        """
+        if pg.sprite.collide_rect(moving, static):
+            # Defining points on the static game object
+            x, y = static.rect.center
+            S00 = static.rect.topleft
+            S10 = static.rect.topright
+            S11 = static.rect.bottomright
+            S01 = static.rect.bottomleft
+
+            # Defining points on the moving game object
+            u, v = moving.rect.center
+            M00 = moving.rect.topleft
+            M10 = moving.rect.topright
+            M11 = moving.rect.bottomright
+            M01 = moving.rect.bottomleft
+
+            # Defining vectors on the static game object which will be used in
+            # accurate collision handling. The vectors are from the center of
+            # the game object to its corners.
+            vec_M00 = Vector2(x - S00[0], y - S00[1])
+            vec_M10 = Vector2(x - S10[0], y - S10[1])
+            vec_M11 = Vector2(x - S11[0], y - S11[1])
+            vec_M01 = Vector2(x - S01[0], y - S01[1])
+
+            # Defining variables for our new coordinate system based on angles
+            # (which is mathematically equivalent to bearings)
+            FULL_ROTATION = 360
+            origin = vec_M00
+
+            # Calculating angles of the static game object vectors
+            angle_00 = origin.angle_to(vec_M00) % FULL_ROTATION
+            angle_10 = origin.angle_to(vec_M10) % FULL_ROTATION
+            angle_11 = origin.angle_to(vec_M11) % FULL_ROTATION
+            angle_01 = origin.angle_to(vec_M01) % FULL_ROTATION
+
+            # Calculating the displacement angle between the moving and
+            # static game objects
+            displacement = Vector2(x - u, y - v)
+            angle = origin.angle_to(displacement) % FULL_ROTATION
+
+            # Calculating direction of the collision
+            isCollideBottom = angle_00 < angle < angle_10
+            isCollideLeft = angle_10 < angle < angle_11
+            isCollideTop = angle_11 < angle < angle_01
+            isCollideRight = angle_01 < angle
+
+            if isCollideBottom:
+                return "bottom"
+            elif isCollideLeft:
+                return "left"
+            elif isCollideTop:
+                return "top"
+            elif isCollideRight:
+                return "right"
+
     def checkButtonCollision(self):
         """
         Checks if the playerOne has collided with any button in the scenario and
         updates accordingly.
         """
         hits = pg.sprite.spritecollide(self.player,
-                                       self.scenario.buttonsOff,
+                                       self.scene.buttonsOff,
                                        True)
         if hits:
             if self.player.physics.velocity.x != 0 or \
                             self.player.physics.velocity.y != 0:
                 print("abrir")
-                self.scenario.isButtonOn = True
+                self.scene.isButtonOn = True
 
     def checkDoorCollision(self):
         """
@@ -154,11 +233,11 @@ class CollisionEngine:
         updates accordingly.
         """
         hits = pg.sprite.spritecollide(self.player,
-                                       self.scenario.doorsOpen,
+                                       self.scene.doorsOpen,
                                        False)
-        if hits and self.scenario.isDoorOpen:
+        if hits and self.scene.isDoorOpen:
             print("entrar")
-            self.scenario.isEnd = True
+            self.scene.isEnd = True
 
     def checkEnemyCollision(self):
         """
@@ -166,7 +245,7 @@ class CollisionEngine:
         in the scenario and updates accordingly.
         """
         enemy_hit = pg.sprite.spritecollide(self.player,
-                                            self.scenario.enemies,
+                                            self.scene.enemies,
                                             False)
 
         if enemy_hit:
@@ -178,9 +257,9 @@ class CollisionEngine:
         """
         Checks if the playerOne has 'fallen' out of the level.
         """
-        background = self.scenario.background.get_rect()
-        boundary = pg.Rect(self.scenario.worldShiftX,
-                           self.scenario.worldShiftY,
+        background = self.scene.background.get_rect()
+        boundary = pg.Rect(self.scene.worldShiftX,
+                           self.scene.worldShiftY,
                            background.width,
                            background.height + 100)
 

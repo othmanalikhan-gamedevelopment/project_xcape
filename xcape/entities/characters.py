@@ -32,7 +32,6 @@ class Player(GameObject, pg.sprite.Sprite):
         cat = self.resources["cat"]
         self.animation = AnimationComponent(self, enableOrientation=True)
         self.animation.add("idle", [cat["idle.png"]], float('inf'))
-        self.animation.add("jumping", cat["running"], 400)
         self.animation.add("running", cat["running"], 400)
         self.animation.scaleAll(self.rect.size)
 

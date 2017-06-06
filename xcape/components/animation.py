@@ -50,17 +50,21 @@ class AnimationComponent(GameObject):
         and an Integer frame number.
         """
         self.elapsed = pg.time.get_ticks() - self.origin
-        self.duration = self.stateToDuration[self.gameObject.state]
 
-        # Resetting frames if a new animation
-        newAnimation = self.stateToAnimation[self.gameObject.state]
-        if newAnimation != self.animation:
-            currentFrame = 0
+        # Trying to change into a new animations
+        try:
+            self.duration = self.stateToDuration[self.gameObject.state]
 
-        self.animation = newAnimation
-        frameDuration = self.duration / len(self.animation)
+            newAnimation = self.stateToAnimation[self.gameObject.state]
+            if newAnimation != self.animation:
+                currentFrame = 0
+
+            self.animation = newAnimation
+        except KeyError:
+            pass
 
         # Increment animation
+        frameDuration = self.duration / len(self.animation)
         if self.elapsed > frameDuration:
             currentFrame += 1
             self.elapsed = 0

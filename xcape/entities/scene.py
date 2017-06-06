@@ -36,41 +36,47 @@ class Wall(SceneEntity):
     A wall entity that obstructs the player.
     """
 
-    def __init__(self, x, y, blocks, image, screen):
+    def __init__(self, x, y, blocks, orientation, image, screen):
+        """
+        :param x: Integer, the x-position of the wall.
+        :param y: Integer, the y-position of the wall.
+        :param blocks: Integer, the number of times to replicate the wall.
+        :param orientation: String, either 'v' or 'h' for vertical or horizontal.
+        :param image: pygame.Surface, the image of the wall.
+        :param screen: pygame.Surface, the screen to draw the wall onto.
+        """
         super().__init__(screen)
+        self.image = image
+        self.rect = pg.Rect(x, y, 0, 0)
+        self.rect.size = image.get_size()
+        self.extend(blocks, orientation)
 
-        w, h = image.get_size()
-        self.rect = pg.Rect(x, y, w, h)
-        self.blocks = blocks
-        self.state = "idle"
-
-        self.animation = AnimationComponent(self)
-        self.animation.addStatic("idle", image)
-
-    def extend(self, blocks, isVertical=True):
+    def extend(self, blocks, orientation):
         """
         Extends the wall either vertically or horizontally by some number of
         blocks specified.
 
         :param blocks: Integer, the number of times to replicate the wall.
-        :param isVertical: Boolean, whether the extension is vertical or horizontal.
+        :param orientation: String, either 'v' or 'h' for vertical or horizontal.
         """
-        if isVertical:
-            w, h = self.animation.image.get_size()
+        w, h = self.image.get_size()
+
+        if orientation == "h":
             wall = pg.Surface((blocks*w, h))
             for i in range(blocks):
-                wall.blit(self.animation.image, (i*w, 0))
+                wall.blit(self.image, (i*w, 0))
+            self.rect.width += (blocks-1)*w
 
-            self.animation.image = wall
+        if orientation == "v":
+            wall = pg.Surface((w, blocks*h))
+            for i in range(blocks):
+                wall.blit(self.image, (0, i*h))
+            self.rect.height += (blocks-1)*h
 
-    def addCorner(self, isLeft):
-        pass
-
-    def update(self):
-        self.animation.update()
+        self.image = wall
 
     def drawWithCamera(self, camera):
-        self.animation.drawWithCamera(camera)
+        self.screen.blit(self.image, camera.apply(self))
 
 
 class StaticPlatform(SceneEntity):
