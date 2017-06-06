@@ -5,6 +5,7 @@ Contains all the entities in a scene (excluding the players and bosses).
 import pygame as pg
 
 
+import xcape.common.settings as settings
 from xcape.components.animation import AnimationComponent
 from xcape.common.object import GameObject
 
@@ -46,34 +47,34 @@ class Wall(SceneEntity):
         :param screen: pygame.Surface, the screen to draw the wall onto.
         """
         super().__init__(screen)
-        self.image = image
+        self.image = self.resize(blocks, orientation, image)
         self.rect = pg.Rect(x, y, 0, 0)
-        self.rect.size = image.get_size()
-        self.extend(blocks, orientation)
+        self.rect.size = self.image.get_size()
 
-    def extend(self, blocks, orientation):
+    def resize(self, blocks, orientation, image):
         """
-        Extends the wall either vertically or horizontally by some number of
-        blocks specified.
+        Resizes the wall vertically or horizontally by a specified amount.
 
-        :param blocks: Integer, the number of times to replicate the wall.
+        :param blocks: Integer, the total number of blocks the final wall has.
         :param orientation: String, either 'v' or 'h' for vertical or horizontal.
+        :param image: pygame.Surface, the image of the wall.
+        :return: pygame.Surface, the resized image of the platform
         """
-        w, h = self.image.get_size()
+        w, h = image.get_size()
 
         if orientation == "h":
             wall = pg.Surface((blocks*w, h))
             for i in range(blocks):
-                wall.blit(self.image, (i*w, 0))
-            self.rect.width += (blocks-1)*w
+                wall.blit(image, (i*w, 0))
 
         if orientation == "v":
             wall = pg.Surface((w, blocks*h))
             for i in range(blocks):
-                wall.blit(self.image, (0, i*h))
-            self.rect.height += (blocks-1)*h
+                wall.blit(image, (0, i*h))
 
-        self.image = wall
+        wall = wall.convert()
+        print(wall.get_size())
+        return wall
 
     def drawWithCamera(self, camera):
         self.screen.blit(self.image, camera.apply(self))
@@ -81,11 +82,53 @@ class Wall(SceneEntity):
 
 class StaticPlatform(SceneEntity):
     """
-    A static platform that the player can collide with.
+    A platform entity that the player can stand on.
     """
 
     def __init__(self, x, y, blocks, screen, resources):
-        super().__init__(screen, resources)
+        """
+        :param x: Integer, the x-position of the wall.
+        :param y: Integer, the y-position of the wall.
+        :param blocks: Integer, the number of times to replicate the wall.
+        :param screen: pygame.Surface, the screen to draw the wall onto.
+        :param resources: 2D Dictionary, mapping dir and file name to image.
+        """
+        super().__init__(screen)
+        self.resources = resources
+        self.image = self.resize(blocks)
+        self.rect = pg.Rect(x, y, 0, 0)
+        self.rect.size = self.image.get_size()
+
+    def resize(self, blocks):
+        """
+        Resizes the platform horizontally by some number of blocks specified.
+
+        :param blocks: Integer, the number of times to replicate the platform.
+        :return: pygame.Surface, the resized image of the platform
+        """
+        left = self.resources["platforms"]["platform_1.png"]
+        mid = self.resources["platforms"]["platform_2.png"]
+        right = self.resources["platforms"]["platform_3.png"]
+
+        lw, lh = left.get_size()
+        mw, mh = mid.get_size()
+        rw, rh = right.get_size()
+
+        # Creating platform image
+        platform = pg.Surface((lw + blocks*mw + rw, mh))
+        platform.blit(left, (0, 0))
+        for i in range(blocks):
+            platform.blit(mid, (lw + i*mw, 0))
+        platform.blit(right, (lw + blocks*mw, 0))
+
+        # Newly created surface has a black background, so need to remove
+        # black pixels
+        platform.set_colorkey(settings.COLOURS["black"])
+        platform = platform.convert_alpha()
+        return platform
+
+    def drawWithCamera(self, camera):
+        self.screen.blit(self.image, camera.apply(self))
 
 
 class MovingPlatform(SceneEntity):

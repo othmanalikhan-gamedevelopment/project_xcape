@@ -28,15 +28,16 @@ class CollisionEngine(GameObject):
                 self.checkDoorCollision()
 
     def update(self):
-        self.ResolveWallCollision()
+        self.ResolveWallCollisions()
+        self.ResolvePlatformCollisions()
         # self.checkPlatformCollision()
         # self.checkButtonCollision()
         # self.checkEnemyCollision()
         # self.checkScenarioBoundaryCollision()
 
-    def ResolveWallCollision(self):
+    def ResolveWallCollisions(self):
         """
-        Resolves any wall collisions by obstructing the player.
+        Resolves any wall collisions.
         """
         hits = pg.sprite.spritecollide(self.player, self.scene.walls, False)
         for wall in hits:
@@ -50,13 +51,33 @@ class CollisionEngine(GameObject):
             elif direction == "left":
                 self.player.rect.left = wall.rect.right
 
-            elif direction == "bottom":
+            elif direction == "top":
                 self.player.rect.top = wall.rect.bottom
 
             elif direction == "right":
                 self.player.rect.right = wall.rect.left
 
+    def ResolvePlatformCollisions(self):
+        """
+        Resolves any platform collisions.
+        """
+        hits = pg.sprite.spritecollide(self.player, self.scene.platforms, False)
+        for platform in hits:
+            direction = self.CheckCollisionDirection(self.player, platform)
 
+            if direction == "bottom":
+                self.player.rect.bottom = platform.rect.top
+                self.player.physics.velocity.y = 0
+                self.player.canJump = True
+
+            elif direction == "left":
+                self.player.rect.left = platform.rect.right
+
+            elif direction == "top":
+                self.player.rect.top = platform.rect.bottom
+
+            elif direction == "right":
+                self.player.rect.right = platform.rect.left
 
     def checkPlatformCollision(self):
         """
@@ -75,47 +96,6 @@ class CollisionEngine(GameObject):
         hits = hitStatic + hitMoving + hitTransparent
 
         for plat in hits:
-            x, y = plat.rect.center
-            P_00 = plat.rect.topleft
-            P_10 = plat.rect.topright
-            P_11 = plat.rect.bottomright
-            P_01 = plat.rect.bottomleft
-
-            # Defining points on the playerOne
-            u, v = self.player.rect.center
-            C_00 = self.player.rect.topleft
-            C_10 = self.player.rect.topright
-            C_11 = self.player.rect.bottomright
-            C_01 = self.player.rect.bottomleft
-
-            # Defining vectors on the platform which will be used in accurate
-            # collision handling. The vectors are from the center of the
-            # platform to the corners of the platform.
-            vec_P00 = Vector2(x - P_00[0], y - P_00[1])
-            vec_P10 = Vector2(x - P_10[0], y - P_10[1])
-            vec_P11 = Vector2(x - P_11[0], y - P_11[1])
-            vec_P01 = Vector2(x - P_01[0], y - P_01[1])
-
-            # Defining variables for our angle coordinate system (which are
-            # mathematically equivalent to bearings)
-            FULL_ROTATION = 360
-            origin = vec_P00
-
-            # Calculating angles of the platform vectors
-            angle_00 = origin.angle_to(vec_P00) % FULL_ROTATION
-            angle_10 = origin.angle_to(vec_P10) % FULL_ROTATION
-            angle_11 = origin.angle_to(vec_P11) % FULL_ROTATION
-            angle_01 = origin.angle_to(vec_P01) % FULL_ROTATION
-
-            # Calculating the displacement angle between the playerOne and platform
-            displacement = Vector2(x - u, y - v)
-            angle = origin.angle_to(displacement) % FULL_ROTATION
-
-            # Calculating direction of the collision
-            isCollideBottom = angle_00 < angle < angle_10
-            isCollideLeft = angle_10 < angle < angle_11
-            isCollideTop = angle_11 < angle < angle_01
-            isCollideRight = angle_01 < angle
 
             if isinstance(plat, TransparentPlatform):
                 tol = abs(self.player.rect.bottom - plat.rect.top)
@@ -131,20 +111,6 @@ class CollisionEngine(GameObject):
                     self.player.rect.bottom = plat.rect.top
 
             else:
-                if isCollideBottom:
-                    self.player.rect.bottom = plat.rect.top
-                    self.player.physics.velocity.y = 0
-                    self.player.canJump = True
-
-                elif isCollideLeft:
-                    self.player.rect.left = plat.rect.right
-
-                elif isCollideTop:
-                    self.player.rect.top = plat.rect.bottom
-
-                elif isCollideRight:
-                    self.player.rect.right = plat.rect.left
-
                 # Moves the playerOne if the playerOne is on a moving platform
                 if isinstance(plat, MovingPlatform):
                     self.player.rect.x += plat.moveX * 2

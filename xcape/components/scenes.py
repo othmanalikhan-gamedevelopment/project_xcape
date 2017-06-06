@@ -9,7 +9,7 @@ import xcape.common.render as render
 import xcape.common.settings as settings
 import xcape.entities.scene as entitites
 
-from xcape.entities.scene import Wall
+from xcape.entities.scene import Wall, StaticPlatform
 from xcape.common.object import GameObject
 from xcape.components.animation import AnimationComponent
 
@@ -113,7 +113,7 @@ class SoloScene01(BaseScene):
         self.rect.size = self.image.get_size()
 
         self.walls = self.addWalls()
-        # self.platforms = pg.sprite.Group()
+        self.platforms = self.addPlatforms()
         # self.doors = pg.sprite.Group()
         # self.buttons = pg.sprite.Group()
         # self.enemies = pg.sprite.Group()
@@ -132,11 +132,20 @@ class SoloScene01(BaseScene):
         decorations = \
         [
             Wall(5, 460, 1, "h", wall["block_left.png"], self.screen),
-            Wall(55, 460, 1, "h", wall["block_right.png"], self.screen),
-            Wall(140, 490, 1, "h", wall["block_small.png"], self.screen),
+            Wall(65, 460, 1, "h", wall["block_right.png"], self.screen),
+            Wall(150, 490, 1, "h", wall["block_small.png"], self.screen),
         ]
 
         return boundaries + decorations
+
+    def addPlatforms(self):
+        platforms = \
+        [
+            StaticPlatform(260, 370, 2, self.screen, self.resources),
+            StaticPlatform(500, 310, 1, self.screen, self.resources),
+            StaticPlatform(200, 250, 3, self.screen, self.resources),
+        ]
+        return platforms
 
     def handleEvent(self, event):
         if event.type == pg.KEYDOWN:
@@ -152,6 +161,7 @@ class SoloScene01(BaseScene):
         self.screen.blit(self.image, camera.apply(self))
 
         [w.drawWithCamera(camera) for w in self.walls]
+        [p.drawWithCamera(camera) for p in self.platforms]
 
     def x(self, screen, spawn):
         # Defining position of all sprites on the scenario (width, height, x, y)
@@ -406,7 +416,7 @@ class SoloScene01(BaseScene):
         bottom
 
         left = Wall(-45, 0, walls["boundary_left.png"], self.screen)
-        left.extend(8, "vertical")
+        left.resize(8, "vertical")
 
         walls = [bottom, left]
         return walls
