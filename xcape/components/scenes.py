@@ -7,13 +7,16 @@ import pygame as pg
 import xcape.common.events as events
 import xcape.common.render as render
 import xcape.common.settings as settings
+import xcape.entities.scene as entitites
+
+from xcape.entities.scene import Wall
 from xcape.common.object import GameObject
 from xcape.components.animation import AnimationComponent
 
 
-class IScene(GameObject):
+class BaseScene(GameObject):
     """
-    The interface for a scene.
+    The base scene for any scene.
     """
 
     def __init__(self, screen, resources):
@@ -44,31 +47,30 @@ class IScene(GameObject):
         pass
 
 
-class BlankScene(IScene):
+class BlankScene(BaseScene):
     """
     A blank scene that does nothing except display a blank screen.
     """
 
     def __init__(self, screen, resources):
         super().__init__(screen, resources)
+        self.spawn = (0, 0)
 
 
-class SoloScene01(IScene):
+class SoloScene01(BaseScene):
     """
     The first scene of the game.
     """
 
     def __init__(self, screen, resources):
         super().__init__(screen, resources)
-        self.rect = pg.Rect(0, 0, 0, 0)
         # self.spawn = (70, 70)
         self.spawn = (70, 400)
         self.levelNum = 1
 
-        background = self.resources["screens"]["scene_01.png"]
-        background = render.addBackground(background, "black_red")
-        self.animation = AnimationComponent(self)
-        self.animation.addStatic("idle", background)
+        self.image = self.resources["screens"]["scene_01.png"]
+        self.rect = pg.Rect(0, 0, 0, 0)
+        self.rect.size = self.image.get_size()
 
         self.player = pg.sprite.Group()
         self.walls = pg.sprite.Group()
@@ -76,6 +78,14 @@ class SoloScene01(IScene):
         self.doors = pg.sprite.Group()
         self.buttons = pg.sprite.Group()
         self.enemies = pg.sprite.Group()
+
+        walls = self.resources["walls"]
+
+        left = Wall(0, 520, 10, walls["boundary_bot.png"], screen)
+        left.extend(3, True)
+
+        self.walls = [left,
+                      Wall(-45, 510, 3, walls["boundary_left.png"], screen)]
 
     def handleEvent(self, event):
         if event.type == pg.KEYDOWN:
@@ -86,8 +96,17 @@ class SoloScene01(IScene):
     def update(self):
         self.animation.update()
 
+        for w in self.walls:
+            w.update()
+
     def drawWithCamera(self, camera):
-        self.animation.drawWithCamera(camera)
+        self.screen.fill(settings.COLOURS["black_red"])
+
+        self.screen.blit(self.animation.image, camera.apply(self))
+
+        for w in self.walls:
+            self.screen.blit(w.animation.image, camera.apply(w))
+
 
     def x(self, screen, spawn):
         # Defining position of all sprites on the scenario (width, height, x, y)

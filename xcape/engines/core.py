@@ -42,11 +42,17 @@ class CoreEngine(GameObject):
                 if event.key == pg.K_F4:
                     quit()
 
-            if event.type == events.MENU_EVENT or event.type == pg.KEYDOWN:
+            if (event.type == events.MENU_EVENT
+                    or event.type == pg.KEYDOWN):
                 self.menuEngine.handleEvent(event)
-            if event.type == events.SCENE_EVENT or event.type == pg.KEYDOWN:
+
+            if (event.type == events.SCENE_EVENT
+                    or event.type == pg.KEYDOWN
+                    or event.type == pg.KEYUP):
                 self.sceneEngine.handleEvent(event)
-            if event.type == events.CUTSCENE_EVENT or event.type == pg.KEYDOWN:
+
+            if (event.type == events.CUTSCENE_EVENT
+                    or event.type == pg.KEYDOWN):
                 self.cutsceneEngine.handleEvent(event)
 
     def update(self):
@@ -65,4 +71,3 @@ class CoreEngine(GameObject):
             self.handleEvent(None)
             self.update()
             self.draw()
-

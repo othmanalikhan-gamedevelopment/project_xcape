@@ -23,7 +23,7 @@ class MenuEngine(GameObject):
         self.screen = screen
         self.resources = loader.loadContent(loader.MENUS_PATH)
 
-        self.menu = menus.BlankMenu(self.screen, self.resources)
+        self.menu = menus.SplashMenu(self.screen, self.resources)
         self.nameToMenu = \
             {
                 "blank_menu": menus.BlankMenu,

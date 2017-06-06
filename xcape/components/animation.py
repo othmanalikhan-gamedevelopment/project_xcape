@@ -22,9 +22,7 @@ class AnimationComponent(GameObject):
         self.gameObject = gameObject
         self.enableOrientation = enableOrientation
 
-        self.stateToType = {}
-        self.stateToStatic = {}
-        self.stateToDynamic = {}
+        self.stateToAnimation = {}
         self.stateToDuration = {}
         self.animation = []
         self.image = None
@@ -36,31 +34,30 @@ class AnimationComponent(GameObject):
         self.frameNum = 0
 
     def update(self):
-        stateType = self.stateToType[self.gameObject.state]
-
-        if stateType == "dynamic":
-            self.image, self.frameNum = self.updateDynamic(self.frameNum)
-
-        if stateType == "static":
-            self.image, self.frameNum = self.updateStatic()
+        self.image, self.frameNum = self._updateAnimation(self.frameNum)
+        self.gameObject.rect.size = self.image.get_size()
 
         if self.enableOrientation:
             if self.gameObject.orientation == "left":
                 self.image = pg.transform.flip(self.image, True, False)
 
-        self.gameObject.rect.size = self.image.get_size()
-
-    def updateDynamic(self, currentFrame):
+    def _updateAnimation(self, currentFrame):
         """
-        Updates the dynamic animation.
+        Updates the animation.
 
         :param currentFrame: Integer, the frame number of the current animation.
         :return: 2-Tuple, containing the pygame.Surface needed to be drawn
         and an Integer frame number.
         """
         self.elapsed = pg.time.get_ticks() - self.origin
-        self.animation = self.stateToDynamic[self.gameObject.state]
         self.duration = self.stateToDuration[self.gameObject.state]
+
+        # Resetting frames if a new animation
+        newAnimation = self.stateToAnimation[self.gameObject.state]
+        if newAnimation != self.animation:
+            currentFrame = 0
+
+        self.animation = newAnimation
         frameDuration = self.duration / len(self.animation)
 
         # Increment animation
@@ -69,7 +66,7 @@ class AnimationComponent(GameObject):
             self.elapsed = 0
             self.origin = pg.time.get_ticks()
 
-        # Reset animation
+        # Reset animation when complete
         if (currentFrame+1)*frameDuration > self.duration:
             currentFrame = 0
             self.elapsed = 0
@@ -77,17 +74,6 @@ class AnimationComponent(GameObject):
 
         image = self.animation[currentFrame]
         return image, currentFrame
-
-    def updateStatic(self):
-        """
-        Updates the static animation.
-
-        :return: 2-Tuple, containing the pygame.Surface needed to be drawn
-        and an Integer frame number.
-        """
-        frameNum = 0
-        image = self.stateToStatic[self.gameObject.state]
-        return image, frameNum
 
     def draw(self):
         self.gameObject.screen.blit(self.image, self.gameObject.rect)
@@ -100,35 +86,27 @@ class AnimationComponent(GameObject):
         """
         self.gameObject.screen.blit(self.image, camera.apply(self.gameObject))
 
-    def addDynamic(self, state, images, duration):
+    def add(self, state, images, duration):
         """
-        Adds a dynamic animation to the given state.
+        Adds an animation to the given state.
 
         :param state: String, the name of the state tied to the animation.
         :param images: List, containing pygame.Surface objects.
         :param duration: Integer, the length of the animation in milliseconds.
         """
-        self.stateToDynamic[state] = images
+        self.stateToAnimation[state] = images
         self.stateToDuration[state] = duration
-        self.stateToType[state] = "dynamic"
-
-    def addStatic(self, state, image):
-        """
-        Adds a static animation to the given state.
-
-        :param state: String, the name of the state tied to the animation.
-        :param image: pygame.Surface, representing the static image.
-        """
-        self.stateToStatic[state] = image
-        self.stateToType[state] = "static"
+        self.image = images[0]
 
     def scaleAll(self, DIMENSIONS):
-        for state, frames in self.stateToDynamic.items():
-            frames = [pg.transform.scale(f, DIMENSIONS) for f in frames]
-            self.stateToDynamic[state] = frames
+        """
+        Scales the size of each frame in all animations.
 
-        for state, f in self.stateToStatic.items():
-            self.stateToStatic[state] = pg.transform.scale(f, DIMENSIONS)
+        :param DIMENSIONS: 2-Tuple, containing integers for new (x, y) size.
+        """
+        for state, frames in self.stateToAnimation.items():
+            frames = [pg.transform.scale(f, DIMENSIONS) for f in frames]
+            self.stateToAnimation[state] = frames
 
     def flip(self, isVertical, isHorizontal):
         """
@@ -140,9 +118,9 @@ class AnimationComponent(GameObject):
 
     def reverse(self):
         """
-        Reverses the animation sequence for dynamic animations only.
+        Reverses the animation sequence for animations.
         """
-        self.stateToDynamic[self.gameObject.state] = \
+        self.stateToAnimation[self.gameObject.state] = \
             list(reversed(self.animation))
 
     def _applyEffect(self, effect, args):
@@ -152,11 +130,5 @@ class AnimationComponent(GameObject):
         :param effect: Function, the effect to apply on the current animation.
         :param args: Tuple, containing the arguments of the effect function.
         """
-        stateType = self.stateToType[self.gameObject.state]
-
-        if stateType == "dynamic":
-            flipped = [effect(frame, *args) for frame in self.animation]
-            self.stateToDynamic[self.gameObject.state] = flipped
-
-        if stateType == "static":
-            self.stateToStatic[self.gameObject.state] = effect(self.image, *args)
+        flipped = [effect(frame, *args) for frame in self.animation]
+        self.stateToAnimation[self.gameObject.state] = flipped

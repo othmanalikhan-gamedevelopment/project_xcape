@@ -1,11 +1,9 @@
 """
-Responsible for containing all the game characters.
+Contains all the game characters.
 """
+
 import pygame as pg
 
-import xcape.common.events as events
-import xcape.common.render as render
-import xcape.common.settings as settings
 from xcape.common.object import GameObject
 from xcape.components.animation import AnimationComponent
 from xcape.components.physics import PhysicsComponent
@@ -28,19 +26,17 @@ class Player(GameObject, pg.sprite.Sprite):
 
         self.state = "idle"
         self.orientation = "right"
-        self.canJump = True
         self.lives = 3
+        self.canJump = True
 
         cat = self.resources["cat"]
         self.animation = AnimationComponent(self, enableOrientation=True)
-        self.animation.addStatic("idle", cat["idle.png"])
-        self.animation.addStatic("jumping", cat["idle.png"])
-        self.animation.addDynamic("running", cat["running"], 1000)
+        self.animation.add("idle", [cat["idle.png"]], float('inf'))
+        self.animation.add("jumping", cat["running"], 400)
+        self.animation.add("running", cat["running"], 400)
         self.animation.scaleAll(self.rect.size)
 
         self.physics = PhysicsComponent(self)
-        self.jumpSpeed = -1
-        self.moveSpeed = 1
 
         self.keybinds = \
             {
@@ -83,7 +79,7 @@ class Player(GameObject, pg.sprite.Sprite):
         Makes the player jump.
         """
         if self.canJump:
-            self.physics.velocity.y = self.jumpSpeed
+            self.physics.velocity.y = self.physics.jumpSpeed
             self.canJump = False
             self.state = "jumping"
 
@@ -91,7 +87,7 @@ class Player(GameObject, pg.sprite.Sprite):
         """
         Moves the player left.
         """
-        self.physics.velocity.x = -self.moveSpeed
+        self.physics.velocity.x = -self.physics.moveSpeed
         self.state = "running"
         self.orientation = "left"
 
@@ -99,7 +95,7 @@ class Player(GameObject, pg.sprite.Sprite):
         """
         Moves the player right.
         """
-        self.physics.velocity.x = self.moveSpeed
+        self.physics.velocity.x = self.physics.moveSpeed
         self.state = "running"
         self.orientation = "right"
 

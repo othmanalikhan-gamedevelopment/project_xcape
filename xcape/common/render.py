@@ -3,7 +3,7 @@ Responsible for containing common rendering functions.
 """
 
 import pygame as pg
-import xcape.common.settings as settings
+
 from xcape.common import settings as settings
 from xcape.common.object import GameObject
 from xcape.components.animation import AnimationComponent
@@ -20,6 +20,7 @@ def addBackground(surface, colour="white"):
     background = pg.Surface(surface.get_size())
     background.fill(settings.COLOURS[colour])
     background.blit(surface, (0, 0))
+    background = background.convert()
     return background
 
 
@@ -32,26 +33,19 @@ class TextLabel(GameObject):
         """
         :param text: String, the text to render.
         :param size: Integer, the size of the font.
-        :param colour: 3-Tuple, containing the RGB values of the colour.
+        :param colour: String, the name of the colour to be used.
         :param x: Integer, the x-position of the text.
         :param y: Integer, the y-position of the text.
         :param screen: pygame.Surface, representing the screen.
         """
+        font = pg.font.SysFont(settings.FONT, size)
+        self.image = font.render(text, True, settings.COLOURS[colour])
         self.rect = pg.Rect(x, y, 0, 0)
+        self.rect.size = self.image.get_size()
         self.screen = screen
 
-        font = pg.font.SysFont(settings.FONT, size)
-        image = font.render(text, True, colour)
-
-        self.state = "idle"
-        self.animation = AnimationComponent(self)
-        self.animation.addStatic("idle", image)
-
-    def update(self):
-        self.animation.update()
-
     def draw(self):
-        self.animation.draw()
+        self.screen.blit(self.image, self.rect)
 
 
 class ImageLabel(GameObject):
@@ -66,15 +60,10 @@ class ImageLabel(GameObject):
         :param y: Integer, the y-position of the text.
         :param screen: pygame.Surface, representing the screen.
         """
-        self.rect = pg.Rect(x, y, 0, 0)
-        self.screen = screen
-
-        self.state = "idle"
         self.animation = AnimationComponent(self)
-        self.animation.addStatic("idle", image)
-
-    def update(self):
-        self.animation.update()
+        self.animation.add("idle", [image], float('inf'))
+        self.screen = screen
+        self.rect = pg.Rect(x, y, 0, 0)
 
     def draw(self):
         self.animation.draw()

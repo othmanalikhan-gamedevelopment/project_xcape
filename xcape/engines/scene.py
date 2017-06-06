@@ -24,10 +24,11 @@ class SceneEngine(GameObject):
         :param screen: pygame.Surface, representing the screen.
         """
         self.screen = screen
-        self.mode = SinglePlayer(self.screen)
+        self.mode = None
 
     def handleEvent(self, event):
-        self.mode.handleEvent(event)
+        if self.mode:
+            self.mode.handleEvent(event)
 
         if event.type == events.SCENE_EVENT:
             if event.category == "start_game":
@@ -39,10 +40,12 @@ class SceneEngine(GameObject):
                     self.mode.startGame()
 
     def update(self):
-        self.mode.update()
+        if self.mode:
+            self.mode.update()
 
     def draw(self):
-        self.mode.draw()
+        if self.mode:
+            self.mode.draw()
 
 
 class SinglePlayer(GameObject):
@@ -62,6 +65,7 @@ class SinglePlayer(GameObject):
 
         self.player = Player(self.screen, self.resourcesChar)
         self.scene = self.loadScene(scenes.SoloScene01)
+        # self.scene = scenes.BlankScene()
         self.nameToScene = \
             {
                 "blank_scene": scenes.BlankScene,
@@ -92,6 +96,15 @@ class SinglePlayer(GameObject):
             if event.category == "transition":
                 self.loadScene(self.nameToScene[event.data])
 
+            # # Restart level
+            # if self.player.isHit:
+            #     self.scene.restart()
+
+            # # Game over
+            # if self.player.lives == 0:
+            #     self.pause = True
+            #     events.messageMenu("single_player", "transition", "game_over")
+
     def update(self):
         if not self.pause:
             self.scene.update()
@@ -103,15 +116,6 @@ class SinglePlayer(GameObject):
             if self.scene.isEnd:
                 self.levelNum += 1
                 self.loadScene(self.numToScene[self.levelNum])
-
-            # # Restart level
-            # if self.player.isHit:
-            #     self.scene.restart()
-
-            # # Game over
-            # if self.player.lives == 0:
-            #     self.pause = True
-            #     events.messageMenu("single_player", "transition", "game_over")
 
     def draw(self):
         self.scene.drawWithCamera(self.camera)

@@ -12,9 +12,9 @@ from xcape.common.render import TextLabel, ImageLabel
 from xcape.components.animation import AnimationComponent
 
 
-class IMenu(GameObject):
+class BaseMenu(GameObject):
     """
-    The interface for a menu.
+    The base menu for any menu.
     """
 
     def __init__(self, screen, resources):
@@ -37,7 +37,7 @@ class IMenu(GameObject):
         pass
 
 
-class BlankMenu(IMenu):
+class BlankMenu(BaseMenu):
     """
     A blank menu that does nothing except display a blank screen.
     """
@@ -46,19 +46,18 @@ class BlankMenu(IMenu):
         super().__init__(screen, resources)
 
 
-class SplashMenu(IMenu):
+class SplashMenu(BaseMenu):
     """
     The splash screen of the game.
     """
 
     def __init__(self, screen, resources):
         super().__init__(screen, resources)
-        self.rect = pg.Rect(0, 0, 0, 0)
-
         background = self.resources["screens"]["splash.jpg"]
         background = render.addBackground(background)
-        self.animation = AnimationComponent(self)
-        self.animation.addStatic("idle", background)
+        self.image = background
+        self.rect = pg.Rect(0, 0, 0, 0)
+        self.rect.size = self.image.get_size()
 
         self.effect = FadeEffect(screen, resources)
 
@@ -71,29 +70,29 @@ class SplashMenu(IMenu):
         if self.effect.isComplete:
             events.messageMenu("splash_menu", "transition", "main_menu")
         else:
-            self.animation.update()
+            self.screen.blit(self.image, self.rect)
             self.effect.update()
 
     def draw(self):
-        self.animation.draw()
+        self.screen.blit(self.image, self.rect)
         self.effect.draw()
 
 
-class MainMenu(IMenu):
+class MainMenu(BaseMenu):
     """
     The main menu of the game.
     """
 
     def __init__(self, screen, resources):
         super().__init__(screen, resources)
-        self.rect = pg.Rect(0, 0, 0, 0)
 
-        self.animation = AnimationComponent(self)
-        self.animation.addStatic("idle", self.resources["screens"]["main.jpg"])
+        self.image = self.resources["screens"]["main.jpg"]
+        self.rect = pg.Rect(0, 0, 0, 0)
+        self.rect.size = self.image.get_size()
 
         self.totalOptions = 4
         self.fontSize = 22
-        self.fontColour = settings.COLOURS["white"]
+        self.fontColour = "white"
         self.x = 250
         self.y = 155
         self.dx = 0
@@ -155,7 +154,6 @@ class MainMenu(IMenu):
                     quit()
 
     def update(self):
-        self.animation.update()
         self.title.update()
         self.option1.update()
         self.option2.update()
@@ -164,7 +162,7 @@ class MainMenu(IMenu):
         self.arrow.update()
 
     def draw(self):
-        self.animation.draw()
+        self.screen.blit(self.image, self.rect)
         self.title.draw()
         self.option1.draw()
         self.option2.draw()
@@ -173,20 +171,20 @@ class MainMenu(IMenu):
         self.arrow.draw()
 
 
-class OptionsMenu(IMenu):
+class OptionsMenu(BaseMenu):
     """
     The options menu of the game.
     """
 
     def __init__(self, screen, resources):
         super().__init__(screen, resources)
-        self.rect = pg.Rect(0, 0, 0, 0)
 
-        self.animation = AnimationComponent(self)
-        self.animation.addStatic("idle", self.resources["screens"]["options.jpg"])
+        self.image = self.resources["screens"]["options.jpg"]
+        self.rect = pg.Rect(0, 0, 0, 0)
+        self.rect.size = self.image.get_size()
 
         fontSize = 22
-        fontColour = settings.COLOURS["white"]
+        fontColour = "white"
         x, y = 230, 155
         dx, dy = 0, 50
 
@@ -235,12 +233,11 @@ class OptionsMenu(IMenu):
             if event.key == pg.K_RETURN:
                 if self.arrow.index == 0:
                     if self.backgroundSetting.index == 0:
-                        self.animation.flip(True, False)
+                        self.image = pg.transform.flip(self.image, True, False)
                     if self.backgroundSetting.index == 1:
-                        self.animation.flip(False, True)
+                        self.image = pg.transform.flip(self.image, False, True)
 
     def update(self):
-        self.animation.update()
         self.backgroundSetting.update()
         self.arrow.update()
         self.escapeImage.update()
@@ -251,7 +248,7 @@ class OptionsMenu(IMenu):
             events.messageMenu("options_menu", "transition", "main_menu")
 
     def draw(self):
-        self.animation.draw()
+        self.screen.blit(self.image, self.rect)
         self.backgroundSetting.draw()
         self.arrow.draw()
         self.escapeImage.draw()
@@ -259,21 +256,20 @@ class OptionsMenu(IMenu):
         self.effect.draw()
 
 
-class GameOverMenu(IMenu):
+class GameOverMenu(BaseMenu):
     """
     The game over menu of the game.
     """
 
     def __init__(self, screen, resources):
         super().__init__(screen, resources)
-        self.rect = pg.Rect(0, 0, 0, 0)
 
-        self.animation = AnimationComponent(self)
-        self.animation.addStatic("idle",
-                                 self.resources["screens"]["game_over.png"])
+        self.image = self.resources["screens"]["game_over.png"]
+        self.rect = pg.Rect(0, 0, 0, 0)
+        self.rect.size = self.image.get_size()
 
         self.fontSize = 18
-        self.fontColour = settings.COLOURS["white"]
+        self.fontColour = "white"
         self.x = 150
         self.y = 320
 
@@ -291,15 +287,14 @@ class GameOverMenu(IMenu):
                 events.messageScene("game_over_menu", "transition", "blank_scene")
 
     def update(self):
-        self.animation.update()
         self.enterText.update()
 
     def draw(self):
-        self.animation.draw()
+        self.screen.blit(self.image, self.rect)
         self.enterText.draw()
 
 
-class PauseMenu(IMenu):
+class PauseMenu(BaseMenu):
     """
     The pause menu of the game.
     """
@@ -308,12 +303,12 @@ class PauseMenu(IMenu):
         super().__init__(screen, resources)
         self.rect = pg.Rect(0, 0, 0, 0)
 
-        self.animation = AnimationComponent(self)
-        self.animation.addStatic("idle",
-                                 self.resources["screens"]["fade.png"])
+        self.image = self.resources["screens"]["fade.png"]
+        self.rect = pg.Rect(0, 0, 0, 0)
+        self.rect.size = self.image.get_size()
 
         self.fontSize = 40
-        self.fontColour = settings.COLOURS["white"]
+        self.fontColour = "white"
         self.x = 270
         self.y = 225
 
@@ -334,11 +329,11 @@ class PauseMenu(IMenu):
         self.pauseText.update()
 
     def draw(self):
-        self.animation.draw()
+        self.screen.blit(self.image, self.rect)
         self.pauseText.draw()
 
 
-class FadeEffect(IMenu):
+class FadeEffect(BaseMenu):
     """
     Responsible for applying a transitioning fade of as follows:
 
@@ -353,10 +348,11 @@ class FadeEffect(IMenu):
         self.isComplete = False
 
         background = pg.Surface((settings.WIDTH, settings.HEIGHT))
-        background = background.convert()
         background.fill(settings.COLOURS["black"])
-        self.animation = AnimationComponent(self)
-        self.animation.addStatic("idle", background)
+        background = background.convert()
+        self.image = background
+        self.rect = pg.Rect(0, 0, 0, 0)
+        self.rect.size = self.image.get_size()
 
         # Units are in seconds (use floats to reduce rounding errors)
         self.origin = pg.time.get_ticks()/1000
@@ -378,10 +374,8 @@ class FadeEffect(IMenu):
             if self.time > self.timeEndDarken:
                 self.isComplete = True
 
-            self.animation.update()
-
     def draw(self):
-        self.animation.draw()
+        self.screen.blit(self.image, self.rect)
 
     def lightenScreen(self):
         """
@@ -391,7 +385,7 @@ class FadeEffect(IMenu):
         duration = self.timeEndLighten - self.timeStartLighten
         percentComplete = current/duration
         self.transparentValue = (1-percentComplete) * 255
-        self.animation.image.set_alpha(self.transparentValue)
+        self.image.set_alpha(self.transparentValue)
 
     def darkenScreen(self):
         """
@@ -401,10 +395,10 @@ class FadeEffect(IMenu):
         duration = self.timeEndDarken - self.timeStartDarken
         percentComplete = current/duration
         self.transparentValue = percentComplete * 255
-        self.animation.image.set_alpha(self.transparentValue)
+        self.image.set_alpha(self.transparentValue)
 
 
-class UIMenu(IMenu):
+class UIMenu(BaseMenu):
     """
     The UI in a scene.
     """
@@ -449,8 +443,8 @@ class UIMenu(IMenu):
         assets = self.resources["assets"]
         for i in range(numLives):
             label = ImageLabel(None, self.x + i*self.dx, self.y, self.screen)
-            label.animation.addStatic("no_life", assets["no_life.png"])
-            label.animation.addStatic("life", assets["life.png"])
+            label.animation.add("no_life", [assets["no_life.png"]], float('inf'))
+            label.animation.add("life", [assets["life.png"]], float('inf'))
             label.state = "life"
             self.lives.append(label)
 
@@ -534,7 +528,7 @@ class _Arrow(GameObject):
 
         self.state = "idle"
         self.animation = AnimationComponent(self)
-        self.animation.addDynamic("idle", resources["assets"]["coin"], 350)
+        self.animation.add("idle", resources["assets"]["coin"], 350)
 
     def update(self):
         self.animation.update()

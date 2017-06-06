@@ -11,9 +11,9 @@ from xcape.common.object import GameObject
 from xcape.components.animation import AnimationComponent
 
 
-class ICutscene(GameObject):
+class BaseCutscene(GameObject):
     """
-    The interface for a cutscene.
+    The base cutscene for any cutscene.
     """
 
     def __init__(self, screen, resources):
@@ -36,7 +36,7 @@ class ICutscene(GameObject):
         pass
 
 
-class BlankCutscene(ICutscene):
+class BlankCutscene(BaseCutscene):
     """
     A blank cutscene that does nothing except display a blank screen.
     """
@@ -45,7 +45,7 @@ class BlankCutscene(ICutscene):
         super().__init__(screen, resources)
 
 
-class OfficeCutscene(ICutscene):
+class OfficeCutscene(BaseCutscene):
     """
     The cutscene where the dog and cat are talking in the office.
     """
@@ -58,8 +58,8 @@ class OfficeCutscene(ICutscene):
 
         self.state = "talk_cat"
         self.animation = AnimationComponent(self)
-        self.animation.addDynamic("talk_dog", intro["office_dog"], 300)
-        self.animation.addDynamic("talk_cat", intro["office_cat"], 300)
+        self.animation.add("talk_dog", intro["office_dog"], 300)
+        self.animation.add("talk_cat", intro["office_cat"], 300)
 
         self.dialogue = Dialogue(self.screen)
         self.dialogue.add(assets["office_1.png"], 358, 165)
@@ -116,7 +116,7 @@ class OfficeCutscene(ICutscene):
         self.dialogue.draw()
 
 
-class TelephoneCutscene(ICutscene):
+class TelephoneCutscene(BaseCutscene):
     """
     The cutscene where the dog is talking on the phone.
     """
@@ -129,9 +129,9 @@ class TelephoneCutscene(ICutscene):
 
         self.state = "no_telephone"
         self.animation = AnimationComponent(self)
-        self.animation.addDynamic("pick_telephone", intro["telephone"], 1100)
-        self.animation.addStatic("no_telephone", intro["telephone"][0])
-        self.animation.addStatic("hold_telephone", intro["telephone"][4])
+        self.animation.add("pick_telephone", intro["telephone"], 1100)
+        self.animation.add("no_telephone", [intro["telephone"][0]], float('inf'))
+        self.animation.add("hold_telephone", [intro["telephone"][4]], float('inf'))
 
         self.dialogue = Dialogue(self.screen)
         self.dialogue.add(assets["telephone_1.png"], 375, 100)
@@ -176,6 +176,7 @@ class TelephoneCutscene(ICutscene):
 
         elif self.speed*12100 > self.elapsed:
             self.state = "pick_telephone"
+            self.animation.update()     # Needed to apply immediate update
             if not self.isReversed:
                 self.animation.reverse()
                 self.isReversed = True
@@ -198,7 +199,7 @@ class TelephoneCutscene(ICutscene):
         self.dialogue.draw()
 
 
-class JailCutscene(ICutscene):
+class JailCutscene(BaseCutscene):
     """
     The cutscene where the cat is being escorted to jail.
     """
@@ -211,8 +212,8 @@ class JailCutscene(ICutscene):
 
         self.state = "empty_jail"
         self.animation = AnimationComponent(self)
-        self.animation.addDynamic("escort", intro["jail"], 2500)
-        self.animation.addStatic("empty_jail", intro["jail"][0])
+        self.animation.add("escort", intro["jail"], 2500)
+        self.animation.add("empty_jail", [intro["jail"][0]], float('inf'))
 
         self.dialogue = Dialogue(self.screen)
         self.dialogue.add(assets["jail_1.png"], 19, 25)
@@ -249,6 +250,9 @@ class JailCutscene(ICutscene):
                 events.messageCutScene("jail_cutscene",
                                        "transition",
                                        "blank_cutscene")
+                events.messageScene("jail_cutscene",
+                                    "transition",
+                                    "scene_01")
 
         self.dialogue.update()
         self.animation.update()
@@ -308,13 +312,11 @@ class _Bubble(GameObject):
 
         image = render.addBackground(image)
         image.set_colorkey(settings.COLOURS["blue"])
-        self.state = "idle"
-        self.animation = AnimationComponent(self)
-        self.animation.addStatic("idle", image)
-
-    def update(self):
-        self.animation.update()
+        self.image = image
+        self.rect = pg.Rect(x, y, 0, 0)
+        self.rect.size = image.get_size()
+        self.screen = screen
 
     def draw(self):
-        self.animation.draw()
+        self.screen.blit(self.image, self.rect)
 

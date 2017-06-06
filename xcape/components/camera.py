@@ -31,6 +31,7 @@ class SimpleCamera(GameObject):
     def update(self):
         x, y, _, _ = self.following.rect
         _, _, w, h = self.view
+
         self.view = pg.Rect(-x + self.HALF_WIDTH, -y + self.HALF_HEIGHT, w, h)
 
     def follow(self, gameobject):
@@ -50,4 +51,3 @@ class SimpleCamera(GameObject):
         :return: pg.Rect, the shifted rectangle into the camera's view.
         """
         return gameobject.rect.move(self.view.topleft)
-

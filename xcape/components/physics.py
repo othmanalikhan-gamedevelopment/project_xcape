@@ -7,6 +7,12 @@ from pygame.math import Vector2
 class PhysicsComponent:
     """
     Represents the physics component that can apply physics to a game object.
+
+    The units for the physics variables are listed below.
+
+        Distance:   pixels.
+        Velocity:   pixels per game tick.
+        Time:       game tick.
     """
 
     def __init__(self, gameObject):
@@ -19,18 +25,26 @@ class PhysicsComponent:
         self.gameObject = gameObject
         self.velocity = Vector2(0, 0)
         self.gravity = Vector2(0, 0.8)
+        self.jumpSpeed = -15
+        self.moveSpeed = 10
         self.maxSpeed = 20
-        self.TIME_STEP = 1
+        self.TIME_STEP = 60
+        self.counter = 0
 
     def update(self):
         """
         Applies the physics on the game object.
         """
-        # self.applyGravity()
-        self.limitSpeed()
+        self.counter += 1
 
-        self.gameObject.rect.x += self.velocity.x * self.TIME_STEP
-        self.gameObject.rect.y += self.velocity.y * self.TIME_STEP
+        if self.counter % self.TIME_STEP == 0:
+            # self.applyGravity()
+            self.limitSpeed()
+
+            self.gameObject.rect.x += self.velocity.x
+            self.gameObject.rect.y += self.velocity.y
+
+            self.counter = 0
 
     def applyGravity(self):
         """
