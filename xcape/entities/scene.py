@@ -73,7 +73,6 @@ class Wall(SceneEntity):
                 wall.blit(image, (0, i*h))
 
         wall = wall.convert()
-        print(wall.get_size())
         return wall
 
     def drawWithCamera(self, camera):
@@ -131,6 +130,51 @@ class StaticPlatform(SceneEntity):
         self.screen.blit(self.image, camera.apply(self))
 
 
+class Button(SceneEntity):
+    """
+    A button entity that the player can turn on and off.
+    """
+
+    def __init__(self, x, y, screen, resources):
+        """
+        :param x: Integer, the x-position of the wall.
+        :param y: Integer, the y-position of the wall.
+        :param screen: pygame.Surface, the screen to draw the wall onto.
+        :param resources: 2D Dictionary, mapping dir and file name to image.
+        """
+        super().__init__(screen)
+        self.resources = resources
+        self.rect = pg.Rect(x, y, 0, 0)
+
+        button = resources["buttons"]
+        self.state = "on"
+        self.animation = AnimationComponent(self, enableRepeat=False)
+        self.animation.add("on", [button["switch"][0]], float('inf'))
+        self.animation.add("animate", button["switch"], 500)
+        self.animation.add("off", [button["switch"][2]], float('inf'))
+
+        self.isOn = False
+
+    def update(self):
+        self.animation.update()
+
+    def drawWithCamera(self, camera):
+        self.animation.drawWithCamera(camera)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 class MovingPlatform(SceneEntity):
     """
     A moving platform that moves constantly between two points.
@@ -166,15 +210,4 @@ class MovingPlatform(SceneEntity):
         if cur_pos_y > self.boundary_bottom or cur_pos_y < self.boundary_top:
             self.moveY *= -1
 
-
-class TransparentPlatform(SceneEntity):
-    """
-    A transparent platform that the player can pass through from beneath only.
-    """
-
-    def __init__(self, size):
-        """
-        A simple constructor.
-        """
-        super().__init__(size)
 

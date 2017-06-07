@@ -28,14 +28,13 @@ class CollisionEngine(GameObject):
                 self.checkDoorCollision()
 
     def update(self):
-        self.ResolveWallCollisions()
-        self.ResolvePlatformCollisions()
-        # self.checkPlatformCollision()
-        # self.checkButtonCollision()
+        self.resolveWallCollisions()
+        self.resolvePlatformCollisions()
+        self.resolveButtonCollision()
         # self.checkEnemyCollision()
         # self.checkScenarioBoundaryCollision()
 
-    def ResolveWallCollisions(self):
+    def resolveWallCollisions(self):
         """
         Resolves any wall collisions.
         """
@@ -57,7 +56,7 @@ class CollisionEngine(GameObject):
             elif direction == "right":
                 self.player.rect.right = wall.rect.left
 
-    def ResolvePlatformCollisions(self):
+    def resolvePlatformCollisions(self):
         """
         Resolves any platform collisions.
         """
@@ -78,6 +77,19 @@ class CollisionEngine(GameObject):
 
             elif direction == "right":
                 self.player.rect.right = platform.rect.left
+
+    def resolveButtonCollision(self):
+        """
+        Resolves any button collisions.
+        """
+        buttonsOff = [button for button in self.scene.buttons if not button.isOn]
+
+        for button in buttonsOff:
+            if pg.sprite.collide_rect(self.player, button):
+                if (self.player.physics.velocity.x != 0 or
+                        self.player.physics.velocity.y != 0):
+                    button.isOn = True
+                    button.state = "animate"
 
     def checkPlatformCollision(self):
         """
@@ -178,20 +190,6 @@ class CollisionEngine(GameObject):
                 return "top"
             elif isCollideRight:
                 return "right"
-
-    def checkButtonCollision(self):
-        """
-        Checks if the playerOne has collided with any button in the scenario and
-        updates accordingly.
-        """
-        hits = pg.sprite.spritecollide(self.player,
-                                       self.scene.buttonsOff,
-                                       True)
-        if hits:
-            if self.player.physics.velocity.x != 0 or \
-                            self.player.physics.velocity.y != 0:
-                print("abrir")
-                self.scene.isButtonOn = True
 
     def checkDoorCollision(self):
         """

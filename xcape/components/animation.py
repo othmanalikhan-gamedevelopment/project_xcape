@@ -12,15 +12,17 @@ class AnimationComponent(GameObject):
     Attaches to a game object to allow rendering of static and animated images.
     """
 
-    def __init__(self, gameObject, enableOrientation=False):
+    def __init__(self, gameObject, enableOrientation=False, enableRepeat=True):
         """
         :param gameObject: GameObject Class, representing any object inheriting
         from the GameObject class.
         :param enableOrientation: Boolean, causing animations to take into
         account direction of the gameobject.
+        :param enableRepeat: Boolean, whether to repeat the animation endlessly.
         """
         self.gameObject = gameObject
         self.enableOrientation = enableOrientation
+        self.enableRepeat = enableRepeat
 
         self.stateToAnimation = {}
         self.stateToDuration = {}
@@ -34,50 +36,55 @@ class AnimationComponent(GameObject):
         self.frameNum = 0
 
     def update(self):
-        self.image, self.frameNum = self._updateAnimation(self.frameNum)
+        self.image, self.frameNum = self._updateAnimation()
         self.gameObject.rect.size = self.image.get_size()
 
         if self.enableOrientation:
             if self.gameObject.orientation == "left":
                 self.image = pg.transform.flip(self.image, True, False)
 
-    def _updateAnimation(self, currentFrame):
+    def _updateAnimation(self):
         """
         Updates the animation.
 
-        :param currentFrame: Integer, the frame number of the current animation.
         :return: 2-Tuple, containing the pygame.Surface needed to be drawn
         and an Integer frame number.
         """
         self.elapsed = pg.time.get_ticks() - self.origin
 
-        # Trying to change into a new animations
+        # Change into a new animation if available
         try:
             self.duration = self.stateToDuration[self.gameObject.state]
-
             newAnimation = self.stateToAnimation[self.gameObject.state]
+
             if newAnimation != self.animation:
                 currentFrame = 0
+                self.elapsed = 0
+                self.origin = pg.time.get_ticks()
+                self.animation = newAnimation
 
-            self.animation = newAnimation
+        # No existing animation found
         except KeyError:
             pass
 
-        # Increment animation
-        frameDuration = self.duration / len(self.animation)
-        if self.elapsed > frameDuration:
-            currentFrame += 1
-            self.elapsed = 0
-            self.origin = pg.time.get_ticks()
+        # Continue with either the old or new animation
+        finally:
+            lastIndex = len(self.animation)-1
 
-        # Reset animation when complete
-        if (currentFrame+1)*frameDuration > self.duration:
-            currentFrame = 0
-            self.elapsed = 0
-            self.origin = pg.time.get_ticks()
+            if self.duration >= self.elapsed >= 0:
+                progress = self.elapsed / self.duration
+                currentFrame = int(progress * lastIndex)
 
-        image = self.animation[currentFrame]
-        return image, currentFrame
+            elif self.elapsed > self.duration and not self.enableRepeat:
+                currentFrame = lastIndex
+
+            else:
+                currentFrame = 0
+                self.elapsed = 0
+                self.origin = pg.time.get_ticks()
+
+            image = self.animation[currentFrame]
+            return image, currentFrame
 
     def draw(self):
         self.gameObject.screen.blit(self.image, self.gameObject.rect)
