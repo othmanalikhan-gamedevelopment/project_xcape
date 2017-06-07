@@ -4,12 +4,10 @@ Contains all the entities in a scene (excluding the players and bosses).
 
 import pygame as pg
 
-
-import xcape.common.settings as settings
 import xcape.common.events as events
-
-from xcape.components.animation import AnimationComponent
+import xcape.common.settings as settings
 from xcape.common.object import GameObject
+from xcape.components.animation import AnimationComponent
 
 
 class SceneEntity(GameObject):
@@ -137,18 +135,18 @@ class Switch(SceneEntity):
     A switch entity that the player can turn on and off.
     """
 
-    def __init__(self, x, y, buttonNum, screen, resources):
+    def __init__(self, x, y, switchNum, screen, resources):
         """
         :param x: Integer, the x-position of the wall.
         :param y: Integer, the y-position of the wall.
-        :param buttonNum: Integer, identifying the number of the button.
+        :param switchNum: Integer, identifying the number of the button.
         :param screen: pygame.Surface, the screen to draw the wall onto.
         :param resources: 2D Dictionary, mapping dir and file name to image.
         """
         super().__init__(screen)
         self.resources = resources
         self.rect = pg.Rect(x, y, 0, 0)
-        self.buttonNum = buttonNum
+        self.buttonNum = switchNum
         self.isOn = True
 
         button = resources["buttons"]
@@ -171,6 +169,67 @@ class Switch(SceneEntity):
         self.state = "off"
         events.messageScene("Switch", "switch", (self.buttonNum, self.isOn))
 
+
+class Door(SceneEntity):
+    """
+    A door entity that the player can enter.
+    """
+
+    def __init__(self, x, y, doorNum, screen, resources):
+        """
+        :param x: Integer, the x-position of the wall.
+        :param y: Integer, the y-position of the wall.
+        :param doorNum: Integer, identifying the number of the button.
+        :param screen: pygame.Surface, the screen to draw the wall onto.
+        :param resources: 2D Dictionary, mapping dir and file name to image.
+        """
+        super().__init__(screen)
+        self.resources = resources
+        self.rect = pg.Rect(x, y, 0, 0)
+        self.doorNum = doorNum
+        self.switchesWaiting = None
+        self.isClosed = True
+
+        button = resources["doors"]
+        self.state = "closed"
+        self.animation = AnimationComponent(self, enableRepeat=False)
+        self.animation.add("open", [button["open.png"]], float('inf'))
+        self.animation.add("closed", [button["closed.png"]], float('inf'))
+
+    def handleEvent(self, event):
+        if event.type == events.SCENE_EVENT:
+            if event.category == "switch":
+
+                try:
+                    switchNum, isOn = event.data
+                    self.switchesWaiting.remove(switchNum)
+                    if not self.switchesWaiting:
+                        self.openDoor()
+                except ValueError:
+                    pass
+
+    def update(self):
+        self.animation.update()
+
+    def drawWithCamera(self, camera):
+        self.animation.drawWithCamera(camera)
+
+    def waitForSwitches(self, switches):
+        """
+        Links the door to the given switch numbers; the door opens only when
+        those switches have been activated.
+
+        :param switches: List, containing Integers for switch numbers.
+        """
+        self.switchesWaiting = switches
+
+    def openDoor(self):
+        """
+        Changes the state of the door to open and sends out an event.
+        """
+        self.isClosed = False
+        self.state = "open"
+        events.messageScene("Door", "door", (self.doorNum, self.isClosed))
 
 
 

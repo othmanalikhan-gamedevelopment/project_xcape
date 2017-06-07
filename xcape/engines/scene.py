@@ -77,8 +77,9 @@ class SinglePlayer(GameObject):
             }
 
     def handleEvent(self, event):
-        # self.collisionEngine.eventHandler(event)
+        self.collisionEngine.eventHandler(event)
         self.player.handleEvent(event)
+        self.scene.handleEvent(event)
 
         if event.type == pg.KEYDOWN:
             if event.key == pg.K_ESCAPE:
@@ -86,15 +87,15 @@ class SinglePlayer(GameObject):
                 if self.pause:
                     events.messageMenu("single_player",
                                        "transition",
-                                       "pause_screen")
+                                       "pause_menu")
                 else:
                     events.messageMenu("single_player",
                                        "transition",
-                                       "blank_screen")
+                                       "blank_menu")
 
         if event.type == events.SCENE_EVENT:
             if event.category == "transition":
-                self.loadScene(self.nameToScene[event.data])
+                self.scene = self.loadScene(self.numToScene[event.data])
 
             # # Restart level
             # if self.player.isHit:
@@ -115,7 +116,7 @@ class SinglePlayer(GameObject):
             # Progress level
             if self.scene.isEnd:
                 self.levelNum += 1
-                self.loadScene(self.numToScene[self.levelNum])
+                self.scene = self.loadScene(self.numToScene[self.levelNum])
 
     def draw(self):
         self.scene.drawWithCamera(self.camera)
@@ -135,11 +136,8 @@ class SinglePlayer(GameObject):
         self.player.rect.center = scene.spawn
         self.camera = SimpleCamera(settings.WIDTH, settings.HEIGHT)
         self.camera.follow(self.player)
-        # self.camera.follow(scene.switches[2])
+        # self.camera.follow(scene.doors[0])
         self.collisionEngine = CollisionEngine(self.player, scene)
         events.messageMenu("single_player", "transition", "ui_menu")
         events.messageMenu("single_player", "health", 3)
         return scene
-
-
-

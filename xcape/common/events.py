@@ -30,7 +30,7 @@ def messageScene(sender, category, data=None):
     :param category: String, the category of the message.
     :param data: N-Tuple, containing the data for the relevant category.
     """
-    CATEGORIES = ["transition", "switch"]
+    CATEGORIES = ["transition", "switch", "door"]
     _messageEngine(CATEGORIES, SCENE_EVENT, sender, category, data)
 
 

@@ -29,7 +29,7 @@ class TextLabel(GameObject):
     Represents text that can be drawn on screen.
     """
 
-    def __init__(self, text, size, colour, x, y, screen):
+    def __init__(self, text, size, colour, x, y, screen, isItalic=False):
         """
         :param text: String, the text to render.
         :param size: Integer, the size of the font.
@@ -39,6 +39,7 @@ class TextLabel(GameObject):
         :param screen: pygame.Surface, representing the screen.
         """
         font = pg.font.SysFont(settings.FONT, size)
+        font.set_italic(isItalic)
         self.image = font.render(text, True, settings.COLOURS[colour])
         self.rect = pg.Rect(x, y, 0, 0)
         self.rect.size = self.image.get_size()

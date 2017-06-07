@@ -5,13 +5,9 @@ Responsible for containing all the menus in game.
 import pygame as pg
 
 import xcape.common.events as events
-import xcape.common.render as render
 import xcape.common.settings as settings
-import xcape.entities.scene as entitites
-
-from xcape.entities.scene import Wall, StaticPlatform, Switch
 from xcape.common.object import GameObject
-from xcape.components.animation import AnimationComponent
+from xcape.entities.scene import Wall, StaticPlatform, Switch, Door
 
 
 class BaseScene(GameObject):
@@ -115,7 +111,7 @@ class SoloScene01(BaseScene):
         self.walls = self.addWalls()
         self.platforms = self.addPlatforms()
         self.switches = self.addSwitches()
-        # self.doors = pg.sprite.Group()
+        self.doors = self.addDoors()
         # self.enemies = pg.sprite.Group()
 
     def addWalls(self):
@@ -156,14 +152,18 @@ class SoloScene01(BaseScene):
         ]
         return switches
 
+    def addDoors(self):
+        door1 = Door(515, 410, 1, self.screen, self.resources)
+        door1.waitForSwitches([1, 2, 3])
+        return [door1]
+
     def handleEvent(self, event):
-        if event.type == pg.KEYDOWN:
-            pass
-            # if event.key == pg.K_RETURN:
-            #     events.messageMenu("splash_menu", "transition", "main_menu")
+        if event.type == events.SCENE_EVENT:
+            [d.handleEvent(event) for d in self.doors]
 
     def update(self):
         [s.update() for s in self.switches]
+        [d.update() for d in self.doors]
 
     def drawWithCamera(self, camera):
         self.screen.fill(settings.COLOURS["black_red"])
@@ -172,7 +172,7 @@ class SoloScene01(BaseScene):
         [w.drawWithCamera(camera) for w in self.walls]
         [p.drawWithCamera(camera) for p in self.platforms]
         [s.drawWithCamera(camera) for s in self.switches]
-
+        [d.drawWithCamera(camera) for d in self.doors]
 
 
 

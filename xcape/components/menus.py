@@ -317,7 +317,8 @@ class PauseMenu(BaseMenu):
                                    self.fontColour,
                                    self.x,
                                    self.y,
-                                   self.screen)
+                                   self.screen,
+                                   isItalic=True)
 
     def handleEvent(self, event):
         if event.type == pg.KEYDOWN:
@@ -325,7 +326,7 @@ class PauseMenu(BaseMenu):
                 events.messageMenu("pause_menu", "transition", "blank_menu")
 
     def update(self):
-        self.animation.update()
+        self.screen.blit(self.image, self.rect)
         self.pauseText.update()
 
     def draw(self):
