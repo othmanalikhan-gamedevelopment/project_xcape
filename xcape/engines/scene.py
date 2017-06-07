@@ -135,7 +135,7 @@ class SinglePlayer(GameObject):
         self.player.rect.center = scene.spawn
         self.camera = SimpleCamera(settings.WIDTH, settings.HEIGHT)
         self.camera.follow(self.player)
-        # self.camera.follow(scene.walls[2])
+        # self.camera.follow(scene.switches[2])
         self.collisionEngine = CollisionEngine(self.player, scene)
         events.messageMenu("single_player", "transition", "ui_menu")
         events.messageMenu("single_player", "health", 3)

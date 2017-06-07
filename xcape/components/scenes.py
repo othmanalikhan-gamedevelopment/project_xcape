@@ -9,7 +9,7 @@ import xcape.common.render as render
 import xcape.common.settings as settings
 import xcape.entities.scene as entitites
 
-from xcape.entities.scene import Wall, StaticPlatform, Button
+from xcape.entities.scene import Wall, StaticPlatform, Switch
 from xcape.common.object import GameObject
 from xcape.components.animation import AnimationComponent
 
@@ -70,7 +70,7 @@ class BaseScene(GameObject):
         """
         pass
 
-    def addButtons(self):
+    def addSwitches(self):
         """
         Adds buttons to the scene.
 
@@ -114,7 +114,7 @@ class SoloScene01(BaseScene):
 
         self.walls = self.addWalls()
         self.platforms = self.addPlatforms()
-        self.buttons = self.addButtons()
+        self.switches = self.addSwitches()
         # self.doors = pg.sprite.Group()
         # self.enemies = pg.sprite.Group()
 
@@ -147,12 +147,14 @@ class SoloScene01(BaseScene):
         ]
         return platforms
 
-    def addButtons(self):
-        buttons = \
+    def addSwitches(self):
+        switches = \
         [
-            Button(100, 450, self.screen, self.resources),
+            Switch(330, 320, 1, self.screen, self.resources),
+            Switch(540, 260, 2, self.screen, self.resources),
+            Switch(210, 200, 3, self.screen, self.resources)
         ]
-        return buttons
+        return switches
 
     def handleEvent(self, event):
         if event.type == pg.KEYDOWN:
@@ -161,7 +163,7 @@ class SoloScene01(BaseScene):
             #     events.messageMenu("splash_menu", "transition", "main_menu")
 
     def update(self):
-        [b.update() for b in self.buttons]
+        [s.update() for s in self.switches]
 
     def drawWithCamera(self, camera):
         self.screen.fill(settings.COLOURS["black_red"])
@@ -169,7 +171,7 @@ class SoloScene01(BaseScene):
 
         [w.drawWithCamera(camera) for w in self.walls]
         [p.drawWithCamera(camera) for p in self.platforms]
-        [b.drawWithCamera(camera) for b in self.buttons]
+        [s.drawWithCamera(camera) for s in self.switches]
 
 
 

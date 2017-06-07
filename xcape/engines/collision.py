@@ -30,7 +30,7 @@ class CollisionEngine(GameObject):
     def update(self):
         self.resolveWallCollisions()
         self.resolvePlatformCollisions()
-        self.resolveButtonCollision()
+        self.resolveSwitchCollision()
         # self.checkEnemyCollision()
         # self.checkScenarioBoundaryCollision()
 
@@ -78,18 +78,17 @@ class CollisionEngine(GameObject):
             elif direction == "right":
                 self.player.rect.right = platform.rect.left
 
-    def resolveButtonCollision(self):
+    def resolveSwitchCollision(self):
         """
         Resolves any button collisions.
         """
-        buttonsOff = [button for button in self.scene.buttons if not button.isOn]
+        switchesOn = [s for s in self.scene.switches if s.isOn]
 
-        for button in buttonsOff:
-            if pg.sprite.collide_rect(self.player, button):
+        for s in switchesOn:
+            if pg.sprite.collide_rect(self.player, s):
                 if (self.player.physics.velocity.x != 0 or
                         self.player.physics.velocity.y != 0):
-                    button.isOn = True
-                    button.state = "animate"
+                    s.turnOff()
 
     def checkPlatformCollision(self):
         """

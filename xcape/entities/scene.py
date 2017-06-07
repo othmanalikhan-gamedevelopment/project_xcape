@@ -6,6 +6,8 @@ import pygame as pg
 
 
 import xcape.common.settings as settings
+import xcape.common.events as events
+
 from xcape.components.animation import AnimationComponent
 from xcape.common.object import GameObject
 
@@ -130,30 +132,30 @@ class StaticPlatform(SceneEntity):
         self.screen.blit(self.image, camera.apply(self))
 
 
-class Button(SceneEntity):
+class Switch(SceneEntity):
     """
-    A button entity that the player can turn on and off.
+    A switch entity that the player can turn on and off.
     """
 
-    def __init__(self, x, y, screen, resources):
+    def __init__(self, x, y, buttonNum, screen, resources):
         """
         :param x: Integer, the x-position of the wall.
         :param y: Integer, the y-position of the wall.
+        :param buttonNum: Integer, identifying the number of the button.
         :param screen: pygame.Surface, the screen to draw the wall onto.
         :param resources: 2D Dictionary, mapping dir and file name to image.
         """
         super().__init__(screen)
         self.resources = resources
         self.rect = pg.Rect(x, y, 0, 0)
+        self.buttonNum = buttonNum
+        self.isOn = True
 
         button = resources["buttons"]
         self.state = "on"
         self.animation = AnimationComponent(self, enableRepeat=False)
         self.animation.add("on", [button["switch"][0]], float('inf'))
-        self.animation.add("animate", button["switch"], 500)
-        self.animation.add("off", [button["switch"][2]], float('inf'))
-
-        self.isOn = False
+        self.animation.add("off", button["switch"], 500)
 
     def update(self):
         self.animation.update()
@@ -161,13 +163,13 @@ class Button(SceneEntity):
     def drawWithCamera(self, camera):
         self.animation.drawWithCamera(camera)
 
-
-
-
-
-
-
-
+    def turnOff(self):
+        """
+        Changes the state of the button to off and sends out an event.
+        """
+        self.isOn = False
+        self.state = "off"
+        events.messageScene("Switch", "switch", (self.buttonNum, self.isOn))
 
 
 
