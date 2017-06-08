@@ -58,12 +58,10 @@ class Player(GameObject, pg.sprite.Sprite):
                 self.moveRight()
 
         if event.type == pg.KEYUP:
-            if (event.key == self.keybinds["move_left"] and
-                    self.physics.velocity.x < 0):
-                self.stop()
-            if (event.key == self.keybinds["move_right"]
-                    and self.physics.velocity.x > 0):
-                self.stop()
+            if event.key == self.keybinds["move_left"]:
+                self.stopLeft()
+            if event.key == self.keybinds["move_right"]:
+                self.stopRight()
 
     def drawWithCamera(self, camera):
         """
@@ -78,15 +76,18 @@ class Player(GameObject, pg.sprite.Sprite):
         Makes the player jump.
         """
         if self.canJump:
-            self.physics.velocity.y = self.physics.jumpSpeed
+            self.physics.acceleration.y = self.physics.jumpForce
             self.canJump = False
-            self.state = "jumping"
 
     def moveLeft(self):
         """
         Moves the player left.
         """
-        self.physics.velocity.x = -self.physics.moveSpeed
+        if self.state == "running" and self.orientation == "right":
+            self.physics.acceleration.x += -self.physics.moveForce * 2
+        else:
+            self.physics.acceleration.x += -self.physics.moveForce
+
         self.state = "running"
         self.orientation = "left"
 
@@ -94,13 +95,26 @@ class Player(GameObject, pg.sprite.Sprite):
         """
         Moves the player right.
         """
-        self.physics.velocity.x = self.physics.moveSpeed
+        if self.state == "running" and self.orientation == "left":
+            self.physics.acceleration.x += self.physics.moveForce * 2
+        else:
+            self.physics.acceleration.x += self.physics.moveForce
+
         self.state = "running"
         self.orientation = "right"
 
-    def stop(self):
+    def stopLeft(self):
         """
-        Stops the player.
+        Stops the player if the player is moving left.
         """
-        self.physics.velocity.x = 0
-        self.state = "idle"
+        if self.state == "running" and self.orientation == "left":
+            self.physics.velocity.x = 0
+            self.state = "idle"
+
+    def stopRight(self):
+        """
+        Stops the player if the player is moving right.
+        """
+        if self.state == "running" and self.orientation == "right":
+            self.physics.velocity.x = 0
+            self.state = "idle"

@@ -8,6 +8,7 @@ import xcape.common.events as events
 import xcape.common.settings as settings
 from xcape.common.object import GameObject
 from xcape.components.animation import AnimationComponent
+from xcape.components.physics import PhysicsComponent
 
 
 class SceneEntity(GameObject):
@@ -79,9 +80,57 @@ class Wall(SceneEntity):
         self.screen.blit(self.image, camera.apply(self))
 
 
-class StaticPlatform(SceneEntity):
+class BasePlatform(SceneEntity):
     """
-    A platform entity that the player can stand on.
+    A base platform that is to be inherited by other platforms.
+    """
+
+    def __init__(self, x, y, screen, resources):
+        """
+        :param x: Integer, the x-position of the wall.
+        :param y: Integer, the y-position of the wall.
+        :param screen: pygame.Surface, the screen to draw the wall onto.
+        :param resources: 2D Dictionary, mapping dir and file name to image.
+        """
+        super().__init__(screen)
+        self.rect = pg.Rect(x, y, 0, 0)
+        self.resources = resources
+        self.image = None
+
+    def resize(self, blocks, leftImage, midImage, rightImage):
+        """
+        Resizes the platform horizontally by some number of blocks specified.
+
+        :param blocks: Integer, the number of times to replicate the platform.
+        :param leftImage: pygame.Surface, the image of the left corner.
+        :param midImage: pygame.Surface, the image of the mid.
+        :param rightImage: pygame.Surface, the image of the right corner.
+        :return: pygame.Surface, the resized image of the platform
+        """
+        lw, lh = leftImage.get_size()
+        mw, mh = midImage.get_size()
+        rw, rh = rightImage.get_size()
+
+        # Creating platform image
+        platform = pg.Surface((lw + blocks*mw + rw, mh))
+        platform.blit(leftImage, (0, 0))
+        for i in range(blocks):
+            platform.blit(midImage, (lw + i*mw, 0))
+        platform.blit(rightImage, (lw + blocks*mw, 0))
+
+        # Newly created surface has a black background, so need to remove
+        # black pixels
+        platform.set_colorkey(settings.COLOURS["black"])
+        platform = platform.convert_alpha()
+        return platform
+
+    def drawWithCamera(self, camera):
+        self.screen.blit(self.image, camera.apply(self))
+
+
+class SPlatform(BasePlatform):
+    """
+    A static platform entity that the player can stand on.
     """
 
     def __init__(self, x, y, blocks, screen, resources):
@@ -92,39 +141,89 @@ class StaticPlatform(SceneEntity):
         :param screen: pygame.Surface, the screen to draw the wall onto.
         :param resources: 2D Dictionary, mapping dir and file name to image.
         """
-        super().__init__(screen)
-        self.resources = resources
-        self.image = self.resize(blocks)
-        self.rect = pg.Rect(x, y, 0, 0)
-        self.rect.size = self.image.get_size()
+        super().__init__(x, y, screen, resources)
 
-    def resize(self, blocks):
-        """
-        Resizes the platform horizontally by some number of blocks specified.
-
-        :param blocks: Integer, the number of times to replicate the platform.
-        :return: pygame.Surface, the resized image of the platform
-        """
         left = self.resources["platforms"]["platform_1.png"]
         mid = self.resources["platforms"]["platform_2.png"]
         right = self.resources["platforms"]["platform_3.png"]
+        self.image = self.resize(blocks, left, mid, right)
+        self.rect.size = self.image.get_size()
 
-        lw, lh = left.get_size()
-        mw, mh = mid.get_size()
-        rw, rh = right.get_size()
+    def drawWithCamera(self, camera):
+        self.screen.blit(self.image, camera.apply(self))
 
-        # Creating platform image
-        platform = pg.Surface((lw + blocks*mw + rw, mh))
-        platform.blit(left, (0, 0))
-        for i in range(blocks):
-            platform.blit(mid, (lw + i*mw, 0))
-        platform.blit(right, (lw + blocks*mw, 0))
 
-        # Newly created surface has a black background, so need to remove
-        # black pixels
-        platform.set_colorkey(settings.COLOURS["black"])
-        platform = platform.convert_alpha()
-        return platform
+class DPlatform(BasePlatform):
+    """
+    A directional platform entity that requires the player to jump from below
+    to pass through.
+    """
+
+    def __init__(self, x, y, blocks, screen, resources):
+        """
+        :param x: Integer, the x-position of the wall.
+        :param y: Integer, the y-position of the wall.
+        :param blocks: Integer, the number of times to replicate the wall.
+        :param screen: pygame.Surface, the screen to draw the wall onto.
+        :param resources: 2D Dictionary, mapping dir and file name to image.
+        """
+        super().__init__(x, y, screen, resources)
+
+        left = self.resources["platforms"]["platform_1.png"]
+        mid = self.resources["platforms"]["platform_2.png"]
+        right = self.resources["platforms"]["platform_3.png"]
+        self.image = self.resize(blocks, left, mid, right)
+        self.rect.size = self.image.get_size()
+
+    def drawWithCamera(self, camera):
+        self.screen.blit(self.image, camera.apply(self))
+
+
+class MPlatform(BasePlatform):
+    """
+    A moving platform entity that constantly moves between two points.
+    """
+
+    def __init__(self, A, B, dx, dy, screen, image):
+        """
+        :param A: 2-Tuple, containing coordinates of a point A.
+        :param B: 2-Tuple, containing coordinates of a point B.
+        :param dx: Number, pixels moved in the x-axis every physics tick.
+        :param dy: Number, pixels moved in the y-axis every physics tick.
+        :param screen: pygame.Surface, the screen to draw the wall onto.
+        :param image: pygame.Surface, the image of the platform.
+        """
+        super().__init__(A[0], A[1], screen, image)
+        self.image = image
+        self.rect.size = self.image.get_size()
+
+        self.state = "forward"
+        self.physics = PhysicsComponent(self)
+        self.physics.isGravity = False
+        self.A = A
+        self.B = B
+        self.dx = dx
+        self.dy = dy
+
+    def update(self):
+        xBoundB, yBoundB = self.B
+        xBoundA, yBoundA = self.A
+
+        if self.rect.x > xBoundB:
+            self.rect.x = xBoundB
+            self.dx = -self.dx
+        if self.rect.y > yBoundB:
+            self.dy = -self.dy
+
+        if self.rect.x < xBoundA:
+            self.rect.x = xBoundA
+            self.dx = -self.dx
+        if self.rect.y < yBoundA:
+            self.dy = -self.dy
+
+        self.physics.velocity.x = self.dx
+        self.physics.velocity.y = self.dy
+        self.physics.update()
 
     def drawWithCamera(self, camera):
         self.screen.blit(self.image, camera.apply(self))
@@ -231,44 +330,5 @@ class Door(SceneEntity):
         self.state = "open"
         events.messageScene("Door", "door", (self.doorNum, self.isClosed))
 
-
-
-
-
-
-class MovingPlatform(SceneEntity):
-    """
-    A moving platform that moves constantly between two points.
-    """
-
-    def __init__(self, x, y, dx, dy, boundVertical, boundHorizontal):
-        """
-        A simple constructor.
-        """
-        super().__init__()
-
-        self.moveX = moveX
-        self.moveY = moveY
-
-        self.boundary_top = boundVertical[0]
-        self.boundary_bottom = boundVertical[1]
-        self.boundary_left = boundHorizontal[0]
-        self.boundary_right = boundHorizontal[1]
-
-    def update(self):
-        """
-        Updating the moving platform to move in game.
-        """
-        self.rect.x += self.moveX
-        self.rect.y += self.moveY
-
-        cur_pos_x = self.rect.x
-        cur_pos_y = self.rect.y
-
-        if cur_pos_x < self.boundary_left or cur_pos_x > self.boundary_right:
-            self.moveX *= -1
-            
-        if cur_pos_y > self.boundary_bottom or cur_pos_y < self.boundary_top:
-            self.moveY *= -1
 
 

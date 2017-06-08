@@ -3,8 +3,10 @@ Responsible for applying physics on a game object.
 """
 from pygame.math import Vector2
 
+from xcape.common.object import GameObject
 
-class PhysicsComponent:
+
+class PhysicsComponent(GameObject):
     """
     Represents the physics component that can apply physics to a game object.
 
@@ -17,43 +19,51 @@ class PhysicsComponent:
 
     def __init__(self, gameObject):
         """
-        A simple constructor.
-
         :param gameObject: GameObject Class, representing any object within the
         game.
         """
         self.gameObject = gameObject
         self.velocity = Vector2(0, 0)
-        self.gravity = Vector2(0, 0.8)
-        self.jumpSpeed = -12
-        self.moveSpeed = 5
+        self.acceleration = Vector2(0, 0)
+        self.gravity = Vector2(0, 1)
+        self.jumpForce = -15
+        self.moveForce = 10
         self.maxSpeed = 20
-        self.counter = 0
+        self.tick = 0
+        self.isGravity = True
 
         # Increasing this variable too much can cause choppiness!
         # This variable needs to be tweaked until it feels smooth enough
-        self.TIME_STEP = 10
+        self.PHYSICS_TICK = 20
 
     def update(self):
-        """
-        Applies the physics on the game object.
-        """
-        self.counter += 1
+        self.tick += 1
 
-        if self.counter % self.TIME_STEP == 0:
+        if self.tick % self.PHYSICS_TICK == 0:
+            self.immediateUpdate()
+            self.tick = 0
+
+    def immediateUpdate(self):
+        """
+        Updates the physics immediately, ignoring the physics time step ticker.
+        """
+        if self.isGravity:
             self.applyGravity()
-            self.limitSpeed()
+        self.limitSpeed()
 
-            self.gameObject.rect.x += self.velocity.x
-            self.gameObject.rect.y += self.velocity.y
+        self.velocity.x += self.acceleration.x
+        self.velocity.y += self.acceleration.y
+        self.gameObject.rect.x += self.velocity.x
+        self.gameObject.rect.y += self.velocity.y
 
-            self.counter = 0
+        # Requires all forces to be re-applied for next iteration
+        self.acceleration = Vector2(0, 0)
 
     def applyGravity(self):
         """
         Applies gravity on the game object.
         """
-        self.velocity.y += self.gravity.y
+        self.acceleration.y += self.gravity.y
 
     def limitSpeed(self):
         """
@@ -66,7 +76,7 @@ class PhysicsComponent:
             if self.velocity.x > 0:
                 self.velocity.x = self.maxSpeed
             else:
-                self.gameObject.velocity.x = -self.maxSpeed
+                self.velocity.x = -self.maxSpeed
 
         if abs(self.velocity.y) > self.maxSpeed:
             if self.velocity.y > 0:

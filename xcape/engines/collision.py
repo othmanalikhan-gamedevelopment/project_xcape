@@ -29,7 +29,9 @@ class CollisionEngine(GameObject):
 
     def update(self):
         self.resolveWallCollisions()
-        self.resolvePlatformCollisions()
+        self.resolveSPlatformCollisions()
+        self.resolveDPlatformCollisions()
+        self.resolveMPlatformCollisions()
         self.resolveSwitchCollisions()
         # self.checkEnemyCollision()
         # self.checkScenarioBoundaryCollision()
@@ -56,18 +58,19 @@ class CollisionEngine(GameObject):
             elif direction == "right":
                 self.player.rect.right = wall.rect.left
 
-    def resolvePlatformCollisions(self):
+    def resolveSPlatformCollisions(self):
         """
-        Resolves any platform collisions.
+        Resolves any static platform collisions.
         """
-        hits = pg.sprite.spritecollide(self.player, self.scene.platforms, False)
+        hits = pg.sprite.spritecollide(self.player, self.scene.sPlatforms, False)
+
         for platform in hits:
             direction = self._checkCollisionDirection(self.player, platform)
 
             if direction == "bottom":
                 self.player.rect.bottom = platform.rect.top
-                self.player.physics.velocity.y = 0
                 self.player.canJump = True
+                self.player.physics.velocity.y = 0
 
             elif direction == "left":
                 self.player.rect.left = platform.rect.right
@@ -78,12 +81,57 @@ class CollisionEngine(GameObject):
             elif direction == "right":
                 self.player.rect.right = platform.rect.left
 
+    def resolveDPlatformCollisions(self):
+        """
+        Resolves any directional platform collisions.
+        """
+        hits = pg.sprite.spritecollide(self.player, self.scene.dPlatforms, False)
+
+        for platform in hits:
+            direction = self._checkCollisionDirection(self.player, platform)
+
+            if direction == "bottom":
+                tol = abs(self.player.rect.bottom - platform.rect.top)
+                if tol < 30:
+                    self.player.rect.bottom = platform.rect.top
+                    self.player.canJump = True
+
+                    # Allows conversation of velocity if the player jumps through
+                    if self.player.physics.velocity.y > 0:
+                        self.player.physics.velocity.y = 0
+
+    def resolveMPlatformCollisions(self):
+        """
+        Resolves any moving platform collisions.
+        """
+        hits = pg.sprite.spritecollide(self.player, self.scene.mPlatforms, False)
+
+        for platform in hits:
+            direction = self._checkCollisionDirection(self.player, platform)
+
+            if direction == "bottom":
+                self.player.rect.bottom = platform.rect.top
+                self.player.canJump = True
+                self.player.physics.velocity.y = 0
+
+            elif direction == "left":
+                self.player.rect.left = platform.rect.right
+
+            elif direction == "top":
+                self.player.rect.top = platform.rect.bottom
+
+            elif direction == "right":
+                self.player.rect.right = platform.rect.left
+
+            self.player.physics.velocity.x += platform.dx
+            # self.player.rect.x = platform.rect.x
+            # self.player.rect.y += platform.dy * 2
+
     def resolveSwitchCollisions(self):
         """
         Resolves any switch collisions.
         """
         switchesOn = [s for s in self.scene.switches if s.isOn]
-
         for s in switchesOn:
             if pg.sprite.collide_rect(self.player, s):
                 if (self.player.physics.velocity.x != 0 or
@@ -95,13 +143,12 @@ class CollisionEngine(GameObject):
         Resolves any door collisions.
         """
         doorsClosed = [d for d in self.scene.doors if d.isClosed]
-        hits = [pg.sprite.collide_rect(self.player, d) for d in self.scene.doors]
+        hits = pg.sprite.spritecollide(self.player, self.scene.doors, False)
 
         if hits and not doorsClosed:
             events.messageScene("collision_engine",
                                 "transition",
-                                self.scene.levelNum )
-
+                                self.scene.levelNum + 1)
 
     def _checkCollisionDirection(self, moving, static):
         """
@@ -167,57 +214,6 @@ class CollisionEngine(GameObject):
                 return "right"
 
 
-
-
-
-    def checkPlatformCollision(self):
-        """
-        Checks if the playerOne has collided with any platform in the scenario and
-        updates accordingly.
-        """
-        hitStatic = pg.sprite.spritecollide(self.player,
-                                            self.scene.platStatic,
-                                            False)
-        hitMoving = pg.sprite.spritecollide(self.player,
-                                            self.scene.platMoving,
-                                            False)
-        hitTransparent = pg.sprite.spritecollide(self.player,
-                                                 self.scene.platTransparent,
-                                                 False)
-        hits = hitStatic + hitMoving + hitTransparent
-
-        for plat in hits:
-
-            if isinstance(plat, TransparentPlatform):
-                tol = abs(self.player.rect.bottom - plat.rect.top)
-
-                if isCollideBottom:
-                    self.player.rect.bottom = plat.rect.top
-                    self.player.canJump = True
-
-                    if self.player.physics.velocity.y > 0:
-                        self.player.physics.velocity.y = 0
-
-                elif isCollideTop and tol < 10:
-                    self.player.rect.bottom = plat.rect.top
-
-            else:
-                # Moves the playerOne if the playerOne is on a moving platform
-                if isinstance(plat, MovingPlatform):
-                    self.player.rect.x += plat.moveX * 2
-                    self.player.rect.y += plat.moveY
-
-    def checkDoorCollision(self):
-        """
-        Checks if the playerOne has collided with any door in the scenario and
-        updates accordingly.
-        """
-        hits = pg.sprite.spritecollide(self.player,
-                                       self.scene.doorsOpen,
-                                       False)
-        if hits and self.scene.isDoorOpen:
-            print("entrar")
-            self.scene.isEnd = True
 
     def checkEnemyCollision(self):
         """

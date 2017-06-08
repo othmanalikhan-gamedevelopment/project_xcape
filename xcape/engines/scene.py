@@ -65,15 +65,17 @@ class SinglePlayer(GameObject):
         self.collisionEngine = None
 
         self.player = Player(self.screen, self.resourcesChar)
-        self.scene = self.loadScene(scenes.SoloScene01)
+        self.scene = self.loadScene(scenes.SoloScene02)
         self.nameToScene = \
             {
                 "blank_scene": scenes.BlankScene,
                 "scene_01": scenes.SoloScene01,
+                "scene_02": scenes.SoloScene02,
             }
         self.numToScene = \
             {
-                1: scenes.SoloScene01
+                1: scenes.SoloScene01,
+                2: scenes.SoloScene02,
             }
 
     def handleEvent(self, event):
@@ -113,11 +115,6 @@ class SinglePlayer(GameObject):
             self.collisionEngine.update()
             self.camera.update()
 
-            # Progress level
-            if self.scene.isEnd:
-                self.levelNum += 1
-                self.scene = self.loadScene(self.numToScene[self.levelNum])
-
     def draw(self):
         self.scene.drawWithCamera(self.camera)
         self.player.drawWithCamera(self.camera)
@@ -136,7 +133,7 @@ class SinglePlayer(GameObject):
         self.player.rect.center = scene.spawn
         self.camera = SimpleCamera(settings.WIDTH, settings.HEIGHT)
         self.camera.follow(self.player)
-        # self.camera.follow(scene.doors[0])
+        # self.camera.follow(scene.walls[2])
         self.collisionEngine = CollisionEngine(self.player, scene)
         events.messageMenu("single_player", "transition", "ui_menu")
         events.messageMenu("single_player", "health", 3)
