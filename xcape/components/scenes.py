@@ -8,7 +8,7 @@ import xcape.common.events as events
 import xcape.common.settings as settings
 from xcape.common.object import GameObject
 from xcape.entities.scene import (
-    Wall, SPlatform, DPlatform, MPlatform, Switch, Door
+    Wall, SPlatform, DPlatform, MPlatform, Switch, Door, Spike
 )
 
 
@@ -34,7 +34,7 @@ class BaseScene(GameObject):
         self.dPlatforms = []
         self.switches = []
         self.doors = []
-        self.enemies = []
+        self.spikes = []
 
     def handleEvent(self, event):
         pass
@@ -98,7 +98,7 @@ class BaseScene(GameObject):
         """
         pass
 
-    def addEnemies(self):
+    def addSpikes(self):
         """
         Adds enemies to the scene.
 
@@ -217,7 +217,7 @@ class SoloScene02(BaseScene):
         self.mPlatforms = self.addMPlatforms()
         self.switches = self.addSwitches()
         self.doors = self.addDoors()
-        # self.enemies = pg.sprite.Group()
+        self.spikes = self.addSpikes()
 
     def handleEvent(self, event):
         if event.type == events.SCENE_EVENT:
@@ -237,6 +237,7 @@ class SoloScene02(BaseScene):
         [p.drawWithCamera(camera) for p in self.mPlatforms]
         [s.drawWithCamera(camera) for s in self.switches]
         [d.drawWithCamera(camera) for d in self.doors]
+        [s.drawWithCamera(camera) for s in self.spikes]
 
     def addWalls(self):
         wall = self.resources["walls"]
@@ -257,6 +258,9 @@ class SoloScene02(BaseScene):
 
             Wall(655, 300, 1, "h", wall["block_left.png"], self.screen),
             Wall(710, 300, 1, "h", wall["block_right.png"], self.screen),
+
+            Wall(770, 42, 4, "v", wall["plat_mid.png"], self.screen),
+            Wall(770, 297, 1, "v", wall["plat_bot.png"], self.screen),
         ]
 
         return boundaries + obstacles
@@ -275,22 +279,38 @@ class SoloScene02(BaseScene):
 
         platforms = \
         [
-            MPlatform((150, 260), (350, 260), 3, 0, self.screen, hImage),
+            MPlatform((150, 260), (350, 260), 10, 0, self.screen, hImage),
+            MPlatform((340, 450), (600, 450), 10, 0, self.screen, hImage),
+            MPlatform((340, 300), (600, 300), 10, 0, self.screen, hImage),
+            MPlatform((660, 350), (660, 435), 0, 0, self.screen, vImage),
+            MPlatform((660, 435), (660, 520), 0, 0, self.screen, vImage),
         ]
         return platforms
 
     def addSwitches(self):
         switches = \
         [
-            Switch(480, 430, 1, self.screen, self.resources),
+            Switch(250, 200, 1, self.screen, self.resources),
+            Switch(480, 200, 2, self.screen, self.resources),
+            Switch(480, 430, 3, self.screen, self.resources),
+            Switch(700, 200, 4, self.screen, self.resources),
         ]
         return switches
 
     def addDoors(self):
         door1 = Door(850, 440, 1, self.screen, self.resources)
-        door1.waitForSwitches([1])
+        door1.waitForSwitches([1, 2, 3, 4])
         return [door1]
 
+    def addSpikes(self):
+        spike = self.resources["spikes"]
+        spikes = \
+        [
+            Spike(325, 525, 5, "h", spike["up.png"], self.screen),
+            Spike(550, 525, 5, "h", spike["up.png"], self.screen),
+        ]
+
+        return spikes
 
 
 

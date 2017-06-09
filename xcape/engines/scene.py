@@ -60,7 +60,6 @@ class SinglePlayer(GameObject):
         self.resourcesChar = loader.loadContent(loader.CHARACTERS_PATH)
         self.pause = False
 
-        self.levelNum = 0
         self.camera = None
         self.collisionEngine = None
 
@@ -77,6 +76,10 @@ class SinglePlayer(GameObject):
                 1: scenes.SoloScene01,
                 2: scenes.SoloScene02,
             }
+
+        # Loads UI
+        events.messageMenu("single_player", "transition", "ui_menu")
+        events.messageMenu("single_player", "health", self.player.lives)
 
     def handleEvent(self, event):
         self.collisionEngine.eventHandler(event)
@@ -99,14 +102,17 @@ class SinglePlayer(GameObject):
             if event.category == "transition":
                 self.scene = self.loadScene(self.numToScene[event.data])
 
-            # # Restart level
-            # if self.player.isHit:
-            #     self.scene.restart()
+            if event.category == "death":
+                self.player.lives -= 1
+                events.messageMenu("single_player", "health", self.player.lives)
 
-            # # Game over
-            # if self.player.lives == 0:
-            #     self.pause = True
-            #     events.messageMenu("single_player", "transition", "game_over")
+                if self.player.lives == 0:
+                    self.pause = True
+                    self.scene = self.loadScene(self.nameToScene["blank_scene"])
+                    events.messageMenu("single_player", "transition", "game_over_menu")
+                else:
+                    levelNum = self.scene.levelNum
+                    self.scene = self.loadScene(self.numToScene[levelNum])
 
     def update(self):
         if not self.pause:
@@ -133,8 +139,6 @@ class SinglePlayer(GameObject):
         self.player.rect.center = scene.spawn
         self.camera = SimpleCamera(settings.WIDTH, settings.HEIGHT)
         self.camera.follow(self.player)
-        # self.camera.follow(scene.walls[2])
+        # self.camera.follow(scene.spikes[1])
         self.collisionEngine = CollisionEngine(self.player, scene)
-        events.messageMenu("single_player", "transition", "ui_menu")
-        events.messageMenu("single_player", "health", 3)
         return scene

@@ -213,18 +213,20 @@ class MPlatform(BasePlatform):
             self.rect.x = xBoundB
             self.dx = -self.dx
         if self.rect.y > yBoundB:
+            self.rect.y = yBoundB
             self.dy = -self.dy
 
         if self.rect.x < xBoundA:
             self.rect.x = xBoundA
             self.dx = -self.dx
         if self.rect.y < yBoundA:
+            self.rect.y = yBoundA
             self.dy = -self.dy
 
+        # Velocity is set to be constant and not additive
         self.physics.velocity.x = self.dx
-        # self.physics.addVelocityX("move", self.dx)
-        # self.physics.addVelocityY("move", self.dy)
         self.physics.velocity.y = self.dy
+
         self.physics.update()
 
     def drawWithCamera(self, camera):
@@ -333,4 +335,46 @@ class Door(SceneEntity):
         events.messageScene("Door", "door", (self.doorNum, self.isClosed))
 
 
+class Spike(SceneEntity):
+    """
+    A spike entity that kills the player.
+    """
 
+    def __init__(self, x, y, blocks, orientation, image, screen):
+        """
+        :param x: Integer, the x-position of the wall.
+        :param y: Integer, the y-position of the wall.
+        :param image: pygame.Surface, the image of the wall.
+        :param screen: pygame.Surface, the screen to draw the wall onto.
+        """
+        super().__init__(screen)
+        self.image = self.resize(blocks, orientation, image)
+        self.rect = pg.Rect(x, y, 0, 0)
+        self.rect.size = self.image.get_size()
+
+    def resize(self, num, orientation, image):
+        """
+        Adds more spikes in the specified orientation (vertical or horizontal).
+
+        :param num: Integer, the total number of blocks the final wall has.
+        :param orientation: String, either 'v' or 'h' for vertical or horizontal.
+        :param image: pygame.Surface, the image of the wall.
+        :return: pygame.Surface, the resized image of the platform
+        """
+        w, h = image.get_size()
+
+        if orientation == "h":
+            spike = pg.Surface((num * w, h))
+            for i in range(num):
+                spike.blit(image, (i*w, 0))
+
+        if orientation == "v":
+            spike = pg.Surface((w, num * h))
+            for i in range(num):
+                spike.blit(image, (0, i*h))
+
+        spike.set_colorkey(settings.COLOURS["black"])
+        return spike
+
+    def drawWithCamera(self, camera):
+        self.screen.blit(self.image, camera.apply(self))

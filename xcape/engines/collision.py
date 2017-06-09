@@ -33,7 +33,7 @@ class CollisionEngine(GameObject):
         self.resolveDPlatformCollisions()
         self.resolveMPlatformCollisions()
         self.resolveSwitchCollisions()
-        # self.checkEnemyCollision()
+        self.resolveSpikeCollisions()
         # self.checkScenarioBoundaryCollision()
 
     def resolveWallCollisions(self):
@@ -149,6 +149,15 @@ class CollisionEngine(GameObject):
                                 "transition",
                                 self.scene.levelNum + 1)
 
+    def resolveSpikeCollisions(self):
+        """
+        Resolves any spike collisions.
+        """
+        hits = pg.sprite.spritecollide(self.player, self.scene.spikes, False)
+
+        if hits:
+            events.messageScene("collision_engine", "death")
+
     def _checkCollisionDirection(self, moving, static):
         """
         Checks if the moving game object has collided with the static game
@@ -211,20 +220,6 @@ class CollisionEngine(GameObject):
                 return "top"
             elif isCollideRight:
                 return "right"
-
-    def checkEnemyCollision(self):
-        """
-        Checks if the playerOne has collided with any enemy or harmful object
-        in the scenario and updates accordingly.
-        """
-        enemy_hit = pg.sprite.spritecollide(self.player,
-                                            self.scene.enemies,
-                                            False)
-
-        if enemy_hit:
-            print("choque")
-            self.player.lives -= 1
-            self.player.isHit = True
 
     def checkScenarioBoundaryCollision(self):
         """

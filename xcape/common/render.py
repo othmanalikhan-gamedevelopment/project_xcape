@@ -66,5 +66,8 @@ class ImageLabel(GameObject):
         self.screen = screen
         self.rect = pg.Rect(x, y, 0, 0)
 
+    def update(self):
+        self.animation.update()
+
     def draw(self):
         self.animation.draw()

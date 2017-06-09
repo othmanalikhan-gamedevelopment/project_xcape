@@ -423,7 +423,6 @@ class UIMenu(BaseMenu):
 
                 for heart in self.lives:
                     heart.state = "no_life"
-
                 for heart in range(currentHP):
                     self.lives[heart].state = "life"
 
