@@ -222,6 +222,8 @@ class MPlatform(BasePlatform):
             self.dy = -self.dy
 
         self.physics.velocity.x = self.dx
+        # self.physics.addVelocityX("move", self.dx)
+        # self.physics.addVelocityY("move", self.dy)
         self.physics.velocity.y = self.dy
         self.physics.update()
 

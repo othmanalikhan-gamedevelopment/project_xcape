@@ -123,9 +123,8 @@ class CollisionEngine(GameObject):
             elif direction == "right":
                 self.player.rect.right = platform.rect.left
 
-            self.player.physics.velocity.x += platform.dx
-            # self.player.rect.x = platform.rect.x
-            # self.player.rect.y += platform.dy * 2
+            self.player.rect.x += platform.dx
+            self.player.rect.y += platform.dy
 
     def resolveSwitchCollisions(self):
         """
@@ -212,8 +211,6 @@ class CollisionEngine(GameObject):
                 return "top"
             elif isCollideRight:
                 return "right"
-
-
 
     def checkEnemyCollision(self):
         """

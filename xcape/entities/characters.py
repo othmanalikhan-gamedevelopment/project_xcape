@@ -28,6 +28,8 @@ class Player(GameObject, pg.sprite.Sprite):
         self.orientation = "right"
         self.lives = 3
         self.canJump = True
+        self.jumpSpeed = -15
+        self.moveSpeed = 10
 
         cat = self.resources["cat"]
         self.animation = AnimationComponent(self, enableOrientation=True)
@@ -76,7 +78,8 @@ class Player(GameObject, pg.sprite.Sprite):
         Makes the player jump.
         """
         if self.canJump:
-            self.physics.acceleration.y = self.physics.jumpForce
+            self.physics.velocity.y = self.jumpSpeed
+            self.physics.addVelocityY("jump", self.jumpSpeed)
             self.canJump = False
 
     def moveLeft(self):
@@ -84,9 +87,9 @@ class Player(GameObject, pg.sprite.Sprite):
         Moves the player left.
         """
         if self.state == "running" and self.orientation == "right":
-            self.physics.acceleration.x += -self.physics.moveForce * 2
+            self.physics.addVelocityX("move", -self.moveSpeed * 2)
         else:
-            self.physics.acceleration.x += -self.physics.moveForce
+            self.physics.addVelocityX("move", -self.moveSpeed)
 
         self.state = "running"
         self.orientation = "left"
@@ -96,9 +99,9 @@ class Player(GameObject, pg.sprite.Sprite):
         Moves the player right.
         """
         if self.state == "running" and self.orientation == "left":
-            self.physics.acceleration.x += self.physics.moveForce * 2
+            self.physics.addVelocityX("move", self.moveSpeed * 2)
         else:
-            self.physics.acceleration.x += self.physics.moveForce
+            self.physics.addVelocityX("move", self.moveSpeed)
 
         self.state = "running"
         self.orientation = "right"

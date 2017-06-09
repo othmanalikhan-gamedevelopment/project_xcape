@@ -1,6 +1,8 @@
 """
 Responsible for applying physics on a game object.
 """
+from collections import OrderedDict
+
 from pygame.math import Vector2
 
 from xcape.common.object import GameObject
@@ -24,17 +26,16 @@ class PhysicsComponent(GameObject):
         """
         self.gameObject = gameObject
         self.velocity = Vector2(0, 0)
-        self.acceleration = Vector2(0, 0)
-        self.gravity = Vector2(0, 1)
-        self.jumpForce = -15
-        self.moveForce = 10
+        self.gravity = Vector2(0, 2)
         self.maxSpeed = 20
-        self.tick = 0
         self.isGravity = True
+        self._nameToVelX = OrderedDict()
+        self._nameToVelY = OrderedDict()
 
         # Increasing this variable too much can cause choppiness!
         # This variable needs to be tweaked until it feels smooth enough
         self.PHYSICS_TICK = 20
+        self.tick = 0
 
     def update(self):
         self.tick += 1
@@ -47,23 +48,46 @@ class PhysicsComponent(GameObject):
         """
         Updates the physics immediately, ignoring the physics time step ticker.
         """
-        if self.isGravity:
-            self.applyGravity()
+        self.applyGravity()
         self.limitSpeed()
 
-        self.velocity.x += self.acceleration.x
-        self.velocity.y += self.acceleration.y
+        # Computing velocity
+        self.velocity.x += sum(self._nameToVelX.values())
+        self.velocity.y += sum(self._nameToVelY.values())
+
+        # Computing displacement
         self.gameObject.rect.x += self.velocity.x
         self.gameObject.rect.y += self.velocity.y
 
-        # Requires all forces to be re-applied for next iteration
-        self.acceleration = Vector2(0, 0)
+        # Removing all velocity components applied (but the main velocity
+        # vector variable is conserved)
+        self._nameToVelX.clear()
+        self._nameToVelY.clear()
+
+    def addVelocityX(self, name, amount):
+        """
+        Adds a new velocity component along the x-axis.
+
+        :param name: String, the name of the velocity being applied.
+        :param amount: Number, the amount of velocity to add.
+        """
+        self._nameToVelX[name] = amount
+
+    def addVelocityY(self, name, amount):
+        """
+        Adds a new velocity component along the y-axis.
+
+        :param name: String, the name of the velocity being applied.
+        :param amount: Number, the amount of velocity to add.
+        """
+        self._nameToVelY[name] = amount
 
     def applyGravity(self):
         """
         Applies gravity on the game object.
         """
-        self.acceleration.y += self.gravity.y
+        if self.isGravity:
+            self.addVelocityY("gravity", self.gravity.y)
 
     def limitSpeed(self):
         """
