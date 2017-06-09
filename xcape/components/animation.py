@@ -107,7 +107,10 @@ class AnimationComponent(GameObject):
         """
         self.stateToAnimation[state] = images
         self.stateToDuration[state] = duration
+
+        self.animation = images
         self.image = images[0]
+        self.duration = duration
 
     def scaleAll(self, DIMENSIONS):
         """

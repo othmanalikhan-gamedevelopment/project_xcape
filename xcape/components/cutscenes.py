@@ -226,9 +226,7 @@ class JailCutscene(BaseCutscene):
     def handleEvent(self, event):
         if event.type == pg.KEYDOWN:
             if event.key == pg.K_RETURN:
-                events.messageCutScene("jail_cutscene",
-                                       "transition",
-                                       "blank_cutscene")
+                self._messageStart()
 
     def update(self):
         self.elapsed = pg.time.get_ticks() - self.origin
@@ -247,12 +245,7 @@ class JailCutscene(BaseCutscene):
         else:
             if not self.isComplete:
                 self.isComplete = True
-                events.messageCutScene("jail_cutscene",
-                                       "transition",
-                                       "blank_cutscene")
-                events.messageScene("jail_cutscene",
-                                    "transition",
-                                    "scene_01")
+                self._messageStart()
 
         self.dialogue.update()
         self.animation.update()
@@ -260,6 +253,14 @@ class JailCutscene(BaseCutscene):
     def draw(self):
         self.animation.draw()
         self.dialogue.draw()
+
+    def _messageStart(self):
+        """
+        Sends out events to end the cutscene and start playing the game.
+        """
+        events.messageCutScene("jail_cutscene", "transition", "blank_cutscene")
+        events.messageScene("jail_cutscene", "start_game", "solo")
+
 
 
 class Dialogue(GameObject):

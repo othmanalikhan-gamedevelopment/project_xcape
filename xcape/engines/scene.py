@@ -25,7 +25,7 @@ class SceneEngine(GameObject):
         :param screen: pygame.Surface, representing the screen.
         """
         self.screen = screen
-        self.mode = SinglePlayer(screen)
+        self.mode = None
 
     def handleEvent(self, event):
         if self.mode:
@@ -64,17 +64,19 @@ class SinglePlayer(GameObject):
         self.collisionEngine = None
 
         self.player = Player(self.screen, self.resourcesChar)
-        self.scene = self.loadScene(scenes.SoloScene02)
+        self.scene = self.loadScene(scenes.BlankScene)
         self.nameToScene = \
             {
                 "blank_scene": scenes.BlankScene,
                 "scene_01": scenes.SoloScene01,
                 "scene_02": scenes.SoloScene02,
+                "scene_03": scenes.SoloScene03,
             }
         self.numToScene = \
             {
                 1: scenes.SoloScene01,
                 2: scenes.SoloScene02,
+                3: scenes.SoloScene03,
             }
 
         # Loads UI
@@ -129,7 +131,7 @@ class SinglePlayer(GameObject):
         """
         Starts a new game.
         """
-        self.loadScene(self.numToScene[1])
+        self.scene = self.loadScene(self.numToScene[1])
 
     def loadScene(self, scene):
         """

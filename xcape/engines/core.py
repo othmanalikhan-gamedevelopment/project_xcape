@@ -7,9 +7,9 @@ import pygame as pg
 import xcape.common.events as events
 import xcape.common.settings as settings
 from xcape.common.object import GameObject
+from xcape.engines.cutscene import CutSceneEngine
 from xcape.engines.menu import MenuEngine
 from xcape.engines.scene import SceneEngine
-from xcape.engines.cutscene import CutSceneEngine
 
 
 class CoreEngine(GameObject):
@@ -32,6 +32,10 @@ class CoreEngine(GameObject):
         self.sceneEngine = SceneEngine(self.screen)
         self.menuEngine = MenuEngine(self.screen)
         self.cutsceneEngine = CutSceneEngine(self.screen)
+
+        events.messageScene("core_engine", "transition", "blank_scene")
+        events.messageMenu("core_engine", "transition", "splash_menu")
+        events.messageCutScene("core_engine", "transition", "blank_cutscene")
 
     def handleEvent(self, _):
         for event in pg.event.get():
