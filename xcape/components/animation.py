@@ -120,8 +120,6 @@ class AnimationComponent(GameObject):
         lastIndex = len(self.animation)-1
         duration = self.timings[-1]
 
-        print(self.frameNum, self.elapsed, self.timings)
-
         if duration >= self.elapsed >= 0:
             if self.elapsed > self.timings[self.frameNum]:
                 self.frameNum += 1

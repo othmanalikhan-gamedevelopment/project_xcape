@@ -4,13 +4,11 @@ The scene engine of the game.
 import pygame as pg
 
 import xcape.common.events as events
-import xcape.common.loader as loader
 import xcape.common.settings as settings
 import xcape.components.scenes as scenes
 from xcape.common.object import GameObject
 from xcape.components.camera import SimpleCamera
 from xcape.engines.collision import CollisionEngine
-from xcape.entities.characters import Player
 
 
 class SceneEngine(GameObject):
@@ -56,14 +54,11 @@ class SinglePlayer(GameObject):
         :param screen: pygame.Surface, representing the screen.
         """
         self.screen = screen
-        self.resourcesScene = loader.loadContent(loader.SCENES_PATH)
-        self.resourcesChar = loader.loadContent(loader.CHARACTERS_PATH)
-        self.pause = False
 
+        self.pause = False
         self.camera = None
         self.collisionEngine = None
 
-        self.player = Player(self.screen, self.resourcesChar)
         self.scene = self.loadScene(scenes.BlankScene)
         self.nameToScene = \
             {
@@ -71,21 +66,19 @@ class SinglePlayer(GameObject):
                 "scene_01": scenes.SoloScene01,
                 "scene_02": scenes.SoloScene02,
                 "scene_03": scenes.SoloScene03,
+                "scene_04": scenes.SoloScene04,
             }
         self.numToScene = \
             {
                 1: scenes.SoloScene01,
                 2: scenes.SoloScene02,
                 3: scenes.SoloScene03,
+                4: scenes.SoloScene04,
             }
-
-        # Loads UI
-        events.messageMenu("single_player", "transition", "ui_menu")
-        events.messageMenu("single_player", "health", self.player.lives)
+        self.loadUI()
 
     def handleEvent(self, event):
         self.collisionEngine.eventHandler(event)
-        self.player.handleEvent(event)
         self.scene.handleEvent(event)
 
         if event.type == pg.KEYDOWN:
@@ -108,10 +101,12 @@ class SinglePlayer(GameObject):
                     self.scene = self.loadScene(self.numToScene[event.data])
 
             if event.category == "death":
-                self.player.lives -= 1
-                events.messageMenu("single_player", "health", self.player.lives)
+                self.scene.player.lives -= 1
+                events.messageMenu("single_player",
+                                   "health",
+                                   self.scene.player.lives)
 
-                if self.player.lives == 0:
+                if self.scene.player.lives == 0:
                     self.pause = True
                     self.scene = self.loadScene(self.nameToScene["blank_scene"])
                     events.messageMenu("single_player", "transition", "game_over_menu")
@@ -122,28 +117,33 @@ class SinglePlayer(GameObject):
     def update(self):
         if not self.pause:
             self.scene.update()
-            self.player.update()
             self.collisionEngine.update()
             self.camera.update()
 
     def draw(self):
         self.scene.drawWithCamera(self.camera)
-        self.player.drawWithCamera(self.camera)
 
     def startGame(self):
         """
         Starts a new game.
         """
-        self.scene = self.loadScene(self.numToScene[1])
+        self.scene = self.loadScene(self.numToScene[4])
 
     def loadScene(self, scene):
         """
         Loads the given scene.
         """
-        scene = scene(self.screen, self.resourcesScene)
-        self.player.rect.center = scene.spawn
+        scene = scene(self.screen)
+        scene.player.rect.center = scene.spawn
         self.camera = SimpleCamera(settings.WIDTH, settings.HEIGHT)
-        self.camera.follow(self.player)
+        self.camera.follow(scene.player)
         # self.camera.follow(scene.spikes[1])
-        self.collisionEngine = CollisionEngine(self.player, scene)
+        self.collisionEngine = CollisionEngine(scene)
         return scene
+
+    def loadUI(self):
+        """
+        Triggers an event to display the UI menu.
+        """
+        events.messageMenu("single_player", "transition", "ui_menu")
+        events.messageMenu("single_player", "health", self.scene.player.lives)

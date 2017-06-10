@@ -7,6 +7,7 @@ import pygame as pg
 import xcape.common.events as events
 import xcape.common.render as render
 import xcape.common.settings as settings
+from xcape.common.loader import menuResources
 from xcape.common.object import GameObject
 from xcape.common.render import TextLabel, ImageLabel
 from xcape.components.animation import AnimationComponent
@@ -17,13 +18,11 @@ class BaseMenu(GameObject):
     The base menu for any menu.
     """
 
-    def __init__(self, screen, resources):
+    def __init__(self, screen):
         """
         :param screen: pygame.Surface, representing the screen.
-        :param resources: 2D Dictionary, mapping dir and file name to image.
         """
         self.screen = screen
-        self.resources = resources
         self.rect = pg.Rect(0, 0, 0, 0)
         self.state = "idle"
 
@@ -42,8 +41,8 @@ class BlankMenu(BaseMenu):
     A blank menu that does nothing except display a blank screen.
     """
 
-    def __init__(self, screen, resources):
-        super().__init__(screen, resources)
+    def __init__(self, screen):
+        super().__init__(screen)
 
 
 class SplashMenu(BaseMenu):
@@ -51,15 +50,15 @@ class SplashMenu(BaseMenu):
     The splash screen of the game.
     """
 
-    def __init__(self, screen, resources):
-        super().__init__(screen, resources)
-        background = self.resources["screens"]["splash.jpg"]
+    def __init__(self, screen):
+        super().__init__(screen)
+        background = menuResources["screens"]["splash.jpg"]
         background = render.addBackground(background)
         self.image = background
         self.rect = pg.Rect(0, 0, 0, 0)
         self.rect.size = self.image.get_size()
 
-        self.effect = FadeEffect(screen, resources)
+        self.effect = FadeEffect(screen)
 
     def handleEvent(self, event):
         if event.type == pg.KEYDOWN:
@@ -83,10 +82,10 @@ class MainMenu(BaseMenu):
     The main menu of the game.
     """
 
-    def __init__(self, screen, resources):
-        super().__init__(screen, resources)
+    def __init__(self, screen):
+        super().__init__(screen)
 
-        self.image = self.resources["screens"]["main.jpg"]
+        self.image = menuResources["screens"]["main.jpg"]
         self.rect = pg.Rect(0, 0, 0, 0)
         self.rect.size = self.image.get_size()
 
@@ -124,15 +123,14 @@ class MainMenu(BaseMenu):
                                  self.screen)
         self.title = ImageLabel(60,
                                 55,
-                                self.resources["assets"]["title.png"],
+                                menuResources["assets"]["title.png"],
                                 self.screen)
         self.arrow = _Arrow(self.x - 40,
                             self.y + 28,
                             self.dx,
                             self.dy,
                             self.totalOptions,
-                            self.screen,
-                            self.resources)
+                            self.screen)
 
     def handleEvent(self, event):
         if event.type == pg.KEYDOWN:
@@ -176,10 +174,10 @@ class OptionsMenu(BaseMenu):
     The options menu of the game.
     """
 
-    def __init__(self, screen, resources):
-        super().__init__(screen, resources)
+    def __init__(self, screen):
+        super().__init__(screen)
 
-        self.image = self.resources["screens"]["options.jpg"]
+        self.image = menuResources["screens"]["options.jpg"]
         self.rect = pg.Rect(0, 0, 0, 0)
         self.rect.size = self.image.get_size()
 
@@ -191,8 +189,7 @@ class OptionsMenu(BaseMenu):
         self.arrow = _Arrow(x - 40, y - 10,
                             dx, dy,
                             1,
-                            screen,
-                            resources)
+                            screen)
 
         self.backgroundSetting = _SettingsLabel("Background Flip: ",
                                                 ["Vertical", "Horizontal"],
@@ -201,15 +198,15 @@ class OptionsMenu(BaseMenu):
                                                 130,
                                                 screen)
 
-        self.escapeImage = ImageLabel(self.resources["assets"]["esc.png"],
-                                      25, 440,
+        self.escapeImage = ImageLabel(25, 440,
+                                      menuResources["assets"]["esc.png"],
                                       screen)
         self.escapeText = TextLabel("Esc para volver",
                                     14, fontColour,
                                     50, 445,
                                     screen)
 
-        self.effect = FadeEffect(self.screen, self.resources)
+        self.effect = FadeEffect(self.screen)
         self.dt = self.effect.timeEndDarken - self.effect.timeStartDarken
         self.effect.timeStartDarken = float('inf')
         self.effect.timeEndDarken = float('inf')
@@ -261,10 +258,10 @@ class GameOverMenu(BaseMenu):
     The game over menu of the game.
     """
 
-    def __init__(self, screen, resources):
-        super().__init__(screen, resources)
+    def __init__(self, screen):
+        super().__init__(screen)
 
-        self.image = self.resources["screens"]["game_over.png"]
+        self.image = menuResources["screens"]["game_over.png"]
         self.rect = pg.Rect(0, 0, 0, 0)
         self.rect.size = self.image.get_size()
 
@@ -299,11 +296,11 @@ class PauseMenu(BaseMenu):
     The pause menu of the game.
     """
 
-    def __init__(self, screen, resources):
-        super().__init__(screen, resources)
+    def __init__(self, screen):
+        super().__init__(screen)
         self.rect = pg.Rect(0, 0, 0, 0)
 
-        self.image = self.resources["screens"]["fade.png"]
+        self.image = menuResources["screens"]["fade.png"]
         self.rect = pg.Rect(0, 0, 0, 0)
         self.rect.size = self.image.get_size()
 
@@ -341,9 +338,8 @@ class FadeEffect(BaseMenu):
     Black screen --> Normal screen --> Black screen
     """
 
-    def __init__(self, screen, resources):
+    def __init__(self, screen):
         self.screen = screen
-        self.resources = resources
         self.rect = pg.Rect(0, 0, 0, 0)
         self.transparentValue = 255
         self.isComplete = False
@@ -404,8 +400,8 @@ class UIMenu(BaseMenu):
     The UI in a scene.
     """
 
-    def __init__(self, screen, resources):
-        super().__init__(screen, resources)
+    def __init__(self, screen):
+        super().__init__(screen)
         self.rect = pg.Rect(0, 0, 0, 0)
 
         self.x = 50
@@ -440,7 +436,7 @@ class UIMenu(BaseMenu):
 
         :param numLives: Integer, the number of lives.
         """
-        assets = self.resources["assets"]
+        assets = menuResources["assets"]
         for i in range(numLives):
             label = ImageLabel(self.x + i*self.dx, self.y, None, self.screen)
             label.state = "life"
@@ -509,7 +505,7 @@ class _Arrow(GameObject):
     An arrow that highlights the option that the user is hovering over.
     """
 
-    def __init__(self, x, y, dx, dy, totalOptions, screen, resources):
+    def __init__(self, x, y, dx, dy, totalOptions, screen):
         """
         :param x: Integer, the x-position of the arrow.
         :param y: Integer, the y-position of the arrow.
@@ -517,7 +513,6 @@ class _Arrow(GameObject):
         :param dy: Integer, the change in y-position per moevement.
         :param totalOptions: Integer, the total number of options.
         :param screen: pygame.Surface, representing the screen.
-        :param resources: 2D Dictionary, mapping dir and file name to image.
         """
         self.rect = pg.Rect(x, y, 0, 0)
         self.dx = dx
@@ -528,7 +523,7 @@ class _Arrow(GameObject):
 
         self.state = "idle"
         self.animation = AnimationComponent(self)
-        self.animation.add("idle", resources["assets"]["coin"], 350)
+        self.animation.add("idle", menuResources["assets"]["coin"], 350)
 
     def update(self):
         self.animation.update()

@@ -3,7 +3,6 @@ The menu engine of the game.
 """
 
 import xcape.common.events as events
-import xcape.common.loader as loader
 import xcape.components.menus as menus
 from xcape.common.object import GameObject
 
@@ -21,9 +20,8 @@ class MenuEngine(GameObject):
         """
         super().__init__()
         self.screen = screen
-        self.resources = loader.loadContent(loader.MENUS_PATH)
 
-        self.menu = menus.BlankMenu(self.screen, self.resources)
+        self.menu = menus.BlankMenu(self.screen)
         self.nameToMenu = \
             {
                 "blank_menu": menus.BlankMenu,
@@ -41,7 +39,7 @@ class MenuEngine(GameObject):
         if event.type == events.MENU_EVENT:
             if event.category == "transition":
                 menu = self.nameToMenu[event.data]
-                self.menu = menu(self.screen, self.resources)
+                self.menu = menu(self.screen)
 
     def update(self):
         self.menu.update()

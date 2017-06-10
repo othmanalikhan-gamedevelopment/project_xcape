@@ -7,6 +7,7 @@ import pygame as pg
 import xcape.common.events as events
 import xcape.common.render as render
 import xcape.common.settings as settings
+from xcape.common.loader import cutsceneResources
 from xcape.common.object import GameObject
 from xcape.components.animation import AnimationComponent
 
@@ -16,13 +17,11 @@ class BaseCutscene(GameObject):
     The base cutscene for any cutscene.
     """
 
-    def __init__(self, screen, resources):
+    def __init__(self, screen):
         """
         :param screen: pygame.Surface, representing the screen.
-        :param resources: 2D Dictionary, mapping dir and file name to image.
         """
         self.screen = screen
-        self.resources = resources
         self.rect = pg.Rect(0, 0, 0, 0)
         self.state = "idle"
 
@@ -41,8 +40,8 @@ class BlankCutscene(BaseCutscene):
     A blank cutscene that does nothing except display a blank screen.
     """
 
-    def __init__(self, screen, resources):
-        super().__init__(screen, resources)
+    def __init__(self, screen):
+        super().__init__(screen)
 
 
 class OfficeCutscene(BaseCutscene):
@@ -50,11 +49,11 @@ class OfficeCutscene(BaseCutscene):
     The cutscene where the dog and cat are talking in the office.
     """
 
-    def __init__(self, screen, resources):
-        super().__init__(screen, resources)
+    def __init__(self, screen):
+        super().__init__(screen)
         self.rect = pg.Rect(0, 0, 0, 0)
-        intro = self.resources["intro"]
-        assets = self.resources["assets"]
+        intro = cutsceneResources["intro"]
+        assets = cutsceneResources["assets"]
 
         self.state = "talk_cat"
         self.animation = AnimationComponent(self)
@@ -121,11 +120,11 @@ class TelephoneCutscene(BaseCutscene):
     The cutscene where the dog is talking on the phone.
     """
 
-    def __init__(self, screen, resources):
-        super().__init__(screen, resources)
+    def __init__(self, screen):
+        super().__init__(screen)
         self.rect = pg.Rect(0, 0, 0, 0)
-        intro = self.resources["intro"]
-        assets = self.resources["assets"]
+        intro = cutsceneResources["intro"]
+        assets = cutsceneResources["assets"]
 
         self.state = "no_telephone"
         self.animation = AnimationComponent(self)
@@ -204,11 +203,11 @@ class JailCutscene(BaseCutscene):
     The cutscene where the cat is being escorted to jail.
     """
 
-    def __init__(self, screen, resources):
-        super().__init__(screen, resources)
+    def __init__(self, screen):
+        super().__init__(screen)
         self.rect = pg.Rect(0, 0, 0, 0)
-        intro = self.resources["intro"]
-        assets = self.resources["assets"]
+        intro = cutsceneResources["intro"]
+        assets = cutsceneResources["assets"]
 
         self.state = "empty_jail"
         self.animation = AnimationComponent(self)

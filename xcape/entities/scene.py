@@ -6,6 +6,7 @@ import pygame as pg
 
 import xcape.common.events as events
 import xcape.common.settings as settings
+from xcape.common.loader import sceneResources
 from xcape.common.object import GameObject
 from xcape.components.animation import AnimationComponent
 from xcape.components.physics import PhysicsComponent
@@ -85,16 +86,14 @@ class BasePlatform(SceneEntity):
     A base platform that is to be inherited by other platforms.
     """
 
-    def __init__(self, x, y, screen, resources):
+    def __init__(self, x, y, screen):
         """
         :param x: Integer, the x-position of the wall.
         :param y: Integer, the y-position of the wall.
         :param screen: pygame.Surface, the screen to draw the wall onto.
-        :param resources: 2D Dictionary, mapping dir and file name to image.
         """
         super().__init__(screen)
         self.rect = pg.Rect(x, y, 0, 0)
-        self.resources = resources
         self.image = None
 
     def resize(self, blocks, leftImage, midImage, rightImage):
@@ -133,19 +132,18 @@ class SPlatform(BasePlatform):
     A static platform entity that the player can stand on.
     """
 
-    def __init__(self, x, y, blocks, screen, resources):
+    def __init__(self, x, y, blocks, screen):
         """
         :param x: Integer, the x-position of the wall.
         :param y: Integer, the y-position of the wall.
         :param blocks: Integer, the number of times to replicate the wall.
         :param screen: pygame.Surface, the screen to draw the wall onto.
-        :param resources: 2D Dictionary, mapping dir and file name to image.
         """
-        super().__init__(x, y, screen, resources)
+        super().__init__(x, y, screen)
 
-        left = self.resources["platforms"]["platform_1.png"]
-        mid = self.resources["platforms"]["platform_2.png"]
-        right = self.resources["platforms"]["platform_3.png"]
+        left = sceneResources["platforms"]["platform_1.png"]
+        mid = sceneResources["platforms"]["platform_2.png"]
+        right = sceneResources["platforms"]["platform_3.png"]
         self.image = self.resize(blocks, left, mid, right)
         self.rect.size = self.image.get_size()
 
@@ -159,19 +157,18 @@ class DPlatform(BasePlatform):
     to pass through.
     """
 
-    def __init__(self, x, y, blocks, screen, resources):
+    def __init__(self, x, y, blocks, screen):
         """
         :param x: Integer, the x-position of the wall.
         :param y: Integer, the y-position of the wall.
         :param blocks: Integer, the number of times to replicate the wall.
         :param screen: pygame.Surface, the screen to draw the wall onto.
-        :param resources: 2D Dictionary, mapping dir and file name to image.
         """
-        super().__init__(x, y, screen, resources)
+        super().__init__(x, y, screen)
 
-        left = self.resources["platforms"]["platform_1.png"]
-        mid = self.resources["platforms"]["platform_2.png"]
-        right = self.resources["platforms"]["platform_3.png"]
+        left = sceneResources["platforms"]["platform_1.png"]
+        mid = sceneResources["platforms"]["platform_2.png"]
+        right = sceneResources["platforms"]["platform_3.png"]
         self.image = self.resize(blocks, left, mid, right)
         self.rect.size = self.image.get_size()
 
@@ -238,21 +235,19 @@ class Switch(SceneEntity):
     A switch entity that the player can turn on and off.
     """
 
-    def __init__(self, x, y, switchNum, screen, resources):
+    def __init__(self, x, y, switchNum, screen):
         """
         :param x: Integer, the x-position of the wall.
         :param y: Integer, the y-position of the wall.
         :param switchNum: Integer, identifying the number of the button.
         :param screen: pygame.Surface, the screen to draw the wall onto.
-        :param resources: 2D Dictionary, mapping dir and file name to image.
         """
         super().__init__(screen)
-        self.resources = resources
         self.rect = pg.Rect(x, y, 0, 0)
         self.buttonNum = switchNum
         self.isOn = True
 
-        button = resources["buttons"]
+        button = sceneResources["buttons"]
         self.state = "on"
         self.animation = AnimationComponent(self, enableRepeat=False)
         self.animation.add("on", [button["switch"][0]], float('inf'))
@@ -278,22 +273,20 @@ class Door(SceneEntity):
     A door entity that the player can enter.
     """
 
-    def __init__(self, x, y, doorNum, screen, resources):
+    def __init__(self, x, y, doorNum, screen):
         """
         :param x: Integer, the x-position of the wall.
         :param y: Integer, the y-position of the wall.
         :param doorNum: Integer, identifying the number of the button.
         :param screen: pygame.Surface, the screen to draw the wall onto.
-        :param resources: 2D Dictionary, mapping dir and file name to image.
         """
         super().__init__(screen)
-        self.resources = resources
         self.rect = pg.Rect(x, y, 0, 0)
         self.doorNum = doorNum
         self.switchesWaiting = None
         self.isClosed = True
 
-        button = resources["doors"]
+        button = sceneResources["doors"]
         self.state = "closed"
         self.animation = AnimationComponent(self, enableRepeat=False)
         self.animation.add("open", [button["open.png"]], float('inf'))

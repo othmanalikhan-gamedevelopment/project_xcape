@@ -1,16 +1,14 @@
 """
 Responsible for loading common rendering resources.
+
+NOTE: Upon importing this module, all image assets are loaded!
 """
 
 import os
 
 import pygame as pg
-import xcape.common.settings as settings
 
-MENUS_PATH = os.path.join("images", "menus")
-SCENES_PATH = os.path.join("images", "scenes")
-CUTSCENES_PATH = os.path.join("images", "cutscenes")
-CHARACTERS_PATH = os.path.join("images", "characters")
+import xcape.common.settings as settings
 
 
 def loadContent(path):
@@ -80,3 +78,20 @@ def loadImage(path, alpha=True):
     else:
         image = image.convert()
     return image
+
+MENUS_PATH = os.path.join("images", "menus")
+SCENES_PATH = os.path.join("images", "scenes")
+CUTSCENES_PATH = os.path.join("images", "cutscenes")
+CHARACTERS_PATH = os.path.join("images", "characters")
+
+# PyGame needs to be partially initialised becaues loading functions for IO
+# use pygame functions which need to be initialised.
+pg.display.init()
+pg.display.set_caption(settings.TITLE)
+pg.display.set_mode((settings.WIDTH, settings.HEIGHT))
+
+# Loads all assets
+menuResources = loadContent(MENUS_PATH)
+sceneResources = loadContent(SCENES_PATH)
+cutsceneResources = loadContent(CUTSCENES_PATH)
+characterResources = loadContent(CHARACTERS_PATH)
