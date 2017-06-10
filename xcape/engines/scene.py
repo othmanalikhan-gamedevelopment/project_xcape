@@ -102,7 +102,10 @@ class SinglePlayer(GameObject):
 
         if event.type == events.SCENE_EVENT:
             if event.category == "transition":
-                self.scene = self.loadScene(self.numToScene[event.data])
+                try:
+                    self.scene = self.loadScene(self.nameToScene[event.data])
+                except KeyError:
+                    self.scene = self.loadScene(self.numToScene[event.data])
 
             if event.category == "death":
                 self.player.lives -= 1

@@ -54,13 +54,14 @@ class ImageLabel(GameObject):
     Represents an image that can be drawn on screen.
     """
 
-    def __init__(self, image, x, y, screen):
+    def __init__(self, x, y, image, screen):
         """
-        :param image: pygame.Surface, representing the image to display.
         :param x: Integer, the x-position of the text.
         :param y: Integer, the y-position of the text.
+        :param image: pygame.Surface, representing the image to display.
         :param screen: pygame.Surface, representing the screen.
         """
+        self.state = "idle"
         self.animation = AnimationComponent(self)
         self.animation.add("idle", [image], float('inf'))
         self.screen = screen

@@ -262,7 +262,6 @@ class JailCutscene(BaseCutscene):
         events.messageScene("jail_cutscene", "start_game", "solo")
 
 
-
 class Dialogue(GameObject):
     """
     Represents a collection of dialogue bubbles.

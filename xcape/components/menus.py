@@ -122,9 +122,9 @@ class MainMenu(BaseMenu):
                                  self.x,
                                  self.y + 4 * self.dy,
                                  self.screen)
-        self.title = ImageLabel(self.resources["assets"]["title.png"],
-                                60,
+        self.title = ImageLabel(60,
                                 55,
+                                self.resources["assets"]["title.png"],
                                 self.screen)
         self.arrow = _Arrow(self.x - 40,
                             self.y + 28,
@@ -428,11 +428,11 @@ class UIMenu(BaseMenu):
 
     def update(self):
         for live in self.lives:
-            live.update()
+            live.animation.update()
 
     def draw(self):
         for live in self.lives:
-            live.draw()
+            live.animation.draw()
 
     def setLives(self, numLives):
         """
@@ -442,10 +442,10 @@ class UIMenu(BaseMenu):
         """
         assets = self.resources["assets"]
         for i in range(numLives):
-            label = ImageLabel(None, self.x + i*self.dx, self.y, self.screen)
+            label = ImageLabel(self.x + i*self.dx, self.y, None, self.screen)
+            label.state = "life"
             label.animation.add("no_life", [assets["no_life.png"]], float('inf'))
             label.animation.add("life", [assets["life.png"]], float('inf'))
-            label.state = "life"
             self.lives.append(label)
 
 
