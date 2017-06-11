@@ -114,12 +114,19 @@ class SoloScene01(BaseScene):
 
     def __init__(self, screen):
         super().__init__(screen)
-        self.spawn = (70, 70)
+        self.spawn = (70, 300)
         self.levelNum = 1
 
         self.image = sceneResources["screens"]["scene_01.png"]
         self.rect = pg.Rect(0, 0, 0, 0)
         self.rect.size = self.image.get_size()
+
+        self.player = Player(self.screen)
+        self.player.rect.center = self.spawn
+
+        self.boss = PigBoss(self.screen)
+        self.boss.rect.center = (70, 70)
+        self.boss.follow(self.player)
 
         self.walls = self.addWalls()
         self.sPlatforms = self.addSPlatforms()
@@ -127,12 +134,17 @@ class SoloScene01(BaseScene):
         self.doors = self.addDoors()
 
     def handleEvent(self, event):
+        self.player.handleEvent(event)
+        self.boss.handleEvent(event)
+
         if event.type == events.SCENE_EVENT:
             [d.handleEvent(event) for d in self.doors]
 
     def update(self):
         [s.update() for s in self.switches]
         [d.update() for d in self.doors]
+        self.player.update()
+        self.boss.update()
 
     def drawWithCamera(self, camera):
         self.screen.fill(settings.COLOURS["black_red"])
@@ -142,23 +154,34 @@ class SoloScene01(BaseScene):
         [p.drawWithCamera(camera) for p in self.sPlatforms]
         [s.drawWithCamera(camera) for s in self.switches]
         [d.drawWithCamera(camera) for d in self.doors]
+        self.player.drawWithCamera(camera)
+        self.boss.drawWithCamera(camera)
 
     def addWalls(self):
         wall = sceneResources["walls"]
         boundaries = \
         [
-            Wall(-45, 10, 8, "v", wall["boundary_left.png"], self.screen),
-            Wall(-45, 520, 11, "h", wall["boundary_bot.png"], self.screen),
-            Wall(610, 138, 6, "v", wall["boundary_right.png"], self.screen),
-            Wall(164, 138, 7, "h", wall["boundary_top.png"], self.screen),
-            Wall(160, 9, 2, "v", wall["boundary_right.png"], self.screen),
+            Wall(0, 10, 8, "v", wall["boundary_left.png"], self.screen),
+            Wall(19, 478, 4, "h", wall["boundary_bot.png"], self.screen),
+            Wall(320, 478, 5, "h", wall["boundary_bot.png"], self.screen),
+            Wall(628, 138, 6, "v", wall["boundary_right.png"], self.screen),
+            Wall(164, 138, 8, "h", wall["boundary_top.png"], self.screen),
+            Wall(160, 138, 1, "v", wall["corner_top_left.png"], self.screen),
+            Wall(160, 10, 2, "v", wall["boundary_right.png"], self.screen),
+            Wall(628, 138, 1, "v", wall["upper_corner_right.png"], self.screen),
+            Wall(0, 478, 1, "h", wall["inner_corner_left.png"], self.screen),
+            Wall(628, 478, 1, "h", wall["inner_corner_right.png"], self.screen),
+            Wall(240, 478, 1, "h", wall["inner_corner_right.png"], self.screen),
+            Wall(240, 426, 1, "h", wall["corner_bot_right.png"], self.screen),
+            Wall(308, 426, 1, "h", wall["corner_bot_left.png"], self.screen),
+            Wall(320, 478, 1, "h", wall["inner_corner_left.png"], self.screen)
         ]
 
         obstacles = \
         [
-            Wall(5, 460, 1, "h", wall["block_left.png"], self.screen),
-            Wall(65, 460, 1, "h", wall["block_right.png"], self.screen),
-            Wall(150, 490, 1, "h", wall["block_small.png"], self.screen),
+            Wall(48, 418, 1, "h", wall["block_left.png"], self.screen),
+            Wall(108, 418, 1, "h", wall["block_right.png"], self.screen),
+            Wall(170, 450, 1, "h", wall["block_small.png"], self.screen),
         ]
 
         return boundaries + obstacles
@@ -166,8 +189,8 @@ class SoloScene01(BaseScene):
     def addSPlatforms(self):
         platforms = \
         [
-            SPlatform(260, 370, 2, self.screen),
-            SPlatform(500, 310, 1, self.screen),
+            #SPlatform(260, 370, 2, self.screen),
+            SPlatform(500, 330, 1, self.screen),
             SPlatform(200, 250, 3, self.screen),
         ]
         return platforms
@@ -175,14 +198,14 @@ class SoloScene01(BaseScene):
     def addSwitches(self):
         switches = \
         [
-            Switch(330, 320, 1, self.screen),
-            Switch(540, 260, 2, self.screen),
-            Switch(210, 200, 3, self.screen)
+            Switch(295, 376, 1, self.screen),
+            Switch(540, 280, 2, self.screen),
+            Switch(295, 205, 3, self.screen)
         ]
         return switches
 
     def addDoors(self):
-        door1 = Door(515, 410, 1, self.screen)
+        door1 = Door(547, 370, 1, self.screen)
         door1.waitForSwitches([1, 2, 3])
         return [door1]
 
@@ -197,7 +220,7 @@ class SoloScene02(BaseScene):
         self.spawn = (70, 510)
         self.levelNum = 2
 
-        self.image = sceneResources["screens"]["scene_02.jpg"]
+        self.image = sceneResources["screens"]["scene_02.png"]
         self.rect = pg.Rect(0, 0, 0, 0)
         self.rect.size = self.image.get_size()
 
@@ -470,18 +493,27 @@ class SoloScene04(BaseScene):
         wall = sceneResources["walls"]
         boundaries = \
         [
-            Wall(-45, 10, 8, "v", wall["boundary_left.png"], self.screen),
-            Wall(-45, 520, 11, "h", wall["boundary_bot.png"], self.screen),
-            Wall(610, 138, 6, "v", wall["boundary_right.png"], self.screen),
-            Wall(164, 138, 7, "h", wall["boundary_top.png"], self.screen),
-            Wall(160, 9, 2, "v", wall["boundary_right.png"], self.screen),
+            Wall(0, 10, 8, "v", wall["boundary_left.png"], self.screen),
+            Wall(19, 478, 4, "h", wall["boundary_bot.png"], self.screen),
+            Wall(320, 478, 5, "h", wall["boundary_bot.png"], self.screen),
+            Wall(628, 138, 6, "v", wall["boundary_right.png"], self.screen),
+            Wall(164, 138, 8, "h", wall["boundary_top.png"], self.screen),
+            Wall(160, 138, 1, "v", wall["corner_top_left.png"], self.screen),
+            Wall(160, 10, 2, "v", wall["boundary_right.png"], self.screen),
+            Wall(628, 138, 1, "v", wall["upper_corner_right.png"], self.screen),
+            Wall(0, 478, 1, "h", wall["inner_corner_left.png"], self.screen),
+            Wall(628, 478, 1, "h", wall["inner_corner_right.png"], self.screen),
+            Wall(240, 478, 1, "h", wall["inner_corner_right.png"], self.screen),
+            Wall(240, 426, 1, "h", wall["corner_bot_right.png"], self.screen),
+            Wall(308, 426, 1, "h", wall["corner_bot_left.png"], self.screen),
+            Wall(320, 478, 1, "h", wall["inner_corner_left.png"], self.screen)
         ]
 
         obstacles = \
         [
-            Wall(5, 460, 1, "h", wall["block_left.png"], self.screen),
-            Wall(65, 460, 1, "h", wall["block_right.png"], self.screen),
-            Wall(150, 490, 1, "h", wall["block_small.png"], self.screen),
+            Wall(48, 418, 1, "h", wall["block_left.png"], self.screen),
+            Wall(108, 418, 1, "h", wall["block_right.png"], self.screen),
+            Wall(170, 450, 1, "h", wall["block_small.png"], self.screen),
         ]
 
         return boundaries + obstacles
@@ -489,8 +521,8 @@ class SoloScene04(BaseScene):
     def addSPlatforms(self):
         platforms = \
         [
-            SPlatform(260, 370, 2, self.screen),
-            SPlatform(500, 310, 1, self.screen),
+            #SPlatform(260, 370, 2, self.screen),
+            SPlatform(500, 330, 1, self.screen),
             SPlatform(200, 250, 3, self.screen),
         ]
         return platforms
@@ -498,14 +530,13 @@ class SoloScene04(BaseScene):
     def addSwitches(self):
         switches = \
         [
-            Switch(330, 320, 1, self.screen),
-            Switch(540, 260, 2, self.screen),
-            Switch(210, 200, 3, self.screen)
+            Switch(295, 376, 1, self.screen),
+            Switch(540, 280, 2, self.screen),
+            Switch(295, 205, 3, self.screen)
         ]
         return switches
 
     def addDoors(self):
-        door1 = Door(515, 410, 1, self.screen)
+        door1 = Door(547, 370, 1, self.screen)
         door1.waitForSwitches([1, 2, 3])
         return [door1]
-

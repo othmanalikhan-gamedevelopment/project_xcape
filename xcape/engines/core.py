@@ -34,12 +34,12 @@ class CoreEngine(GameObject):
         self.menuEngine = MenuEngine(self.screen)
         self.cutsceneEngine = CutSceneEngine(self.screen)
 
-        events.messageScene("core_engine", "start_game", "solo")
-        events.messageScene("core_engine", "transition", "scene_04")
+        # events.messageScene("core_engine", "start_game", "solo")
+        # events.messageScene("core_engine", "transition", "scene_04")
         # events.messageScene("core_engine", "transition", "blank_scene")
 
-        events.messageMenu("core_engine", "transition", "blank_menu")
-        # events.messageMenu("core_engine", "transition", "splash_menu")
+        # events.messageMenu("core_engine", "transition", "blank_menu")
+        events.messageMenu("core_engine", "transition", "splash_menu")
 
         events.messageCutScene("core_engine", "transition", "blank_cutscene")
 

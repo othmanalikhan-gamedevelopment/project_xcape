@@ -43,7 +43,7 @@ class SplashMenu(BaseMenu):
 
     def __init__(self, screen):
         super().__init__(screen)
-        background = menuResources["screens"]["splash.jpg"]
+        background = menuResources["screens"]["splash.png"]
         background = render.addBackground(background)
         self.image = background
         self.rect = pg.Rect(0, 0, 0, 0)
@@ -76,7 +76,7 @@ class MainMenu(BaseMenu):
     def __init__(self, screen):
         super().__init__(screen)
 
-        self.image = menuResources["screens"]["main.jpg"]
+        self.image = menuResources["screens"]["main.png"]
         self.rect = pg.Rect(0, 0, 0, 0)
         self.rect.size = self.image.get_size()
 
@@ -164,7 +164,7 @@ class OptionsMenu(BaseMenu):
     def __init__(self, screen):
         super().__init__(screen)
 
-        self.image = menuResources["screens"]["options.jpg"]
+        self.image = menuResources["screens"]["options.png"]
         self.rect = pg.Rect(0, 0, 0, 0)
         self.rect.size = self.image.get_size()
 
