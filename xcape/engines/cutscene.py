@@ -20,25 +20,29 @@ class CutSceneEngine(GameObject):
         """
         self.screen = screen
 
-        self.cutscene = cutscenes.BlankCutscene(self.screen)
+        self.cutscene = None
         self.nameToCutscene = \
             {
-                "blank_cutscene": cutscenes.BlankCutscene,
+                "blank_cutscene": None,
                 "office_cutscene": cutscenes.OfficeCutscene,
                 "telephone_cutscene": cutscenes.TelephoneCutscene,
                 "jail_cutscene": cutscenes.JailCutscene
             }
 
     def handleEvent(self, event):
-        self.cutscene.handleEvent(event)
+        if self.cutscene:
+            self.cutscene.handleEvent(event)
 
         if event.type == events.CUTSCENE_EVENT:
             if event.category == "transition":
                 cutscene = self.nameToCutscene[event.data]
-                self.cutscene = cutscene(self.screen)
+                if cutscene:
+                    self.cutscene = cutscene(self.screen)
 
     def update(self):
-        self.cutscene.update()
+        if self.cutscene:
+            self.cutscene.update()
 
     def draw(self):
-        self.cutscene.draw()
+        if self.cutscene:
+            self.cutscene.draw()

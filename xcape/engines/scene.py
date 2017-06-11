@@ -55,14 +55,14 @@ class SinglePlayer(GameObject):
         """
         self.screen = screen
 
-        self.pause = False
+        self.scene = None
         self.camera = None
         self.collisionEngine = None
+        self.pause = False
 
-        self.scene = self.loadScene(scenes.BlankScene)
         self.nameToScene = \
             {
-                "blank_scene": scenes.BlankScene,
+                "blank_scene": None,
                 "scene_01": scenes.SoloScene01,
                 "scene_02": scenes.SoloScene02,
                 "scene_03": scenes.SoloScene03,
@@ -70,12 +70,12 @@ class SinglePlayer(GameObject):
             }
         self.numToScene = \
             {
+                0: None,
                 1: scenes.SoloScene01,
                 2: scenes.SoloScene02,
                 3: scenes.SoloScene03,
                 4: scenes.SoloScene04,
             }
-        self.loadUI()
 
     def handleEvent(self, event):
         self.collisionEngine.eventHandler(event)
@@ -83,67 +83,84 @@ class SinglePlayer(GameObject):
 
         if event.type == pg.KEYDOWN:
             if event.key == pg.K_ESCAPE:
-                self.pause = not self.pause
-                if self.pause:
-                    events.messageMenu("single_player",
-                                       "transition",
-                                       "pause_menu")
-                else:
-                    events.messageMenu("single_player",
-                                       "transition",
-                                       "blank_menu")
+                self._togglePause()
 
         if event.type == events.SCENE_EVENT:
             if event.category == "transition":
                 try:
-                    self.scene = self.loadScene(self.nameToScene[event.data])
+                    self._loadScene(self.nameToScene[event.data])
                 except KeyError:
-                    self.scene = self.loadScene(self.numToScene[event.data])
+                    self._loadScene(self.numToScene[event.data])
 
             if event.category == "death":
                 self.scene.player.lives -= 1
-                events.messageMenu("single_player",
-                                   "health",
-                                   self.scene.player.lives)
-
+                events.messageMenu("single_player", "health", self.scene.player.lives)
                 if self.scene.player.lives == 0:
-                    self.pause = True
-                    self.scene = self.loadScene(self.nameToScene["blank_scene"])
-                    events.messageMenu("single_player", "transition", "game_over_menu")
+                    self._showGameOver()
                 else:
-                    levelNum = self.scene.levelNum
-                    self.scene = self.loadScene(self.numToScene[levelNum])
+                    self._restartScene()
 
     def update(self):
-        if not self.pause:
+        if not self.pause and self.scene:
             self.scene.update()
             self.collisionEngine.update()
             self.camera.update()
 
     def draw(self):
-        self.scene.drawWithCamera(self.camera)
+        if self.scene:
+            self.scene.drawWithCamera(self.camera)
 
     def startGame(self):
         """
         Starts a new game.
         """
-        self.scene = self.loadScene(self.numToScene[4])
+        self._loadScene(self.nameToScene["scene_04"])
 
-    def loadScene(self, scene):
+    def _loadScene(self, Scene):
         """
         Loads the given scene.
-        """
-        scene = scene(self.screen)
-        scene.player.rect.center = scene.spawn
-        self.camera = SimpleCamera(settings.WIDTH, settings.HEIGHT)
-        self.camera.follow(scene.player)
-        # self.camera.follow(scene.spikes[1])
-        self.collisionEngine = CollisionEngine(scene)
-        return scene
 
-    def loadUI(self):
+        :param Scene: BaseScene inheritor, representing a scene class.
+        """
+        if Scene:
+            self.scene = Scene(self.screen)
+            self.collisionEngine = CollisionEngine(self.scene)
+            self._loadUI(self.scene.player.lives)
+
+            self.camera = SimpleCamera(settings.WIDTH, settings.HEIGHT)
+            self.camera.follow(self.scene.player)
+            # self.camera.follow(self.scene.walls[0])
+
+    def _loadUI(self, health):
         """
         Triggers an event to display the UI menu.
+
+        :param health: Integer, the number of hearts to display on the UI.
         """
         events.messageMenu("single_player", "transition", "ui_menu")
-        events.messageMenu("single_player", "health", self.scene.player.lives)
+        events.messageMenu("single_player", "health", health)
+
+    def _restartScene(self):
+        """
+        Restarts the current scene.
+        """
+        levelNum = self.scene.levelNum
+        self._loadScene(self.numToScene[levelNum])
+
+    def _showGameOver(self):
+        """
+        Pauses the game and triggers the game over screen.
+        """
+        self.pause = True
+        self._loadScene(self.nameToScene["blank_scene"])
+        events.messageMenu("single_player", "transition", "game_over_menu")
+
+    def _togglePause(self):
+        """
+        Pauses the game and triggers the pause menu and vice-versa.
+        """
+        self.pause = not self.pause
+        if self.pause:
+            events.messageMenu("single_player", "transition", "pause_menu")
+        else:
+            events.messageMenu("single_player", "transition", "blank_menu")

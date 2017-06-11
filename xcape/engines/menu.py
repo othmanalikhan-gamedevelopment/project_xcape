@@ -21,10 +21,10 @@ class MenuEngine(GameObject):
         super().__init__()
         self.screen = screen
 
-        self.menu = menus.BlankMenu(self.screen)
+        self.menu = None
         self.nameToMenu = \
             {
-                "blank_menu": menus.BlankMenu,
+                "blank_menu": None,
                 "splash_menu": menus.SplashMenu,
                 "main_menu": menus.MainMenu,
                 "options_menu": menus.OptionsMenu,
@@ -34,15 +34,19 @@ class MenuEngine(GameObject):
             }
 
     def handleEvent(self, event):
-        self.menu.handleEvent(event)
+        if self.menu:
+            self.menu.handleEvent(event)
 
         if event.type == events.MENU_EVENT:
             if event.category == "transition":
                 menu = self.nameToMenu[event.data]
-                self.menu = menu(self.screen)
+                if menu:
+                    self.menu = menu(self.screen)
 
     def update(self):
-        self.menu.update()
+        if self.menu:
+            self.menu.update()
 
     def draw(self):
-        self.menu.draw()
+        if self.menu:
+            self.menu.draw()

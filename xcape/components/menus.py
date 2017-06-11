@@ -36,15 +36,6 @@ class BaseMenu(GameObject):
         pass
 
 
-class BlankMenu(BaseMenu):
-    """
-    A blank menu that does nothing except display a blank screen.
-    """
-
-    def __init__(self, screen):
-        super().__init__(screen)
-
-
 class SplashMenu(BaseMenu):
     """
     The splash screen of the game.
@@ -153,10 +144,6 @@ class MainMenu(BaseMenu):
 
     def update(self):
         self.title.update()
-        self.option1.update()
-        self.option2.update()
-        self.option3.update()
-        self.option4.update()
         self.arrow.update()
 
     def draw(self):
@@ -238,7 +225,6 @@ class OptionsMenu(BaseMenu):
         self.backgroundSetting.update()
         self.arrow.update()
         self.escapeImage.update()
-        self.escapeText.update()
         self.effect.update()
 
         if self.effect.isComplete:
@@ -324,7 +310,6 @@ class PauseMenu(BaseMenu):
 
     def update(self):
         self.screen.blit(self.image, self.rect)
-        self.pauseText.update()
 
     def draw(self):
         self.screen.blit(self.image, self.rect)
@@ -473,9 +458,7 @@ class _SettingsLabel(GameObject):
             for choice in settingChoices]
 
     def update(self):
-        self.name.update()
         self.optionChosen = self.options[self.index]
-        self.optionChosen.update()
 
     def draw(self):
         self.name.draw()

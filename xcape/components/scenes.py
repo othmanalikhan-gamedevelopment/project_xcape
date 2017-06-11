@@ -8,7 +8,7 @@ import xcape.common.events as events
 import xcape.common.settings as settings
 from xcape.common.loader import sceneResources
 from xcape.common.object import GameObject
-from xcape.entities.characters import Player
+from xcape.entities.characters import Player, PigBoss
 from xcape.entities.scene import (
     Wall, SPlatform, DPlatform, MPlatform, Switch, Door, Spike
 )
@@ -105,17 +105,6 @@ class BaseScene(GameObject):
         :return: List, containing enemy entities.
         """
         pass
-
-
-class BlankScene(BaseScene):
-    """
-    A blank scene that does nothing except display a blank screen.
-    """
-
-    def __init__(self, screen):
-        super().__init__(screen)
-        self.player = Player(screen)
-        self.spawn = (0, 0)
 
 
 class SoloScene01(BaseScene):
@@ -319,8 +308,8 @@ class SoloScene03(BaseScene):
 
     def __init__(self, screen):
         super().__init__(screen)
-        # self.spawn = (315, 180)
-        self.spawn = (70, 510)
+        self.spawn = (315, 180)
+        # self.spawn = (70, 510)
         self.levelNum = 2
 
         self.image = sceneResources["screens"]["scene_02.jpg"]
@@ -434,7 +423,7 @@ class SoloScene04(BaseScene):
 
     def __init__(self, screen):
         super().__init__(screen)
-        self.spawn = (70, 70)
+        self.spawn = (70, 300)
         self.levelNum = 1
 
         self.image = sceneResources["screens"]["scene_01.png"]
@@ -442,17 +431,20 @@ class SoloScene04(BaseScene):
         self.rect.size = self.image.get_size()
 
         self.player = Player(self.screen)
+        self.player.rect.center = self.spawn
 
-
+        self.boss = PigBoss(self.screen)
+        self.boss.rect.center = (70, 70)
+        self.boss.follow(self.player)
 
         self.walls = self.addWalls()
         self.sPlatforms = self.addSPlatforms()
         self.switches = self.addSwitches()
         self.doors = self.addDoors()
-        # self.bosses = [PigBoss(screen["characters"])]
 
     def handleEvent(self, event):
         self.player.handleEvent(event)
+        self.boss.handleEvent(event)
 
         if event.type == events.SCENE_EVENT:
             [d.handleEvent(event) for d in self.doors]
@@ -460,8 +452,8 @@ class SoloScene04(BaseScene):
     def update(self):
         [s.update() for s in self.switches]
         [d.update() for d in self.doors]
-        # [b.update() for b in self.bosses]
         self.player.update()
+        self.boss.update()
 
     def drawWithCamera(self, camera):
         self.screen.fill(settings.COLOURS["black_red"])
@@ -472,6 +464,7 @@ class SoloScene04(BaseScene):
         [s.drawWithCamera(camera) for s in self.switches]
         [d.drawWithCamera(camera) for d in self.doors]
         self.player.drawWithCamera(camera)
+        self.boss.drawWithCamera(camera)
 
     def addWalls(self):
         wall = sceneResources["walls"]

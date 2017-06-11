@@ -35,15 +35,6 @@ class BaseCutscene(GameObject):
         pass
 
 
-class BlankCutscene(BaseCutscene):
-    """
-    A blank cutscene that does nothing except display a blank screen.
-    """
-
-    def __init__(self, screen):
-        super().__init__(screen)
-
-
 class OfficeCutscene(BaseCutscene):
     """
     The cutscene where the dog and cat are talking in the office.
@@ -107,7 +98,6 @@ class OfficeCutscene(BaseCutscene):
                                        "transition",
                                        "telephone_cutscene")
 
-        self.dialogue.update()
         self.animation.update()
 
     def draw(self):
@@ -190,7 +180,6 @@ class TelephoneCutscene(BaseCutscene):
                                        "transition",
                                        "jail_cutscene")
 
-        self.dialogue.update()
         self.animation.update()
 
     def draw(self):
@@ -246,7 +235,6 @@ class JailCutscene(BaseCutscene):
                 self.isComplete = True
                 self._messageStart()
 
-        self.dialogue.update()
         self.animation.update()
 
     def draw(self):
@@ -276,9 +264,6 @@ class Dialogue(GameObject):
 
         blankBubble = _Bubble(pg.Surface((0, 0)), 0, 0, self.screen)
         self.bubbles.append(blankBubble)
-
-    def update(self):
-        self.bubbles[self.index].update()
 
     def draw(self):
         self.bubbles[self.index].draw()

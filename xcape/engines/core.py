@@ -5,14 +5,11 @@ The core engine of the game.
 import pygame as pg
 
 import xcape.common.events as events
-import xcape.common.loader as loader
 import xcape.common.settings as settings
 from xcape.common.object import GameObject
 from xcape.engines.cutscene import CutSceneEngine
 from xcape.engines.menu import MenuEngine
 from xcape.engines.scene import SceneEngine
-
-print(loader.CHARACTERS_PATH)
 
 
 class CoreEngine(GameObject):
@@ -24,6 +21,8 @@ class CoreEngine(GameObject):
     """
 
     def __init__(self):
+        # Loads all images into memory
+
         pg.init()
         self.screen = pg.display.get_surface()
 

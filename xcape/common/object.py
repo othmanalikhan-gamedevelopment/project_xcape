@@ -15,17 +15,17 @@ class GameObject:
 
         :param event: pygame.Event, allowing event-driven programming.
         """
-        pass
+        raise NotImplementedError
 
     def update(self):
         """
         Updates the logic of the game object every game tick.
         """
-        pass
+        raise NotImplementedError
 
     def draw(self):
         """
         Renders the game object to the screen every game tick.
         """
-        pass
+        raise NotImplementedError
 
