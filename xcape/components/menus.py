@@ -175,7 +175,7 @@ class OptionsMenu(BaseMenu):
 
         self.arrow = _Arrow(x - 40, y - 10,
                             dx, dy,
-                            1,
+                            2,
                             screen)
 
         self.backgroundSetting = _SettingsLabel("Background Flip: ",
@@ -184,6 +184,13 @@ class OptionsMenu(BaseMenu):
                                                 x, y,
                                                 130,
                                                 screen)
+
+        self.fullscreenSetting = _SettingsLabel("Full Screen: ",
+                                        ["Disable", "Enable"],
+                                        fontSize, fontColour,
+                                        x, y+dy,
+                                        130,
+                                        screen)
 
         self.escapeImage = ImageLabel(25, 440,
                                       menuResources["assets"]["esc.png"],
@@ -209,20 +216,40 @@ class OptionsMenu(BaseMenu):
                 self.arrow.moveUp()
             if event.key == pg.K_DOWN:
                 self.arrow.moveDown()
-            if event.key == pg.K_RIGHT:
-                self.backgroundSetting.next()
-            if event.key == pg.K_LEFT:
-                self.backgroundSetting.previous()
 
-            if event.key == pg.K_RETURN:
-                if self.arrow.index == 0:
+            if self.arrow.index == 0:
+                if event.key == pg.K_RIGHT:
+                    self.backgroundSetting.next()
+                if event.key == pg.K_LEFT:
+                    self.backgroundSetting.previous()
+
+                if event.key == pg.K_RETURN:
                     if self.backgroundSetting.index == 0:
                         self.image = pg.transform.flip(self.image, True, False)
                     if self.backgroundSetting.index == 1:
                         self.image = pg.transform.flip(self.image, False, True)
 
+            if self.arrow.index == 1:
+                if event.key == pg.K_RIGHT:
+                    self.fullscreenSetting.next()
+                if event.key == pg.K_LEFT:
+                    self.fullscreenSetting.previous()
+
+                if event.key == pg.K_RETURN:
+                    if self.fullscreenSetting.index == 0:
+                        pg.display.set_mode((settings.WIDTH, settings.HEIGHT))
+                    if self.fullscreenSetting.index == 1:
+                        pg.display.set_mode((settings.WIDTH, settings.HEIGHT),
+                                            pg.FULLSCREEN)
+
+                    events.messageMenu("options_menu", "screen")
+                    events.messageScene("options_menu", "screen")
+                    events.messageCutScene("options_menu", "screen")
+
+
     def update(self):
         self.backgroundSetting.update()
+        self.fullscreenSetting.update()
         self.arrow.update()
         self.escapeImage.update()
         self.effect.update()
@@ -233,6 +260,7 @@ class OptionsMenu(BaseMenu):
     def draw(self):
         self.screen.blit(self.image, self.rect)
         self.backgroundSetting.draw()
+        self.fullscreenSetting.draw()
         self.arrow.draw()
         self.escapeImage.draw()
         self.escapeText.draw()
@@ -267,10 +295,7 @@ class GameOverMenu(BaseMenu):
         if event.type == pg.KEYDOWN:
             if event.key == pg.K_RETURN:
                 events.messageMenu("game_over_menu", "transition", "main_menu")
-                events.messageScene("game_over_menu", "transition", "blank_scene")
-
-    def update(self):
-        self.enterText.update()
+                events.messageScene("game_over_menu", "no_mode")
 
     def draw(self):
         self.screen.blit(self.image, self.rect)
@@ -380,7 +405,7 @@ class FadeEffect(BaseMenu):
         self.image.set_alpha(self.transparentValue)
 
 
-class UIMenu(BaseMenu):
+class SoloUIMenu(BaseMenu):
     """
     The UI in a scene.
     """

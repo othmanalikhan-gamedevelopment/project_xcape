@@ -38,6 +38,12 @@ class SceneEngine(GameObject):
                     self.mode = None
                     self.mode.startGame()
 
+            if event.category == "no_mode":
+                self.mode = None
+
+            if event.category == "screen":
+                self.screen = pg.display.get_surface()
+
     def update(self):
         if self.mode:
             self.mode.update()
@@ -60,9 +66,11 @@ class SinglePlayer(GameObject):
         self.collisionEngine = None
         self.pause = False
 
+        self.lives = 3
+        self._loadUI(self.lives)
+
         self.nameToScene = \
             {
-                "blank_scene": None,
                 "scene_01": scenes.SoloScene01,
                 "scene_02": scenes.SoloScene02,
                 "scene_03": scenes.SoloScene03,
@@ -70,7 +78,6 @@ class SinglePlayer(GameObject):
             }
         self.numToScene = \
             {
-                0: None,
                 1: scenes.SoloScene01,
                 2: scenes.SoloScene02,
                 3: scenes.SoloScene03,
@@ -82,7 +89,7 @@ class SinglePlayer(GameObject):
         self.scene.handleEvent(event)
 
         if event.type == pg.KEYDOWN:
-            if event.key == pg.K_ESCAPE:
+            if event.key == pg.K_ESCAPE and self.lives != 0:
                 self._togglePause()
 
         if event.type == events.SCENE_EVENT:
@@ -93,9 +100,10 @@ class SinglePlayer(GameObject):
                     self._loadScene(self.numToScene[event.data])
 
             if event.category == "death":
-                self.scene.player.lives -= 1
-                events.messageMenu("single_player", "health", self.scene.player.lives)
-                if self.scene.player.lives == 0:
+                self.lives -= 1
+                events.messageMenu("single_player", "health", self.lives)
+
+                if self.lives == 0:
                     self._showGameOver()
                 else:
                     self._restartScene()
@@ -122,14 +130,12 @@ class SinglePlayer(GameObject):
 
         :param Scene: BaseScene inheritor, representing a scene class.
         """
-        if Scene:
-            self.scene = Scene(self.screen)
-            self.collisionEngine = CollisionEngine(self.scene)
-            self._loadUI(self.scene.player.lives)
+        self.scene = Scene(self.screen)
+        self.collisionEngine = CollisionEngine(self.scene)
 
-            self.camera = SimpleCamera(settings.WIDTH, settings.HEIGHT)
-            self.camera.follow(self.scene.player)
-            # self.camera.follow(self.scene.walls[0])
+        self.camera = SimpleCamera(settings.WIDTH, settings.HEIGHT)
+        self.camera.follow(self.scene.players[0])
+        # self.camera.follow(self.scene.walls[0])
 
     def _loadUI(self, health):
         """
@@ -137,7 +143,7 @@ class SinglePlayer(GameObject):
 
         :param health: Integer, the number of hearts to display on the UI.
         """
-        events.messageMenu("single_player", "transition", "ui_menu")
+        events.messageMenu("single_player", "transition", "solo_ui_menu")
         events.messageMenu("single_player", "health", health)
 
     def _restartScene(self):
@@ -152,7 +158,6 @@ class SinglePlayer(GameObject):
         Pauses the game and triggers the game over screen.
         """
         self.pause = True
-        self._loadScene(self.nameToScene["blank_scene"])
         events.messageMenu("single_player", "transition", "game_over_menu")
 
     def _togglePause(self):

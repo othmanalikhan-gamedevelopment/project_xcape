@@ -38,7 +38,7 @@ class SimpleCamera(GameObject):
         """
         Sets the camera to follow a game object.
 
-        :param gameobject: GameObject Class, the game object to follow.
+        :param gameobject: GameObject instance, the game object to follow.
         """
         self.following = gameobject
 
@@ -47,7 +47,7 @@ class SimpleCamera(GameObject):
         Returns a shifted rectangle of the given object so such that it
         is within the bounds of the camera view.
 
-        :param gameobject: GameObject Class, the game object to follow.
+        :param gameobject: GameObject instance, the game object to follow.
         :return: pg.Rect, the shifted rectangle into the camera's view.
         """
         return gameobject.rect.move(self.view.topleft)

@@ -206,6 +206,7 @@ class MPlatform(BasePlatform):
         xBoundB, yBoundB = self.B
         xBoundA, yBoundA = self.A
 
+        # TODO: Update to use physics displacement functions instead
         if self.rect.x > xBoundB:
             self.rect.x = xBoundB
             self.dx = -self.dx

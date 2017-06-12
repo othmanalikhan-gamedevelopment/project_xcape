@@ -21,13 +21,10 @@ class CoreEngine(GameObject):
     """
 
     def __init__(self):
-        # Loads all images into memory
-
         pg.init()
         self.screen = pg.display.get_surface()
 
         self.clock = pg.time.Clock()
-        self.clock.tick(settings.FPS)
         self.running = True
 
         self.sceneEngine = SceneEngine(self.screen)
@@ -36,12 +33,7 @@ class CoreEngine(GameObject):
 
         # events.messageScene("core_engine", "start_game", "solo")
         # events.messageScene("core_engine", "transition", "scene_04")
-        # events.messageScene("core_engine", "transition", "blank_scene")
-
-        # events.messageMenu("core_engine", "transition", "blank_menu")
         events.messageMenu("core_engine", "transition", "splash_menu")
-
-        events.messageCutScene("core_engine", "transition", "blank_cutscene")
 
     def handleEvent(self, _):
         for event in pg.event.get():
@@ -81,3 +73,4 @@ class CoreEngine(GameObject):
             self.handleEvent(None)
             self.update()
             self.draw()
+            self.clock.tick(settings.FPS)

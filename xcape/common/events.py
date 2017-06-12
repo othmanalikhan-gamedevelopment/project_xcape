@@ -18,7 +18,7 @@ def messageMenu(sender, category, data=None):
     :param category: String, the category of the message.
     :param data: N-Tuple, containing the data for the relevant category.
     """
-    CATEGORIES = ["transition", "health"]
+    CATEGORIES = ["screen", "transition", "health"]
     _messageEngine(CATEGORIES, MENU_EVENT, sender, category, data)
 
 
@@ -30,7 +30,8 @@ def messageScene(sender, category, data=None):
     :param category: String, the category of the message.
     :param data: N-Tuple, containing the data for the relevant category.
     """
-    CATEGORIES = ["transition", "start_game", "switch", "door", "death"]
+    CATEGORIES = ["screen", "transition", "start_game", "no_mode",
+                  "switch", "door", "death"]
     _messageEngine(CATEGORIES, SCENE_EVENT, sender, category, data)
 
 
@@ -42,7 +43,7 @@ def messageCutScene(sender, category, data=None):
     :param category: String, the category of the message.
     :param data: N-Tuple, containing the data for the relevant category.
     """
-    CATEGORIES = ["transition"]
+    CATEGORIES = ["screen", "transition"]
     _messageEngine(CATEGORIES, CUTSCENE_EVENT, sender, category, data)
 
 

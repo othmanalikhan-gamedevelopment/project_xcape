@@ -5,10 +5,9 @@ Responsible for containing all the cutscenes in game.
 import pygame as pg
 
 import xcape.common.events as events
-import xcape.common.render as render
-import xcape.common.settings as settings
 from xcape.common.loader import cutsceneResources
 from xcape.common.object import GameObject
+from xcape.common.render import Dialogue
 from xcape.components.animation import AnimationComponent
 
 
@@ -60,14 +59,12 @@ class OfficeCutscene(BaseCutscene):
         self.origin = pg.time.get_ticks()       # milliseconds
         self.elapsed = 0                        # milliseconds
         self.speed = 1
-        self.isComplete = False
+        self.isSentMessage = False
 
     def handleEvent(self, event):
         if event.type == pg.KEYDOWN:
             if event.key == pg.K_RETURN:
-                events.messageCutScene("office_cutscene",
-                                       "transition",
-                                       "telephone_cutscene")
+                self.messageNextScene()
 
     def update(self):
         self.elapsed = pg.time.get_ticks() - self.origin
@@ -92,17 +89,25 @@ class OfficeCutscene(BaseCutscene):
             self.dialogue.index = 4
 
         else:
-            if not self.isComplete:
-                self.isComplete = True
-                events.messageCutScene("office_cutscene",
-                                       "transition",
-                                       "telephone_cutscene")
+            self.messageNextScene()
 
         self.animation.update()
 
     def draw(self):
         self.animation.draw()
         self.dialogue.draw()
+
+    def messageNextScene(self):
+        """
+        Sends a message to play the next cutscene.
+        """
+        if not self.isSentMessage:
+            events.messageCutScene("office_cutscene",
+                                   "transition",
+                                   "telephone_cutscene")
+            self.isSentMessage = True
+
+
 
 
 class TelephoneCutscene(BaseCutscene):
@@ -208,7 +213,7 @@ class JailCutscene(BaseCutscene):
 
         self.origin = pg.time.get_ticks()       # milliseconds
         self.elapsed = 0                        # milliseconds
-        self.speed = 1
+        self.speed = 100
         self.isComplete = False
 
     def handleEvent(self, event):
@@ -247,60 +252,3 @@ class JailCutscene(BaseCutscene):
         """
         events.messageCutScene("jail_cutscene", "transition", "blank_cutscene")
         events.messageScene("jail_cutscene", "start_game", "solo")
-
-
-class Dialogue(GameObject):
-    """
-    Represents a collection of dialogue bubbles.
-    """
-
-    def __init__(self, screen):
-        """
-        :param screen: pygame.Surface, representing the screen.
-        """
-        self.screen = screen
-        self.bubbles = []
-        self.index = 0
-
-        blankBubble = _Bubble(pg.Surface((0, 0)), 0, 0, self.screen)
-        self.bubbles.append(blankBubble)
-
-    def draw(self):
-        self.bubbles[self.index].draw()
-
-    def add(self, image, x, y):
-        """
-        Adds a dialogue bubble.
-
-        :param image: pygame.Surface, representing the image to display.
-        :param x: Integer, the x-position of the text.
-        :param y: Integer, the y-position of the text.
-        """
-        self.bubbles.append(_Bubble(image, x, y, self.screen))
-
-
-class _Bubble(GameObject):
-    """
-    Represents a dialogue bubble.
-    """
-
-    def __init__(self, image, x, y, screen):
-        """
-        :param image: pygame.Surface, representing the image to display.
-        :param x: Integer, the x-position of the text.
-        :param y: Integer, the y-position of the text.
-        :param screen: pygame.Surface, representing the screen.
-        """
-        self.rect = pg.Rect(x, y, 0, 0)
-        self.screen = screen
-
-        image = render.addBackground(image)
-        image.set_colorkey(settings.COLOURS["blue"])
-        self.image = image
-        self.rect = pg.Rect(x, y, 0, 0)
-        self.rect.size = image.get_size()
-        self.screen = screen
-
-    def draw(self):
-        self.screen.blit(self.image, self.rect)
-

@@ -14,8 +14,8 @@ class AnimationComponent(GameObject):
 
     def __init__(self, gameObject, enableOrientation=False, enableRepeat=True):
         """
-        :param gameObject: GameObject Class, representing any object inheriting
-        from the GameObject class.
+        :param gameObject: GameObject instance, representing any object
+        inheriting from the GameObject class.
         :param enableOrientation: Boolean, causing animations to take into
         account direction of the gameobject.
         :param enableRepeat: Boolean, whether to repeat the animation endlessly.

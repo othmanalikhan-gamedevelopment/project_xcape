@@ -2,6 +2,8 @@
 The menu engine of the game.
 """
 
+import pygame as pg
+
 import xcape.common.events as events
 import xcape.components.menus as menus
 from xcape.common.object import GameObject
@@ -30,7 +32,7 @@ class MenuEngine(GameObject):
                 "options_menu": menus.OptionsMenu,
                 "game_over_menu": menus.GameOverMenu,
                 "pause_menu": menus.PauseMenu,
-                "ui_menu": menus.UIMenu
+                "solo_ui_menu": menus.SoloUIMenu
             }
 
     def handleEvent(self, event):
@@ -39,9 +41,14 @@ class MenuEngine(GameObject):
 
         if event.type == events.MENU_EVENT:
             if event.category == "transition":
-                menu = self.nameToMenu[event.data]
-                if menu:
+                try:
+                    menu = self.nameToMenu[event.data]
                     self.menu = menu(self.screen)
+                except TypeError:
+                    self.menu = menu
+
+            if event.category == "screen":
+                self.screen = pg.display.get_surface()
 
     def update(self):
         if self.menu:

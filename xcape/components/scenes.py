@@ -28,6 +28,8 @@ class BaseScene(GameObject):
         self.levelNum = 0
         self.spawn = None
 
+        self.players = []
+        self.bosses = []
         self.walls = []
         self.sPlatforms = []
         self.mPlatforms = []
@@ -40,7 +42,7 @@ class BaseScene(GameObject):
         pass
 
     def update(self):
-        pass
+        raise NotImplementedError
 
     def drawWithCamera(self, camera):
         """
@@ -48,7 +50,23 @@ class BaseScene(GameObject):
 
         :param camera: Camera class, shifts the position of the drawn animation.
         """
-        pass
+        raise NotImplementedError
+
+    def addPlayers(self):
+        """
+        Adds players to the scene.
+
+        :return: List, containing enemy entities.
+        """
+        raise NotImplementedError
+
+    def addBosses(self):
+        """
+        Adds players to the scene.
+
+        :return: List, containing enemy entities.
+        """
+        raise NotImplementedError
 
     def addWalls(self):
         """
@@ -56,7 +74,7 @@ class BaseScene(GameObject):
 
         :return: List, containing wall entities.
         """
-        pass
+        raise NotImplementedError
 
     def addSPlatforms(self):
         """
@@ -64,7 +82,7 @@ class BaseScene(GameObject):
 
         :return: List, containing platform entities.
         """
-        pass
+        raise NotImplementedError
 
     def addMPlatforms(self):
         """
@@ -72,7 +90,7 @@ class BaseScene(GameObject):
 
         :return: List, containing platform entities.
         """
-        pass
+        raise NotImplementedError
 
     def addDPlatforms(self):
         """
@@ -80,7 +98,7 @@ class BaseScene(GameObject):
 
         :return: List, containing platform entities.
         """
-        pass
+        raise NotImplementedError
 
     def addDoors(self):
         """
@@ -88,7 +106,7 @@ class BaseScene(GameObject):
 
         :return: List, containing door entities.
         """
-        pass
+        raise NotImplementedError
 
     def addSwitches(self):
         """
@@ -96,15 +114,15 @@ class BaseScene(GameObject):
 
         :return: List, containing button entities.
         """
-        pass
+        raise NotImplementedError
 
     def addSpikes(self):
         """
-        Adds enemies to the scene.
+        Adds spikes to the scene.
 
         :return: List, containing enemy entities.
         """
-        pass
+        raise NotImplementedError
 
 
 class SoloScene01(BaseScene):
@@ -446,19 +464,15 @@ class SoloScene04(BaseScene):
 
     def __init__(self, screen):
         super().__init__(screen)
-        self.spawn = (70, 300)
-        self.levelNum = 1
+        self.levelNum = 4
 
         self.image = sceneResources["screens"]["scene_01.png"]
         self.rect = pg.Rect(0, 0, 0, 0)
         self.rect.size = self.image.get_size()
 
-        self.player = Player(self.screen)
-        self.player.rect.center = self.spawn
-
-        self.boss = PigBoss(self.screen)
-        self.boss.rect.center = (70, 70)
-        self.boss.follow(self.player)
+        self.players = self.addPlayers()
+        self.bosses = self.addBosses()
+        self.bosses[0].follow(self.players[0])
 
         self.walls = self.addWalls()
         self.sPlatforms = self.addSPlatforms()
@@ -466,8 +480,8 @@ class SoloScene04(BaseScene):
         self.doors = self.addDoors()
 
     def handleEvent(self, event):
-        self.player.handleEvent(event)
-        self.boss.handleEvent(event)
+        [p.handleEvent(event) for p in self.players]
+        [b.handleEvent(event) for b in self.bosses]
 
         if event.type == events.SCENE_EVENT:
             [d.handleEvent(event) for d in self.doors]
@@ -475,8 +489,8 @@ class SoloScene04(BaseScene):
     def update(self):
         [s.update() for s in self.switches]
         [d.update() for d in self.doors]
-        self.player.update()
-        self.boss.update()
+        [p.update() for p in self.players]
+        [b.update() for b in self.bosses]
 
     def drawWithCamera(self, camera):
         self.screen.fill(settings.COLOURS["black_red"])
@@ -486,8 +500,20 @@ class SoloScene04(BaseScene):
         [p.drawWithCamera(camera) for p in self.sPlatforms]
         [s.drawWithCamera(camera) for s in self.switches]
         [d.drawWithCamera(camera) for d in self.doors]
-        self.player.drawWithCamera(camera)
-        self.boss.drawWithCamera(camera)
+        [p.drawWithCamera(camera) for p in self.players]
+        [b.drawWithCamera(camera) for b in self.bosses]
+
+    def addPlayers(self):
+        spawn = (300, 300)
+        player = [Player(self.screen)]
+        player[0].rect.center = spawn
+        return player
+
+    def addBosses(self):
+        spawn = (70, 70)
+        boss = [PigBoss(self.screen)]
+        boss[0].rect.center = spawn
+        return boss
 
     def addWalls(self):
         wall = sceneResources["walls"]

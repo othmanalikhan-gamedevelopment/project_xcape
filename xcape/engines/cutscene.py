@@ -2,6 +2,8 @@
 The cutscene engine of the game.
 """
 
+import pygame as pg
+
 import xcape.common.events as events
 import xcape.components.cutscenes as cutscenes
 from xcape.common.object import GameObject
@@ -35,9 +37,14 @@ class CutSceneEngine(GameObject):
 
         if event.type == events.CUTSCENE_EVENT:
             if event.category == "transition":
-                cutscene = self.nameToCutscene[event.data]
-                if cutscene:
+                try:
+                    cutscene = self.nameToCutscene[event.data]
                     self.cutscene = cutscene(self.screen)
+                except TypeError:
+                    self.cutscene = cutscene
+
+            if event.category == "screen":
+                self.screen = pg.display.get_surface()
 
     def update(self):
         if self.cutscene:

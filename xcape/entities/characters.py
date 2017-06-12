@@ -7,8 +7,10 @@ import random
 import pygame as pg
 
 from xcape.common.loader import characterResources
+from xcape.common.loader import cutsceneResources
 from xcape.common.object import GameObject
 from xcape.components.animation import AnimationComponent
+from xcape.components.cutscenes import Dialogue
 from xcape.components.physics import PhysicsComponent
 
 
@@ -28,9 +30,11 @@ class Player(GameObject, pg.sprite.Sprite):
         self.state = "idle"
         self.orientation = "right"
         self.lives = 3
-        self.canJump = True
+
+        self.isOnGround = False
+        self.canJump = False
         self.jumpSpeed = -15
-        self.moveSpeed = 10
+        self.moveSpeed = 1
 
         self.physics = PhysicsComponent(self)
 
@@ -51,20 +55,30 @@ class Player(GameObject, pg.sprite.Sprite):
         self.animation.update()
         self.physics.update()
 
+        pressed = pg.key.get_pressed()
+
+        # TODO: Fix left and right if else statement
+        # Allows registering of multiple keys
+        if pressed[pg.K_LEFT]:
+            self.moveLeft()
+        if pressed[pg.K_RIGHT]:
+            self.moveRight()
+
+
+        # if abs(self.physics.velocity.y) > 0:
+        # print(self.physics.velocity)
+        # self.isOnGround = False
+
     def handleEvent(self, event):
         if event.type == pg.KEYDOWN:
             if event.key == self.keybinds["jump"]:
                 self.jump()
-            if event.key == self.keybinds["move_left"]:
-                self.moveLeft()
-            if event.key == self.keybinds["move_right"]:
-                self.moveRight()
 
         if event.type == pg.KEYUP:
             if event.key == self.keybinds["move_left"]:
-                self.stopLeft()
+                self.stop()
             if event.key == self.keybinds["move_right"]:
-                self.stopRight()
+                self.stop()
 
     def drawWithCamera(self, camera):
         """
@@ -74,6 +88,17 @@ class Player(GameObject, pg.sprite.Sprite):
         """
         self.animation.drawWithCamera(camera)
 
+    def manageJump(self):
+
+        if self.isOnGround:
+            self.jumpTimer = pg.time.get_ticks()
+
+            elapsed = pg.time.get_ticks()
+
+        if self.jumpTimer - elapsed > 0.3:
+            self.isOnGround = False
+
+
     def jump(self):
         """
         Makes the character jump.
@@ -81,47 +106,29 @@ class Player(GameObject, pg.sprite.Sprite):
         if self.canJump:
             self.physics.velocity.y = self.jumpSpeed
             self.physics.addVelocityY("jump", self.jumpSpeed)
-            self.canJump = False
 
     def moveLeft(self):
         """
         Moves the character left.
         """
-        if self.state == "running" and self.orientation == "right":
-            self.physics.addVelocityX("move", -self.moveSpeed * 2)
-        else:
-            self.physics.addVelocityX("move", -self.moveSpeed)
-
         self.state = "running"
         self.orientation = "left"
+        self.physics.addVelocityX("move", -self.moveSpeed)
 
     def moveRight(self):
         """
         Moves the character right.
         """
-        if self.state == "running" and self.orientation == "left":
-            self.physics.addVelocityX("move", self.moveSpeed * 2)
-        else:
-            self.physics.addVelocityX("move", self.moveSpeed)
-
         self.state = "running"
         self.orientation = "right"
+        self.physics.addVelocityX("move", self.moveSpeed)
 
-    def stopLeft(self):
+    def stop(self):
         """
-        Stops the character if the character is moving left.
+        Stops the character.
         """
-        if self.state == "running" and self.orientation == "left":
-            self.physics.velocity.x = 0
-            self.state = "idle"
-
-    def stopRight(self):
-        """
-        Stops the character if the character is moving right.
-        """
-        if self.state == "running" and self.orientation == "right":
-            self.physics.velocity.x = 0
-            self.state = "idle"
+        self.state = "idle"
+        self.physics.velocity.x = 0
 
 
 class PigBoss(GameObject, pg.sprite.Sprite):
@@ -144,8 +151,8 @@ class PigBoss(GameObject, pg.sprite.Sprite):
         self.following = None
 
         self.physics = PhysicsComponent(self)
-        # self.physics.PHYSICS_TICK = 70
         self.physics.isGravity = False
+
 
         pig = characterResources["pig"]
         self.animation = AnimationComponent(self, enableOrientation=True)
@@ -153,35 +160,30 @@ class PigBoss(GameObject, pg.sprite.Sprite):
         self.animation.add("running", pig["running"], 400)
         self.animation.scaleAll(self.rect.size)
 
+        assets = cutsceneResources["assets"]
+        self.dialogue = Dialogue(self.screen)
+        self.dialogue.add(assets["office_1.png"], 300, 300)
+
+
+    # TODO:
+    # 1. Add dialogues for the boss
+    # 2. Make the boss do a long dash sweeping attack
+    # 3. Make the boss do fake attacks from time to time
+    # 4. Make the boss do a dunk attack from above
     def update(self):
-        r = random.randint(1, 100)
 
-        x, y = self.following.rect.center
-        u, v = self.rect.center
 
-        dx = x - u
-        dy = y - v
+        if abs(self.rect.x - self.following.rect.x) > 0:
+            self.moveRight()
+        else:
+            self.stop()
 
-        move = pg.math.Vector2(dx, dy)
-        move = move.normalize()
 
-        # self.physics.velocity.x = move.x
-        # self.physics.velocity.y = move.y
-        self.physics.addVelocityX("move", move.x)
-        self.physics.addVelocityY("move", move.y)
-        print(dx, dy)
-
-        # self.rect.x += dx * 0.001
-        # self.rect.y += dy * 0.001
-
-        # if r == 3:
-        #     self.moveLeft()
-
-        # if r == 4:
-        #     self.moveRight()
+        self.moveVertical()
 
         self.animation.update()
         self.physics.update()
+        # print(self.physics.velocity)
 
     def handleEvent(self, event):
         pass
@@ -193,27 +195,45 @@ class PigBoss(GameObject, pg.sprite.Sprite):
         :param camera: Camera class, shifts the position of the drawn animation.
         """
         self.animation.drawWithCamera(camera)
+        self.dialogue.draw()
 
     def follow(self, gameobject):
         """
         Sets the target that the boss is chasing.
 
-        :param gameobject: GameObject Class, the game object to follow.
+        :param gameobject: GameObject instance, the game object to follow.
         """
         self.following = gameobject
 
-    def moveLeft(self):
+    def moveVertical(self):
         """
-        Moves the character left.
+        Moves the character vertically.
         """
-        self.rect.x -= 3
-        self.state = "running"
-        self.orientation = "left"
+        r = random.randint(1, 10)
+
+        y1 = self.rect.top
+        y2 = self.following.rect.top
+
+        dy = y2 - y1
+
+        # if r > 5:
+        #     self.rect.y = self.following.rect.top + r
+        # else:
+        #     self.rect.y = self.following.rect.bottom + r
+
+        self.rect.y = self.following.rect.top
 
     def moveRight(self):
         """
         Moves the character right.
         """
-        self.rect.x += 3
+        self.physics.fixVelocityX(1)
         self.state = "running"
         self.orientation = "right"
+
+    def stop(self):
+        """
+        Stops the character.
+        """
+        self.physics.fixVelocityX(0)
+
