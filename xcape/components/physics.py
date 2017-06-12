@@ -145,7 +145,7 @@ class PhysicsComponent(GameObject):
         """
         Applies gravity on the game object.
         """
-        if self.isGravity and not self.gameObject.isOnGround:
+        if self.isGravity:
             self.addVelocityY("gravity", self.gravity.y)
 
     def limitSpeed(self):

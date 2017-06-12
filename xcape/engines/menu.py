@@ -32,7 +32,8 @@ class MenuEngine(GameObject):
                 "options_menu": menus.OptionsMenu,
                 "game_over_menu": menus.GameOverMenu,
                 "pause_menu": menus.PauseMenu,
-                "solo_ui_menu": menus.SoloUIMenu
+                "solo_ui_menu": menus.SoloUIMenu,
+                "win_menu": menus.WinMenu
             }
 
     def handleEvent(self, event):

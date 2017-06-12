@@ -97,7 +97,10 @@ class SinglePlayer(GameObject):
                 try:
                     self._loadScene(self.nameToScene[event.data])
                 except KeyError:
-                    self._loadScene(self.numToScene[event.data])
+                    try:
+                        self._loadScene(self.numToScene[event.data])
+                    except KeyError:
+                        events.messageMenu("single_player", "transition", "win_menu")
 
             if event.category == "death":
                 self.lives -= 1

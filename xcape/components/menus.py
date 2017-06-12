@@ -302,6 +302,41 @@ class GameOverMenu(BaseMenu):
         self.enterText.draw()
 
 
+class WinMenu(BaseMenu):
+    """
+    The win menu of the game.
+    """
+
+    def __init__(self, screen):
+        super().__init__(screen)
+
+        self.image = menuResources["screens"]["fade.png"]
+        self.rect = pg.Rect(0, 0, 0, 0)
+        self.rect.size = self.image.get_size()
+
+        self.fontSize = 18
+        self.fontColour = "white"
+        self.x = 150
+        self.y = 320
+
+        self.enterText = TextLabel("Enter para salir",
+                                   self.fontSize,
+                                   self.fontColour,
+                                   self.x,
+                                   self.y,
+                                   self.screen)
+
+    def handleEvent(self, event):
+        if event.type == pg.KEYDOWN:
+            if event.key == pg.K_RETURN:
+                events.messageMenu("game_over_menu", "transition", "main_menu")
+                events.messageScene("game_over_menu", "no_mode")
+
+    def draw(self):
+        self.screen.blit(self.image, self.rect)
+        self.enterText.draw()
+
+
 class PauseMenu(BaseMenu):
     """
     The pause menu of the game.

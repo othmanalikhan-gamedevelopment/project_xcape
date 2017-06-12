@@ -32,8 +32,7 @@ class Player(GameObject, pg.sprite.Sprite):
         self.lives = 3
 
         self.isOnGround = False
-        self.canJump = False
-        self.jumpSpeed = -15
+        self.jumpSpeed = -12
         self.moveSpeed = 9
 
         self.physics = PhysicsComponent(self)
@@ -67,7 +66,6 @@ class Player(GameObject, pg.sprite.Sprite):
 
         # if abs(self.physics.velocity.y) > 0:
         # print(self.physics.velocity)
-        # self.isOnGround = False
 
     def handleEvent(self, event):
         if event.type == pg.KEYDOWN:
@@ -88,24 +86,14 @@ class Player(GameObject, pg.sprite.Sprite):
         """
         self.animation.drawWithCamera(camera)
 
-    def manageJump(self):
-
-        if self.isOnGround:
-            self.jumpTimer = pg.time.get_ticks()
-
-            elapsed = pg.time.get_ticks()
-
-        if self.jumpTimer - elapsed > 0.3:
-            self.isOnGround = False
-
-
     def jump(self):
         """
         Makes the character jump.
         """
-        if self.canJump:
+        if self.isOnGround:
             self.physics.velocity.y = self.jumpSpeed
             self.physics.addVelocityY("jump", self.jumpSpeed)
+            self.isOnGround = False
 
     def moveLeft(self):
         """
