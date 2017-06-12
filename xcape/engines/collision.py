@@ -34,7 +34,7 @@ class CollisionEngine(GameObject):
         self.resolveMPlatformCollisions()
 
         self.resolveSpikeCollisions()
-        self.resolveBossCollisions()
+        # self.resolveBossCollisions()
         self.resolveBoundaryCollision()
 
     def resolveWallCollisions(self):

@@ -28,3 +28,8 @@ Authors
 -------
 - Gustavo Sazo, gustavol97_lp@hotmail.com
 - Othman Alikhan, oz.alikhan@gmail.com
+
+
+TODO
+----
+- Add boss AI

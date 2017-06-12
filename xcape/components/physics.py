@@ -15,8 +15,8 @@ class PhysicsComponent(GameObject):
     The units for the physics variables are listed below.
 
     Displacement:       Pixels.
-    Velocity:           Pixels per game tick.
-    Time:               Game tick.
+    Velocity:           Pixels per physics tick.
+    Time:               Physics tick.
     """
 
     def __init__(self, gameObject):
@@ -41,7 +41,7 @@ class PhysicsComponent(GameObject):
 
         # Increasing the tick rate too much can cause choppiness!
         # This variable needs to be tweaked until it feels smooth enough.
-        self.PHYSICS_TICK = 5
+        self.PHYSICS_TICK = 2
         self.tick = 0
 
     def update(self):

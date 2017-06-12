@@ -34,14 +34,15 @@ class Player(GameObject, pg.sprite.Sprite):
         self.isOnGround = False
         self.canJump = False
         self.jumpSpeed = -15
-        self.moveSpeed = 1
+        self.moveSpeed = 9
 
         self.physics = PhysicsComponent(self)
 
         cat = characterResources["cat"]
         self.animation = AnimationComponent(self, enableOrientation=True)
-        self.animation.add("idle", [cat["idle.png"]], float('inf'))
+        self.animation.add("idle", cat["idle"], float('inf'))
         self.animation.add("running", cat["running"], 400)
+
         self.animation.scaleAll(self.rect.size)
 
         self.keybinds = \
@@ -63,7 +64,6 @@ class Player(GameObject, pg.sprite.Sprite):
             self.moveLeft()
         if pressed[pg.K_RIGHT]:
             self.moveRight()
-
 
         # if abs(self.physics.velocity.y) > 0:
         # print(self.physics.velocity)
@@ -113,7 +113,7 @@ class Player(GameObject, pg.sprite.Sprite):
         """
         self.state = "running"
         self.orientation = "left"
-        self.physics.addVelocityX("move", -self.moveSpeed)
+        self.physics.addDisplacementX("move", -self.moveSpeed)
 
     def moveRight(self):
         """
@@ -121,7 +121,7 @@ class Player(GameObject, pg.sprite.Sprite):
         """
         self.state = "running"
         self.orientation = "right"
-        self.physics.addVelocityX("move", self.moveSpeed)
+        self.physics.addDisplacementX("move", self.moveSpeed)
 
     def stop(self):
         """

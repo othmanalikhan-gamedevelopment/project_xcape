@@ -31,9 +31,9 @@ class CoreEngine(GameObject):
         self.menuEngine = MenuEngine(self.screen)
         self.cutsceneEngine = CutSceneEngine(self.screen)
 
-        # events.messageScene("core_engine", "start_game", "solo")
-        # events.messageScene("core_engine", "transition", "scene_04")
-        events.messageMenu("core_engine", "transition", "splash_menu")
+        events.messageScene("core_engine", "start_game", "solo")
+        events.messageScene("core_engine", "transition", "scene_04")
+        # events.messageMenu("core_engine", "transition", "splash_menu")
 
     def handleEvent(self, _):
         for event in pg.event.get():
