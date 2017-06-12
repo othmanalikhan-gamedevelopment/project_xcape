@@ -57,15 +57,10 @@ class Player(GameObject, pg.sprite.Sprite):
 
         pressed = pg.key.get_pressed()
 
-        # TODO: Fix left and right if else statement
-        # Allows registering of multiple keys
-        if pressed[pg.K_LEFT]:
+        if pressed[pg.K_LEFT] and not pressed[pg.K_RIGHT]:
             self.moveLeft()
-        if pressed[pg.K_RIGHT]:
+        if pressed[pg.K_RIGHT] and not pressed[pg.K_LEFT]:
             self.moveRight()
-
-        # if abs(self.physics.velocity.y) > 0:
-        # print(self.physics.velocity)
 
     def handleEvent(self, event):
         if event.type == pg.KEYDOWN:
