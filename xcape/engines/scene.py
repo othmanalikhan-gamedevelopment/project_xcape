@@ -66,7 +66,7 @@ class SinglePlayer(GameObject):
         self.collisionEngine = None
         self.pause = False
 
-        self.lives = 3
+        self.lives = 5
         self._loadUI(self.lives)
 
         self.nameToScene = \

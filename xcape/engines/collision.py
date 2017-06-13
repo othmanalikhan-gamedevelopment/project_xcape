@@ -76,25 +76,10 @@ class CollisionEngine(GameObject):
         Resolves any moving platform collisions.
         """
         for player in self.scene.players:
+            self._resolveBasicCollision(player, self.scene.sPlatforms)
 
             hits = pg.sprite.spritecollide(player, self.scene.mPlatforms, False)
             for platform in hits:
-                direction = self._checkCollisionDirection(player, platform)
-
-                if direction == "bottom":
-                    player.rect.bottom = platform.rect.top
-                    player.canJump = True
-                    player.physics.velocity.y = 0
-
-                elif direction == "left":
-                    player.rect.left = platform.rect.right
-
-                elif direction == "top":
-                    player.rect.top = platform.rect.bottom
-
-                elif direction == "right":
-                    player.rect.right = platform.rect.left
-
                 # TODO: Update to use physics displacement functions instead
                 player.rect.x += platform.dx
                 player.rect.y += platform.dy

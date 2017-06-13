@@ -29,7 +29,7 @@ class SceneEntity(GameObject):
         """
         Draws the player on the screen, shifted by the camera.
 
-        :param camera: Camera class, shifts the position of the drawn animation.
+        :param camera: Camera instance, shifts the position of the drawn animation.
         """
         pass
 

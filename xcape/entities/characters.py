@@ -6,6 +6,7 @@ import random
 
 import pygame as pg
 
+import xcape.components.dialogue as dialogue
 from xcape.common.loader import characterResources
 from xcape.common.loader import cutsceneResources
 from xcape.common.object import GameObject
@@ -77,7 +78,7 @@ class Player(GameObject, pg.sprite.Sprite):
         """
         Draws the character on the screen, shifted by the camera.
 
-        :param camera: Camera class, shifts the position of the drawn animation.
+        :param camera: Camera instance, shifts the position of the drawn animation.
         """
         self.animation.drawWithCamera(camera)
 
@@ -145,7 +146,8 @@ class PigBoss(GameObject, pg.sprite.Sprite):
 
         assets = cutsceneResources["assets"]
         self.dialogue = Dialogue(self.screen)
-        self.dialogue.add(assets["office_1.png"], 300, 300)
+        self.dialogue.add(dialogue.BOSS_1, 0, 0)
+        self.dialogue.index = 1
 
 
     # TODO:
@@ -155,14 +157,14 @@ class PigBoss(GameObject, pg.sprite.Sprite):
     # 4. Make the boss do a dunk attack from above
     def update(self):
 
-
         if abs(self.rect.x - self.following.rect.x) > 0:
             self.moveRight()
         else:
             self.stop()
 
-
         self.moveVertical()
+
+        self.updateBubble()
 
         self.animation.update()
         self.physics.update()
@@ -175,10 +177,18 @@ class PigBoss(GameObject, pg.sprite.Sprite):
         """
         Draws the character on the screen, shifted by the camera.
 
-        :param camera: Camera class, shifts the position of the drawn animation.
+        :param camera: Camera instance, shifts the position of the drawn animation.
         """
         self.animation.drawWithCamera(camera)
-        self.dialogue.draw()
+        self.dialogue.drawWithCamera(camera)
+
+    def updateBubble(self):
+        """
+        Makes the character bubble follow the character.
+        """
+        x, y = self.rect.center
+        currentBubble = self.dialogue.bubbles[self.dialogue.index]
+        currentBubble.rect.center = (x+80, y-60)
 
     def follow(self, gameobject):
         """
