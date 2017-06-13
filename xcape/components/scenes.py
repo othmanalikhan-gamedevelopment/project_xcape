@@ -132,339 +132,7 @@ class SoloScene01(BaseScene):
 
     def __init__(self, screen):
         super().__init__(screen)
-        self.spawn = (70, 300)
         self.levelNum = 1
-
-        self.image = sceneResources["screens"]["scene_01.png"]
-        self.rect = pg.Rect(0, 0, 0, 0)
-        self.rect.size = self.image.get_size()
-
-        self.player = Player(self.screen)
-        self.player.rect.center = self.spawn
-
-        self.boss = PigBoss(self.screen)
-        self.boss.rect.center = (70, 70)
-        self.boss.follow(self.player)
-
-        self.walls = self.addWalls()
-        self.sPlatforms = self.addSPlatforms()
-        self.switches = self.addSwitches()
-        self.doors = self.addDoors()
-
-    def handleEvent(self, event):
-        self.player.handleEvent(event)
-        self.boss.handleEvent(event)
-
-        if event.type == events.SCENE_EVENT:
-            [d.handleEvent(event) for d in self.doors]
-
-    def update(self):
-        [s.update() for s in self.switches]
-        [d.update() for d in self.doors]
-        self.player.update()
-        self.boss.update()
-
-    def drawWithCamera(self, camera):
-        self.screen.fill(settings.COLOURS["black_red"])
-        self.screen.blit(self.image, camera.apply(self))
-
-        [w.drawWithCamera(camera) for w in self.walls]
-        [p.drawWithCamera(camera) for p in self.sPlatforms]
-        [s.drawWithCamera(camera) for s in self.switches]
-        [d.drawWithCamera(camera) for d in self.doors]
-        self.player.drawWithCamera(camera)
-        self.boss.drawWithCamera(camera)
-
-    def addWalls(self):
-        wall = sceneResources["walls"]
-        boundaries = \
-        [
-            Wall(0, 10, 8, "v", wall["boundary_left.png"], self.screen),
-            Wall(19, 478, 4, "h", wall["boundary_bot.png"], self.screen),
-            Wall(320, 478, 5, "h", wall["boundary_bot.png"], self.screen),
-            Wall(628, 138, 6, "v", wall["boundary_right.png"], self.screen),
-            Wall(164, 138, 8, "h", wall["boundary_top.png"], self.screen),
-            Wall(160, 138, 1, "v", wall["corner_top_left.png"], self.screen),
-            Wall(160, 10, 2, "v", wall["boundary_right.png"], self.screen),
-            Wall(628, 138, 1, "v", wall["upper_corner_right.png"], self.screen),
-            Wall(0, 478, 1, "h", wall["inner_corner_left.png"], self.screen),
-            Wall(628, 478, 1, "h", wall["inner_corner_right.png"], self.screen),
-            Wall(240, 478, 1, "h", wall["inner_corner_right.png"], self.screen),
-            Wall(240, 426, 1, "h", wall["corner_bot_right.png"], self.screen),
-            Wall(308, 426, 1, "h", wall["corner_bot_left.png"], self.screen),
-            Wall(320, 478, 1, "h", wall["inner_corner_left.png"], self.screen)
-        ]
-
-        obstacles = \
-        [
-            Wall(48, 418, 1, "h", wall["block_left.png"], self.screen),
-            Wall(108, 418, 1, "h", wall["block_right.png"], self.screen),
-            Wall(170, 450, 1, "h", wall["block_small.png"], self.screen),
-        ]
-
-        return boundaries + obstacles
-
-    def addSPlatforms(self):
-        platforms = \
-        [
-            #SPlatform(260, 370, 2, self.screen),
-            SPlatform(500, 330, 1, self.screen),
-            SPlatform(200, 250, 3, self.screen),
-        ]
-        return platforms
-
-    def addSwitches(self):
-        switches = \
-        [
-            Switch(295, 376, 1, self.screen),
-            Switch(540, 280, 2, self.screen),
-            Switch(295, 205, 3, self.screen)
-        ]
-        return switches
-
-    def addDoors(self):
-        door1 = Door(547, 370, 1, self.screen)
-        door1.waitForSwitches([1, 2, 3])
-        return [door1]
-
-
-class SoloScene02(BaseScene):
-    """
-    The second single player scene of the game.
-    """
-
-    def __init__(self, screen):
-        super().__init__(screen)
-        self.spawn = (70, 510)
-        self.levelNum = 2
-
-        self.image = sceneResources["screens"]["scene_02.png"]
-        self.rect = pg.Rect(0, 0, 0, 0)
-        self.rect.size = self.image.get_size()
-
-        self.walls = self.addWalls()
-        self.dPlatforms = self.addDPlatforms()
-        self.mPlatforms = self.addMPlatforms()
-        self.switches = self.addSwitches()
-        self.doors = self.addDoors()
-        self.spikes = self.addSpikes()
-
-    def handleEvent(self, event):
-        if event.type == events.SCENE_EVENT:
-            [d.handleEvent(event) for d in self.doors]
-
-    def update(self):
-        [s.update() for s in self.switches]
-        [d.update() for d in self.doors]
-        [p.update() for p in self.mPlatforms]
-
-    def drawWithCamera(self, camera):
-        self.screen.fill(settings.COLOURS["black_red"])
-        self.screen.blit(self.image, camera.apply(self))
-
-        [w.drawWithCamera(camera) for w in self.walls]
-        [p.drawWithCamera(camera) for p in self.dPlatforms]
-        [p.drawWithCamera(camera) for p in self.mPlatforms]
-        [s.drawWithCamera(camera) for s in self.switches]
-        [d.drawWithCamera(camera) for d in self.doors]
-        [s.drawWithCamera(camera) for s in self.spikes]
-
-    def addWalls(self):
-        wall = sceneResources["walls"]
-        boundaries = \
-        [
-            Wall(0, 10, 9, "v", wall["boundary_left.png"], self.screen),
-            Wall(0, 548, 15, "h", wall["boundary_bot.png"], self.screen),
-            Wall(952, 25, 9, "v", wall["boundary_right.png"], self.screen),
-        ]
-
-        obstacles = \
-        [
-            Wall(210, 300, 1, "h", wall["block_left.png"], self.screen),
-            Wall(265, 300, 1, "h", wall["block_right.png"], self.screen),
-
-            Wall(435, 490, 1, "h", wall["block_left.png"], self.screen),
-            Wall(490, 490, 1, "h", wall["block_right.png"], self.screen),
-
-            Wall(655, 300, 1, "h", wall["block_left.png"], self.screen),
-            Wall(710, 300, 1, "h", wall["block_right.png"], self.screen),
-
-            Wall(770, 42, 4, "v", wall["plat_mid.png"], self.screen),
-            Wall(770, 297, 1, "v", wall["plat_bot.png"], self.screen),
-        ]
-
-        return boundaries + obstacles
-
-    def addDPlatforms(self):
-        platforms = \
-        [
-            DPlatform(170, 450, 1, self.screen),
-            DPlatform(60, 330, 0, self.screen),
-        ]
-        return platforms
-
-    def addMPlatforms(self):
-        vImage = sceneResources["platforms"]["moving_vertical.png"]
-        hImage = sceneResources["platforms"]["moving_horizontal.png"]
-
-        platforms = \
-        [
-            MPlatform((150, 260), (350, 260), 10, 0, self.screen, hImage),
-            MPlatform((340, 450), (600, 450), 10, 0, self.screen, hImage),
-            MPlatform((340, 300), (600, 300), 10, 0, self.screen, hImage),
-            MPlatform((660, 350), (660, 435), 0, 0, self.screen, vImage),
-            MPlatform((660, 435), (660, 520), 0, 0, self.screen, vImage),
-        ]
-        return platforms
-
-    def addSwitches(self):
-        switches = \
-        [
-            Switch(250, 200, 1, self.screen),
-            Switch(480, 200, 2, self.screen),
-            Switch(480, 430, 3, self.screen),
-            Switch(700, 200, 4, self.screen),
-        ]
-        return switches
-
-    def addDoors(self):
-        door1 = Door(850, 440, 1, self.screen)
-        door1.waitForSwitches([1, 2, 3, 4])
-        return [door1]
-
-    def addSpikes(self):
-        spike = sceneResources["spikes"]
-        spikes = \
-        [
-            Spike(325, 525, 5, "h", spike["up.png"], self.screen),
-            Spike(550, 525, 5, "h", spike["up.png"], self.screen),
-        ]
-        return spikes
-
-
-class SoloScene03(BaseScene):
-    """
-    The third single player scene of the game.
-    """
-
-    def __init__(self, screen):
-        super().__init__(screen)
-        self.spawn = (315, 180)
-        # self.spawn = (70, 510)
-        self.levelNum = 2
-
-        self.image = sceneResources["screens"]["scene_02.jpg"]
-        self.rect = pg.Rect(0, 0, 0, 0)
-        self.rect.size = self.image.get_size()
-
-        self.walls = self.addWalls()
-        self.dPlatforms = self.addDPlatforms()
-        self.mPlatforms = self.addMPlatforms()
-        self.switches = self.addSwitches()
-        self.doors = self.addDoors()
-        self.spikes = self.addSpikes()
-
-    def handleEvent(self, event):
-        if event.type == events.SCENE_EVENT:
-            [d.handleEvent(event) for d in self.doors]
-
-    def update(self):
-        [s.update() for s in self.switches]
-        [d.update() for d in self.doors]
-        [p.update() for p in self.mPlatforms]
-
-    def drawWithCamera(self, camera):
-        self.screen.fill(settings.COLOURS["black_red"])
-        self.screen.blit(self.image, camera.apply(self))
-
-        [w.drawWithCamera(camera) for w in self.walls]
-        [p.drawWithCamera(camera) for p in self.dPlatforms]
-        [p.drawWithCamera(camera) for p in self.mPlatforms]
-        [s.drawWithCamera(camera) for s in self.switches]
-        [d.drawWithCamera(camera) for d in self.doors]
-        [s.drawWithCamera(camera) for s in self.spikes]
-
-    def addWalls(self):
-        wall = sceneResources["walls"]
-        boundaries = \
-        [
-            Wall(0, 10, 9, "v", wall["boundary_left.png"], self.screen),
-            Wall(0, 548, 15, "h", wall["boundary_bot.png"], self.screen),
-            Wall(952, 25, 9, "v", wall["boundary_right.png"], self.screen),
-        ]
-
-        obstacles = \
-        [
-            Wall(210, 300, 1, "h", wall["block_left.png"], self.screen),
-            Wall(265, 300, 1, "h", wall["block_right.png"], self.screen),
-
-            Wall(435, 490, 1, "h", wall["block_left.png"], self.screen),
-            Wall(490, 490, 1, "h", wall["block_right.png"], self.screen),
-
-            Wall(655, 300, 1, "h", wall["block_left.png"], self.screen),
-            Wall(710, 300, 1, "h", wall["block_right.png"], self.screen),
-
-            Wall(770, 42, 4, "v", wall["plat_mid.png"], self.screen),
-            Wall(770, 297, 1, "v", wall["plat_bot.png"], self.screen),
-        ]
-
-        return boundaries + obstacles
-
-    def addDPlatforms(self):
-        platforms = \
-        [
-            DPlatform(170, 450, 1, self.screen),
-            DPlatform(60, 330, 0, self.screen),
-        ]
-        return platforms
-
-    def addMPlatforms(self):
-        vImage = sceneResources["platforms"]["moving_vertical.png"]
-        hImage = sceneResources["platforms"]["moving_horizontal.png"]
-
-        platforms = \
-        [
-            MPlatform((150, 260), (350, 260), 10, 0, self.screen, hImage),
-            MPlatform((340, 450), (600, 450), 10, 0, self.screen, hImage),
-            MPlatform((340, 300), (600, 300), 10, 0, self.screen, hImage),
-            MPlatform((660, 350), (660, 435), 0, 0, self.screen, vImage),
-            MPlatform((660, 435), (660, 520), 0, 0, self.screen, vImage),
-        ]
-        return platforms
-
-    def addSwitches(self):
-        switches = \
-        [
-            Switch(250, 200, 1, self.screen),
-            Switch(480, 200, 2, self.screen),
-            Switch(480, 430, 3, self.screen),
-            Switch(700, 200, 4, self.screen),
-        ]
-        return switches
-
-    def addDoors(self):
-        door1 = Door(850, 440, 1, self.screen)
-        door1.waitForSwitches([1, 2, 3, 4])
-        return [door1]
-
-    def addSpikes(self):
-        spike = sceneResources["spikes"]
-        spikes = \
-        [
-            Spike(325, 525, 5, "h", spike["up.png"], self.screen),
-            Spike(550, 525, 5, "h", spike["up.png"], self.screen),
-        ]
-        return spikes
-
-
-class SoloScene04(BaseScene):
-    """
-    The first single player scene of the game.
-    """
-
-    def __init__(self, screen):
-        super().__init__(screen)
-        self.levelNum = 4
 
         self.image = sceneResources["screens"]["scene_01.png"]
         self.rect = pg.Rect(0, 0, 0, 0)
@@ -518,51 +186,187 @@ class SoloScene04(BaseScene):
     def addWalls(self):
         wall = sceneResources["walls"]
         boundaries = \
-        [
-            Wall(0, 10, 8, "v", wall["boundary_left.png"], self.screen),
-            Wall(19, 478, 4, "h", wall["boundary_bot.png"], self.screen),
-            Wall(320, 478, 5, "h", wall["boundary_bot.png"], self.screen),
-            Wall(628, 138, 6, "v", wall["boundary_right.png"], self.screen),
-            Wall(164, 138, 8, "h", wall["boundary_top.png"], self.screen),
-            Wall(160, 138, 1, "v", wall["corner_top_left.png"], self.screen),
-            Wall(160, 10, 2, "v", wall["boundary_right.png"], self.screen),
-            Wall(628, 138, 1, "v", wall["upper_corner_right.png"], self.screen),
-            Wall(0, 478, 1, "h", wall["inner_corner_left.png"], self.screen),
-            Wall(628, 478, 1, "h", wall["inner_corner_right.png"], self.screen),
-            Wall(240, 478, 1, "h", wall["inner_corner_right.png"], self.screen),
-            Wall(240, 426, 1, "h", wall["corner_bot_right.png"], self.screen),
-            Wall(308, 426, 1, "h", wall["corner_bot_left.png"], self.screen),
-            Wall(320, 478, 1, "h", wall["inner_corner_left.png"], self.screen)
-        ]
+            [
+                Wall(0, 10, 8, "v", wall["boundary_left.png"], self.screen),
+                Wall(19, 478, 4, "h", wall["boundary_bot.png"], self.screen),
+                Wall(320, 478, 5, "h", wall["boundary_bot.png"], self.screen),
+                Wall(628, 138, 6, "v", wall["boundary_right.png"], self.screen),
+                Wall(164, 138, 8, "h", wall["boundary_top.png"], self.screen),
+                Wall(160, 138, 1, "v", wall["corner_top_left.png"], self.screen),
+                Wall(160, 10, 2, "v", wall["boundary_right.png"], self.screen),
+                Wall(628, 138, 1, "v", wall["upper_corner_right.png"], self.screen),
+                Wall(0, 478, 1, "h", wall["inner_corner_left.png"], self.screen),
+                Wall(628, 478, 1, "h", wall["inner_corner_right.png"], self.screen),
+                Wall(240, 478, 1, "h", wall["inner_corner_right.png"], self.screen),
+                Wall(240, 426, 1, "h", wall["corner_bot_right.png"], self.screen),
+                Wall(308, 426, 1, "h", wall["corner_bot_left.png"], self.screen),
+                Wall(320, 478, 1, "h", wall["inner_corner_left.png"], self.screen)
+            ]
 
         obstacles = \
-        [
-            Wall(48, 418, 1, "h", wall["block_left.png"], self.screen),
-            Wall(108, 418, 1, "h", wall["block_right.png"], self.screen),
-            Wall(170, 450, 1, "h", wall["block_small.png"], self.screen),
-        ]
+            [
+                Wall(48, 418, 1, "h", wall["block_left.png"], self.screen),
+                Wall(108, 418, 1, "h", wall["block_right.png"], self.screen),
+                Wall(170, 450, 1, "h", wall["block_small.png"], self.screen),
+            ]
 
         return boundaries + obstacles
 
     def addSPlatforms(self):
         platforms = \
-        [
-            #SPlatform(260, 370, 2, self.screen),
-            SPlatform(500, 330, 1, self.screen),
-            SPlatform(200, 250, 3, self.screen),
-        ]
+            [
+                #SPlatform(260, 370, 2, self.screen),
+                SPlatform(500, 330, 1, self.screen),
+                SPlatform(200, 250, 3, self.screen),
+            ]
         return platforms
 
     def addSwitches(self):
         switches = \
-        [
-            Switch(295, 376, 1, self.screen),
-            Switch(540, 280, 2, self.screen),
-            Switch(295, 205, 3, self.screen)
-        ]
+            [
+                Switch(295, 376, 1, self.screen),
+                Switch(540, 280, 2, self.screen),
+                Switch(295, 205, 3, self.screen)
+            ]
         return switches
 
     def addDoors(self):
         door1 = Door(547, 370, 1, self.screen)
         door1.waitForSwitches([1, 2, 3])
         return [door1]
+
+
+class SoloScene02(BaseScene):
+    """
+    The second single player scene of the game.
+    """
+
+    def __init__(self, screen):
+        super().__init__(screen)
+        self.levelNum = 2
+
+        self.image = sceneResources["screens"]["scene_02.png"]
+        self.rect = pg.Rect(0, 0, 0, 0)
+        self.rect.size = self.image.get_size()
+
+        self.players = self.addPlayers()
+
+        self.walls = self.addWalls()
+        self.dPlatforms = self.addDPlatforms()
+        self.mPlatforms = self.addMPlatforms()
+        self.switches = self.addSwitches()
+        self.doors = self.addDoors()
+        self.spikes = self.addSpikes()
+
+    def handleEvent(self, event):
+        [p.handleEvent(event) for p in self.players]
+        [b.handleEvent(event) for b in self.bosses]
+
+        if event.type == events.SCENE_EVENT:
+            [d.handleEvent(event) for d in self.doors]
+
+    def update(self):
+        [s.update() for s in self.switches]
+        [d.update() for d in self.doors]
+        [p.update() for p in self.mPlatforms]
+        [p.update() for p in self.players]
+
+    def drawWithCamera(self, camera):
+        self.screen.fill(settings.COLOURS["black_red"])
+        self.screen.blit(self.image, camera.apply(self))
+
+        [w.drawWithCamera(camera) for w in self.walls]
+        [p.drawWithCamera(camera) for p in self.mPlatforms]
+        [p.drawWithCamera(camera) for p in self.dPlatforms]
+        [s.drawWithCamera(camera) for s in self.switches]
+        [d.drawWithCamera(camera) for d in self.doors]
+        [s.drawWithCamera(camera) for s in self.spikes]
+        [p.drawWithCamera(camera) for p in self.players]
+
+    def addPlayers(self):
+        spawn = (70, 510)
+        player = [Player(self.screen)]
+        player[0].rect.center = spawn
+        return player
+
+    def addBosses(self):
+        spawn = (70, 70)
+        boss = [PigBoss(self.screen)]
+        boss[0].rect.center = spawn
+        return boss
+
+    def addWalls(self):
+        wall = sceneResources["walls"]
+        boundaries = \
+        [
+            Wall(0, 50, 8, "v", wall["boundary_left.png"], self.screen),
+            Wall(0, 548, 15, "h", wall["boundary_bot.png"], self.screen),
+            Wall(0, 548, 1, "h", wall["inner_corner_left.png"], self.screen),
+            Wall(952, 50, 8, "v", wall["boundary_right.png"], self.screen),
+            Wall(952, 548, 1, "h", wall["inner_corner_right.png"], self.screen)
+        ]
+
+        obstacles = \
+        [
+            Wall(210, 300, 1, "h", wall["block_left.png"], self.screen),
+            Wall(265, 300, 1, "h", wall["block_right.png"], self.screen),
+
+            Wall(435, 490, 1, "h", wall["block_left.png"], self.screen),
+            Wall(490, 490, 1, "h", wall["block_right.png"], self.screen),
+
+            Wall(655, 300, 1, "h", wall["block_left.png"], self.screen),
+            Wall(710, 300, 1, "h", wall["block_right.png"], self.screen),
+
+            Wall(770, 169, 2, "v", wall["plat_mid.png"], self.screen),
+            Wall(770, 297, 1, "v", wall["plat_bot.png"], self.screen),
+            Wall(770, 105, 1, "v", wall["plat_top.png"], self.screen),
+        ]
+
+        return boundaries + obstacles
+
+    def addDPlatforms(self):
+        platforms = \
+        [
+            DPlatform(170, 450, 1, self.screen),
+            DPlatform(60, 330, 0, self.screen),
+        ]
+        return platforms
+
+    def addMPlatforms(self):
+        vImage = sceneResources["platforms"]["moving_vertical.png"]
+        hImage = sceneResources["platforms"]["moving_horizontal.png"]
+
+        platforms = \
+        [
+            # MPlatform((150, 260), (350, 260), 7, 0, self.screen, hImage),
+            # MPlatform((340, 450), (600, 450), 10, 0, self.screen, hImage),
+            MPlatform((340, 300), (600, 300), 6, 0, self.screen, hImage),
+            # MPlatform((660, 350), (660, 435), 0, 0, self.screen, vImage),
+            # MPlatform((660, 435), (660, 520), 0, 0, self.screen, vImage),
+        ]
+        return platforms
+
+    def addSwitches(self):
+        switches = \
+        [
+            Switch(250, 200, 1, self.screen),
+            Switch(480, 200, 2, self.screen),
+            Switch(480, 430, 3, self.screen),
+            Switch(700, 200, 4, self.screen),
+        ]
+        return switches
+
+    def addDoors(self):
+        door1 = Door(865, 440, 1, self.screen)
+        door1.waitForSwitches([1, 2, 3, 4])
+        return [door1]
+
+    def addSpikes(self):
+        spike = sceneResources["spikes"]
+        spikes = \
+        [
+            Spike(325, 525, 5, "h", spike["up.png"], self.screen),
+            Spike(550, 525, 5, "h", spike["up.png"], self.screen),
+            Spike(778, 81, 1, "h", spike["skull.png"], self.screen)
+        ]
+        return spikes

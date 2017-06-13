@@ -65,7 +65,7 @@ class CollisionEngine(GameObject):
                     tol = abs(player.rect.bottom - platform.rect.top)
                     if tol < 30:
                         player.rect.bottom = platform.rect.top
-                        player.canJump = True
+                        player.isOnGround = True
 
                         # Allows conversation of velocity if the player jumps through
                         if player.physics.velocity.y > 0:
@@ -76,13 +76,12 @@ class CollisionEngine(GameObject):
         Resolves any moving platform collisions.
         """
         for player in self.scene.players:
-            self._resolveBasicCollision(player, self.scene.sPlatforms)
-
             hits = pg.sprite.spritecollide(player, self.scene.mPlatforms, False)
+            self._resolveBasicCollision(player, self.scene.mPlatforms)
+
             for platform in hits:
-                # TODO: Update to use physics displacement functions instead
-                player.rect.x += platform.dx
-                player.rect.y += platform.dy
+                player.physics.addDisplacementX("platform", platform.dx)
+                player.physics.addDisplacementY("platform", platform.dy)
 
     def resolveSwitchCollisions(self):
         """

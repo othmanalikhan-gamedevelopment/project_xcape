@@ -190,7 +190,7 @@ class MPlatform(BasePlatform):
         :param screen: pygame.Surface, the screen to draw the wall onto.
         :param image: pygame.Surface, the image of the platform.
         """
-        super().__init__(A[0], A[1], screen, image)
+        super().__init__(A[0], A[1], screen)
         self.image = image
         self.rect.size = self.image.get_size()
 
@@ -201,31 +201,27 @@ class MPlatform(BasePlatform):
         self.B = B
         self.dx = dx
         self.dy = dy
+        self.isDirection = True
 
     def update(self):
-        xBoundB, yBoundB = self.B
-        xBoundA, yBoundA = self.A
-
-        # TODO: Update to use physics displacement functions instead
-        if self.rect.x > xBoundB:
-            self.rect.x = xBoundB
-            self.dx = -self.dx
-        if self.rect.y > yBoundB:
-            self.rect.y = yBoundB
-            self.dy = -self.dy
-
-        if self.rect.x < xBoundA:
-            self.rect.x = xBoundA
-            self.dx = -self.dx
-        if self.rect.y < yBoundA:
-            self.rect.y = yBoundA
-            self.dy = -self.dy
-
-        # Velocity is set to be constant and not additive
-        self.physics.velocity.x = self.dx
-        self.physics.velocity.y = self.dy
-
+        # Physics update at start because it seems there is a mismatch of clock
+        # between moving platform and the player; the proper solution involves
+        # coding a physics engine that synchronises all physics updates.
+        # Try moving the physics update post the change in self.dx variables
+        # and the bug of the player standing on the moving platform appears.
         self.physics.update()
+
+        xBoundA, yBoundA = self.A
+        xBoundB, yBoundB = self.B
+
+        if self.rect.x > xBoundB and self.isDirection:
+            self.dx *= -1
+            self.isDirection = False
+        if self.rect.x < xBoundA and not self.isDirection:
+            self.dx *= -1
+            self.isDirection = True
+
+        self.physics.addDisplacementX("move", self.dx)
 
     def drawWithCamera(self, camera):
         self.screen.blit(self.image, camera.apply(self))

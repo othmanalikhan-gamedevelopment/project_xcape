@@ -136,7 +136,6 @@ class PigBoss(GameObject, pg.sprite.Sprite):
         self.physics = PhysicsComponent(self)
         self.physics.isGravity = False
 
-
         pig = characterResources["pig"]
         self.animation = AnimationComponent(self, enableOrientation=True)
         self.animation.add("idle", [pig["running"][0]], float('inf'))
@@ -151,9 +150,13 @@ class PigBoss(GameObject, pg.sprite.Sprite):
         self.dialogue.index = 1
         self.dialogueOrigin = pg.time.get_ticks()
 
+    def fakeAttack(self):
+        pass
+
+    def attack(self):
+        pass
 
     # TODO:
-    # 1. Add dialogues for the boss
     # 2. Make the boss do a long dash sweeping attack
     # 3. Make the boss do fake attacks from time to time
     # 4. Make the boss do a dunk attack from above
