@@ -8,7 +8,6 @@ import pygame as pg
 
 import xcape.components.dialogue as dialogue
 from xcape.common.loader import characterResources
-from xcape.common.loader import cutsceneResources
 from xcape.common.object import GameObject
 from xcape.components.animation import AnimationComponent
 from xcape.components.cutscenes import Dialogue
@@ -144,10 +143,13 @@ class PigBoss(GameObject, pg.sprite.Sprite):
         self.animation.add("running", pig["running"], 400)
         self.animation.scaleAll(self.rect.size)
 
-        assets = cutsceneResources["assets"]
         self.dialogue = Dialogue(self.screen)
         self.dialogue.add(dialogue.BOSS_1, 0, 0)
+        self.dialogue.add(dialogue.BOSS_2, 0, 0)
+        self.dialogue.add(dialogue.BOSS_3, 0, 0)
+        self.dialogue.add(dialogue.BOSS_4, 0, 0)
         self.dialogue.index = 1
+        self.dialogueOrigin = pg.time.get_ticks()
 
 
     # TODO:
@@ -164,8 +166,7 @@ class PigBoss(GameObject, pg.sprite.Sprite):
 
         self.moveVertical()
 
-        self.updateBubble()
-
+        self.updateDialogue()
         self.animation.update()
         self.physics.update()
         # print(self.physics.velocity)
@@ -182,10 +183,19 @@ class PigBoss(GameObject, pg.sprite.Sprite):
         self.animation.drawWithCamera(camera)
         self.dialogue.drawWithCamera(camera)
 
-    def updateBubble(self):
+    def updateDialogue(self):
         """
-        Makes the character bubble follow the character.
+        Updates the dialogue of the boss.
         """
+        elapsed = pg.time.get_ticks()
+
+        # Changes the dialogue line every three seconds
+        if abs(elapsed - self.dialogueOrigin) > 3000:
+            self.dialogueOrigin = pg.time.get_ticks()
+            r = random.randint(0, len(self.dialogue.bubbles)-1)
+            self.dialogue.index = r
+
+        # Forces the dialogue bubble to follow the boss
         x, y = self.rect.center
         currentBubble = self.dialogue.bubbles[self.dialogue.index]
         currentBubble.rect.center = (x+80, y-60)

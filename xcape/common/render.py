@@ -100,6 +100,7 @@ class WrappedTextLabel:
 
         """
         font = pg.font.SysFont(settings.FONT, size)
+        font.set_italic(True)
         lines = textwrap.wrap(text, wrap)
         self.image = self.renderLines(lines, font, colour,
                                       width, height, indent, spacing)
@@ -140,10 +141,10 @@ class Dialogue(GameObject):
         self.screen = screen
         self.bubbles = []
         self.index = 0
-        self.add("...", 0, 0)   # 'blank' bubble
 
     def draw(self):
-        self.bubbles[self.index].draw()
+        if self.index != 0:
+            self.bubbles[self.index].draw()
 
     def drawWithCamera(self, camera):
         """
@@ -151,7 +152,8 @@ class Dialogue(GameObject):
 
         :param camera: Camera instance, shifts the position of the drawn animation.
         """
-        self.bubbles[self.index].drawWithCamera(camera)
+        if self.index != 0:
+            self.bubbles[self.index].drawWithCamera(camera)
 
     def add(self, text, x, y):
         """
@@ -183,7 +185,7 @@ class _Bubble(GameObject):
         text = WrappedTextLabel(text=str(text),
                                 size=18,
                                 colour="black",
-                                wrap=35,
+                                wrap=29,
                                 width=180,
                                 height=40,
                                 indent=10,
