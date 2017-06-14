@@ -133,6 +133,18 @@ class PigBoss(GameObject, pg.sprite.Sprite):
         self.moveSpeed = 1
         self.following = None
 
+        self.AIState = "chase"
+        self.attackDirectionX = "right"
+        self.attackDirectionY = "down"
+
+        self.timer = 0
+        self.attackDelay = 700
+
+        self.isSweepAttack = False
+        self.sweepDirection = "right"
+        self.sweepOrigin = 0
+        self.sweepsDone = 3
+
         self.physics = PhysicsComponent(self)
         self.physics.isGravity = False
 
@@ -150,29 +162,34 @@ class PigBoss(GameObject, pg.sprite.Sprite):
         self.dialogue.index = 1
         self.dialogueOrigin = pg.time.get_ticks()
 
-    def fakeAttack(self):
-        pass
-
-    def attack(self):
-        pass
-
     # TODO:
-    # 2. Make the boss do a long dash sweeping attack
-    # 3. Make the boss do fake attacks from time to time
     # 4. Make the boss do a dunk attack from above
     def update(self):
+        self.updateAttackDirectionX()
+        self.updateAttackDirectionY()
 
-        if abs(self.rect.x - self.following.rect.x) > 0:
-            self.moveRight()
-        else:
-            self.stop()
+        if self.AIState == "chase":
+            if not self.inRangeX(200):
+                self.chaseHorizontally(5)
+            else:
+                self.physics.fixVelocityX(0)
 
-        self.moveVertical()
+            if not self.inRangeY(10):
+                self.chaseVertically(5)
+            else:
+                self.physics.fixVelocityY(0)
+
+            if self.inRangeX(200) and self.inRangeY(10):
+                self.AIState = "attack"
+                self.timer = pg.time.get_ticks()
+
+        if self.AIState == "attack":
+            if pg.time.get_ticks() - self.timer > self.attackDelay:
+                self.sweepAttack(10, 400)
 
         self.updateDialogue()
         self.animation.update()
         self.physics.update()
-        # print(self.physics.velocity)
 
     def handleEvent(self, event):
         pass
@@ -201,7 +218,32 @@ class PigBoss(GameObject, pg.sprite.Sprite):
         # Forces the dialogue bubble to follow the boss
         x, y = self.rect.center
         currentBubble = self.dialogue.bubbles[self.dialogue.index]
-        currentBubble.rect.center = (x+80, y-60)
+        if self.orientation == "right":
+            currentBubble.rect.center = (x+80, y-55)
+        if self.orientation == "left":
+            currentBubble.rect.center = (x-15, y-55)
+
+    def updateAttackDirectionX(self):
+        """
+        Determines whether the target to attack is on the right or left.
+        """
+        isRight = self.rect.x - self.following.rect.x < 0
+        isLeft = self.rect.x - self.following.rect.x > 0
+        if isRight:
+            self.attackDirectionX = "right"
+        if isLeft:
+            self.attackDirectionX = "left"
+
+    def updateAttackDirectionY(self):
+        """
+        Determines whether the target to attack is up or down.
+        """
+        isUp = self.rect.y - self.following.rect.y < 0
+        isDown = self.rect.y - self.following.rect.y > 0
+        if isUp:
+            self.attackDirectionY = "up"
+        elif isDown:
+            self.attackDirectionY = "down"
 
     def follow(self, gameobject):
         """
@@ -211,35 +253,120 @@ class PigBoss(GameObject, pg.sprite.Sprite):
         """
         self.following = gameobject
 
-    def moveVertical(self):
+    def sweepAttack(self, speed, distance):
         """
-        Moves the character vertically.
+        Attacks the target by moving horizontally towards the target at the
+        given speed and over the specified distance.
+
+        :param speed: Integer, the speed the character moves left.
+        :param distance: Integer, the distance the attack lasts in pixels.
         """
-        r = random.randint(1, 10)
+        if not self.isSweepAttack:
+            self.isSweepAttack = True
+            self.sweepOrigin = self.rect.x
+            self.sweepDirection = self.attackDirectionX
 
-        y1 = self.rect.top
-        y2 = self.following.rect.top
+        if distance > abs(self.sweepOrigin - self.rect.x):
+            if self.sweepDirection == "right":
+                self.moveRight(speed)
+            elif self.sweepDirection == "left":
+                self.moveLeft(speed)
 
-        dy = y2 - y1
+            # Proc to stop the sweep attack abruptly to confuse the player
+            if random.randint(1, 200) == 1:
+                self.AIState = "chase"
+                self.isSweepAttack = False
 
-        # if r > 5:
-        #     self.rect.y = self.following.rect.top + r
-        # else:
-        #     self.rect.y = self.following.rect.bottom + r
+        else:
+            self.AIState = "chase"
+            self.isSweepAttack = False
 
-        self.rect.y = self.following.rect.top
+    def chaseVertically(self, speed):
+        """
+        Chases the target vertically.
 
-    def moveRight(self):
+        :param speed: Integer, the speed the character moves up.
+        """
+        if self.attackDirectionY == "up":
+            self.moveUp(speed)
+        elif self.attackDirectionY == "down":
+            self.moveDown(speed)
+        else:
+            self.physics.fixVelocityY(0)
+
+    def chaseHorizontally(self, speed):
+        """
+        Chases the target horizontally.
+
+        :param speed: Integer, the speed the character moves up.
+        """
+        if self.attackDirectionX == "right":
+            self.moveRight(speed)
+        elif self.attackDirectionX == "left":
+            self.moveLeft(speed)
+        else:
+            self.physics.fixVelocityX(0)
+
+    def inRangeY(self, range):
+        """
+        Checks if the target is within range vertically.
+
+        :param range: Integer, the amount of pixels until the following target.
+        :return: Boolean, whether the target is close within the tolerance.
+        """
+        distance = abs(self.rect.y - self.following.rect.y)
+        if range > distance:
+            return True
+        else:
+            return False
+
+    def inRangeX(self, range):
+        """
+        Checks if the target is within range horizontally.
+
+        :param range: Integer, the amount of pixels until the following target.
+        :return: Boolean, whether the target is close within the tolerance.
+        """
+        distance = abs(self.rect.x - self.following.rect.x)
+        if range > distance:
+            return True
+        else:
+            return False
+
+    def moveUp(self, speed):
+        """
+        Moves the character up.
+
+        :param speed: Integer, the speed the character moves up.
+        """
+        self.physics.fixVelocityY(speed)
+        self.state = "running"
+
+    def moveDown(self, speed):
+        """
+        Moves the character down.
+
+        :param speed: Integer, the speed the character moves down.
+        """
+        self.physics.fixVelocityY(-speed)
+        self.state = "running"
+
+    def moveRight(self, speed):
         """
         Moves the character right.
+
+        :param speed: Integer, the speed the character moves right.
         """
-        self.physics.fixVelocityX(1)
+        self.physics.fixVelocityX(speed)
         self.state = "running"
         self.orientation = "right"
 
-    def stop(self):
+    def moveLeft(self, speed):
         """
-        Stops the character.
-        """
-        self.physics.fixVelocityX(0)
+        Moves the character left.
 
+        :param speed: Integer, the speed the character moves left.
+        """
+        self.physics.fixVelocityX(-speed)
+        self.state = "running"
+        self.orientation = "left"

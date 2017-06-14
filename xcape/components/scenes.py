@@ -178,7 +178,7 @@ class SoloScene01(BaseScene):
         return player
 
     def addBosses(self):
-        spawn = (70, 70)
+        spawn = (100, 70)
         boss = [PigBoss(self.screen)]
         boss[0].rect.center = spawn
         return boss
