@@ -27,6 +27,60 @@ def addBackground(surface, colour="white"):
     return background
 
 
+def buildParts(blocks, leftImage, midImage, rightImage):
+    """
+    Builds the image that consists of three separate parts, and allows
+    scaling of the middle image so that the output image has greater length.
+
+    :param blocks: Integer, the number of times to replicate the mid image.
+    :param leftImage: pygame.Surface, the left image.
+    :param midImage: pygame.Surface, the mid image.
+    :param rightImage: pygame.Surface, the right image.
+    :return: pygame.Surface, the built image.
+    """
+    lw, lh = leftImage.get_size()
+    mw, mh = midImage.get_size()
+    rw, rh = rightImage.get_size()
+
+    # Creating image
+    img = pg.Surface((lw + blocks*mw + rw, mh))
+    img.blit(leftImage, (0, 0))
+    for i in range(blocks):
+        img.blit(midImage, (lw + i*mw, 0))
+    img.blit(rightImage, (lw + blocks*mw, 0))
+
+    # Removing black pixels on newly created surface
+    img.set_colorkey(settings.COLOURS["black"])
+    img = img.convert_alpha()
+    return img
+
+
+def replicate(amount, orientation, image):
+    """
+    Extends the image by duplicating it either vertically or horizontally.
+
+    :param amount: Integer, the amount of times to replicate the image.
+    :param orientation: String, either 'v' or 'h' for vertical or horizontal.
+    :param image: pygame.Surface, the original image.
+    :return: pygame.Surface, the replicated image.
+    """
+    w, h = image.get_size()
+
+    if orientation == "h":
+        img = pg.Surface((amount*w, h))
+        for i in range(amount):
+            img.blit(image, (i*w, 0))
+
+    if orientation == "v":
+        img = pg.Surface((w, amount*h))
+        for i in range(amount):
+            img.blit(image, (0, i*h))
+
+    img.set_colorkey(settings.COLOURS["black"])
+    img = img.convert()
+    return img
+
+
 class ImageLabel(GameObject):
     """
     Represents an image that can be drawn on screen.

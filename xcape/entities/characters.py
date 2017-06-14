@@ -170,7 +170,7 @@ class PigBoss(GameObject, pg.sprite.Sprite):
         minAttackDelay = 500
         maxAttackDelay = 2000
         sweepSpeed = 10
-        sweepDistance = 400
+        sweepDistance = 500
 
         self.updateAttackDirectionX()
         self.updateAttackDirectionY()
@@ -259,13 +259,13 @@ class PigBoss(GameObject, pg.sprite.Sprite):
         elif isDown:
             self.attackDirectionY = "down"
 
-    def follow(self, gameobject):
+    def follow(self, gameObject):
         """
         Sets the target that the boss is chasing.
 
-        :param gameobject: GameObject instance, the game object to follow.
+        :param gameObject: GameObject instance, the game object to follow.
         """
-        self.following = gameobject
+        self.following = gameObject
 
     def sweepAttack(self, speed, distance):
         """
@@ -295,19 +295,6 @@ class PigBoss(GameObject, pg.sprite.Sprite):
             self.AIState = "chase"
             self.isSweepAttack = False
 
-    def chaseY(self, speed):
-        """
-        Chases the target vertically.
-
-        :param speed: Integer, the speed the character moves up.
-        """
-        if self.attackDirectionY == "up":
-            self.moveUp(speed)
-        elif self.attackDirectionY == "down":
-            self.moveDown(speed)
-        else:
-            self.physics.fixVelocityY(0)
-
     def chaseX(self, speed):
         """
         Chases the target horizontally.
@@ -321,18 +308,18 @@ class PigBoss(GameObject, pg.sprite.Sprite):
         else:
             self.physics.fixVelocityX(0)
 
-    def inRangeY(self, range):
+    def chaseY(self, speed):
         """
-        Checks if the target is within range vertically.
+        Chases the target vertically.
 
-        :param range: Integer, the amount of pixels until the following target.
-        :return: Boolean, whether the target is close within the tolerance.
+        :param speed: Integer, the speed the character moves up.
         """
-        distance = abs(self.rect.y - self.following.rect.y)
-        if range > distance:
-            return True
+        if self.attackDirectionY == "up":
+            self.moveUp(speed)
+        elif self.attackDirectionY == "down":
+            self.moveDown(speed)
         else:
-            return False
+            self.physics.fixVelocityY(0)
 
     def inRangeX(self, range):
         """
@@ -342,6 +329,19 @@ class PigBoss(GameObject, pg.sprite.Sprite):
         :return: Boolean, whether the target is close within the tolerance.
         """
         distance = abs(self.rect.x - self.following.rect.x)
+        if range > distance:
+            return True
+        else:
+            return False
+
+    def inRangeY(self, range):
+        """
+        Checks if the target is within range vertically.
+
+        :param range: Integer, the amount of pixels until the following target.
+        :return: Boolean, whether the target is close within the tolerance.
+        """
+        distance = abs(self.rect.y - self.following.rect.y)
         if range > distance:
             return True
         else:

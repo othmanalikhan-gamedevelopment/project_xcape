@@ -37,6 +37,7 @@ class BaseScene(GameObject):
         self.switches = []
         self.doors = []
         self.spikes = []
+        self.decorations = []
 
     def handleEvent(self, event):
         pass
@@ -124,6 +125,14 @@ class BaseScene(GameObject):
         """
         raise NotImplementedError
 
+    def addDecorations(self):
+        """
+        Adds decorations to the scene.
+
+        :return: List, containing enemy entities.
+        """
+        raise NotImplementedError
+
 
 class SoloScene01(BaseScene):
     """
@@ -165,9 +174,9 @@ class SoloScene01(BaseScene):
         self.screen.blit(self.image, camera.apply(self))
 
         [w.drawWithCamera(camera) for w in self.walls]
-        [p.drawWithCamera(camera) for p in self.sPlatforms]
-        [s.drawWithCamera(camera) for s in self.switches]
         [d.drawWithCamera(camera) for d in self.doors]
+        [s.drawWithCamera(camera) for s in self.switches]
+        [p.drawWithCamera(camera) for p in self.sPlatforms]
         [p.drawWithCamera(camera) for p in self.players]
         [b.drawWithCamera(camera) for b in self.bosses]
 
@@ -235,7 +244,6 @@ class SoloScene01(BaseScene):
         return [door1]
 
 
-
 class SoloScene02(BaseScene):
     """
     The second single player scene of the game.
@@ -257,6 +265,7 @@ class SoloScene02(BaseScene):
         self.switches = self.addSwitches()
         self.doors = self.addDoors()
         self.spikes = self.addSpikes()
+        self.decorations = self.addDecorations()
 
     def handleEvent(self, event):
         [p.handleEvent(event) for p in self.players]
@@ -275,12 +284,13 @@ class SoloScene02(BaseScene):
         self.screen.fill(settings.COLOURS["black_red"])
         self.screen.blit(self.image, camera.apply(self))
 
+        [d.drawWithCamera(camera) for d in self.decorations]
         [w.drawWithCamera(camera) for w in self.walls]
-        [p.drawWithCamera(camera) for p in self.mPlatforms]
-        [p.drawWithCamera(camera) for p in self.dPlatforms]
         [s.drawWithCamera(camera) for s in self.switches]
         [d.drawWithCamera(camera) for d in self.doors]
         [s.drawWithCamera(camera) for s in self.spikes]
+        [p.drawWithCamera(camera) for p in self.mPlatforms]
+        [p.drawWithCamera(camera) for p in self.dPlatforms]
         [p.drawWithCamera(camera) for p in self.players]
 
     def addPlayers(self):
@@ -361,9 +371,16 @@ class SoloScene02(BaseScene):
         [
             Spike(325, 525, 5, "h", spike["up.png"], self.screen),
             Spike(550, 525, 5, "h", spike["up.png"], self.screen),
-            Spike(778, 81, 1, "h", spike["skull.png"], self.screen)
         ]
         return spikes
+
+    def addDecorations(self):
+        deco = sceneResources["decorations"]
+        decorations = \
+        [
+            Spike(778, 81, 1, "h", deco["skull.png"], self.screen)
+        ]
+        return decorations
 
 
 class SoloScene03(BaseScene):
@@ -404,14 +421,14 @@ class SoloScene03(BaseScene):
         self.screen.blit(self.image, camera.apply(self))
 
         [w.drawWithCamera(camera) for w in self.walls]
-        [p.drawWithCamera(camera) for p in self.mPlatforms]
         [s.drawWithCamera(camera) for s in self.switches]
         [d.drawWithCamera(camera) for d in self.doors]
         [s.drawWithCamera(camera) for s in self.spikes]
+        [p.drawWithCamera(camera) for p in self.mPlatforms]
         [p.drawWithCamera(camera) for p in self.players]
 
     def addPlayers(self):
-        spawn = (815, 128)
+        spawn = (315, 128)
         player = [Player(self.screen)]
         player[0].rect.center = spawn
         return player
@@ -432,7 +449,6 @@ class SoloScene03(BaseScene):
 
         obstacles = \
         [
-            ###PILLARS HERE:
             Wall(363, 70, 2, "v", pillar["steel_mid.png"], self.screen),
             Wall(363, 163, 1, "v", pillar["steel_bot.png"], self.screen),
             Wall(363, 52, 1, "v", pillar["steel_top.png"], self.screen),
@@ -440,7 +456,6 @@ class SoloScene03(BaseScene):
             Wall(738, 70, 2, "v", pillar["steel_mid.png"], self.screen),
             Wall(738, 163, 1, "v", pillar["steel_bot.png"], self.screen),
             Wall(738, 52, 1, "v", pillar["steel_top.png"], self.screen),
-            ###END OF PILLARS.
 
             Wall(227, 182, 2, "h", wall["block_mid.png"], self.screen),
             Wall(167, 182, 1, "h", wall["block_left.png"], self.screen),
@@ -495,5 +510,8 @@ class SoloScene03(BaseScene):
         [
             Spike(415, 189, 2, "v", spike["left.png"], self.screen),
             Spike(711, 189, 2, "v", spike["right.png"], self.screen),
+
+            Spike(45, 590, 16, "h", spike["up.png"], self.screen),
+            Spike(765, 590, 16, "h", spike["up.png"], self.screen),
         ]
         return spikes

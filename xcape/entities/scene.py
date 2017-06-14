@@ -5,9 +5,9 @@ Contains all the entities in a scene (excluding the players and bosses).
 import pygame as pg
 
 import xcape.common.events as events
-import xcape.common.settings as settings
 from xcape.common.loader import sceneResources
 from xcape.common.object import GameObject
+from xcape.common.render import buildParts, replicate
 from xcape.components.animation import AnimationComponent
 from xcape.components.physics import PhysicsComponent
 
@@ -34,6 +34,27 @@ class SceneEntity(GameObject):
         pass
 
 
+class Decoration(SceneEntity):
+    """
+    An entity that does nothing other than act as a background decoration.
+    """
+
+    def __init__(self, x, y, image, screen):
+        """
+        :param x: Integer, the x-position of the wall.
+        :param y: Integer, the y-position of the wall.
+        :param image: pygame.Surface, the image of the wall.
+        :param screen: pygame.Surface, the screen to draw the wall onto.
+        """
+        super().__init__(screen)
+        self.image = image
+        self.rect = pg.Rect(x, y, 0, 0)
+        self.rect.size = self.image.get_size()
+
+    def drawWithCamera(self, camera):
+        self.screen.blit(self.image, camera.apply(self))
+
+
 class Wall(SceneEntity):
     """
     A wall entity that obstructs the player.
@@ -49,33 +70,9 @@ class Wall(SceneEntity):
         :param screen: pygame.Surface, the screen to draw the wall onto.
         """
         super().__init__(screen)
-        self.image = self.resize(blocks, orientation, image)
+        self.image = replicate(blocks, orientation, image)
         self.rect = pg.Rect(x, y, 0, 0)
         self.rect.size = self.image.get_size()
-
-    def resize(self, blocks, orientation, image):
-        """
-        Resizes the wall vertically or horizontally by a specified amount.
-
-        :param blocks: Integer, the total number of blocks the final wall has.
-        :param orientation: String, either 'v' or 'h' for vertical or horizontal.
-        :param image: pygame.Surface, the image of the wall.
-        :return: pygame.Surface, the resized image of the platform
-        """
-        w, h = image.get_size()
-
-        if orientation == "h":
-            wall = pg.Surface((blocks*w, h))
-            for i in range(blocks):
-                wall.blit(image, (i*w, 0))
-
-        if orientation == "v":
-            wall = pg.Surface((w, blocks*h))
-            for i in range(blocks):
-                wall.blit(image, (0, i*h))
-
-        wall = wall.convert()
-        return wall
 
     def drawWithCamera(self, camera):
         self.screen.blit(self.image, camera.apply(self))
@@ -95,33 +92,6 @@ class BasePlatform(SceneEntity):
         super().__init__(screen)
         self.rect = pg.Rect(x, y, 0, 0)
         self.image = None
-
-    def resize(self, blocks, leftImage, midImage, rightImage):
-        """
-        Resizes the platform horizontally by some number of blocks specified.
-
-        :param blocks: Integer, the number of times to replicate the platform.
-        :param leftImage: pygame.Surface, the image of the left corner.
-        :param midImage: pygame.Surface, the image of the mid.
-        :param rightImage: pygame.Surface, the image of the right corner.
-        :return: pygame.Surface, the resized image of the platform
-        """
-        lw, lh = leftImage.get_size()
-        mw, mh = midImage.get_size()
-        rw, rh = rightImage.get_size()
-
-        # Creating platform image
-        platform = pg.Surface((lw + blocks*mw + rw, mh))
-        platform.blit(leftImage, (0, 0))
-        for i in range(blocks):
-            platform.blit(midImage, (lw + i*mw, 0))
-        platform.blit(rightImage, (lw + blocks*mw, 0))
-
-        # Newly created surface has a black background, so need to remove
-        # black pixels
-        platform.set_colorkey(settings.COLOURS["black"])
-        platform = platform.convert_alpha()
-        return platform
 
     def drawWithCamera(self, camera):
         self.screen.blit(self.image, camera.apply(self))
@@ -144,7 +114,7 @@ class SPlatform(BasePlatform):
         left = sceneResources["platforms"]["platform_1.png"]
         mid = sceneResources["platforms"]["platform_2.png"]
         right = sceneResources["platforms"]["platform_3.png"]
-        self.image = self.resize(blocks, left, mid, right)
+        self.image = buildParts(blocks, left, mid, right)
         self.rect.size = self.image.get_size()
 
     def drawWithCamera(self, camera):
@@ -169,7 +139,7 @@ class DPlatform(BasePlatform):
         left = sceneResources["platforms"]["platform_1.png"]
         mid = sceneResources["platforms"]["platform_2.png"]
         right = sceneResources["platforms"]["platform_3.png"]
-        self.image = self.resize(blocks, left, mid, right)
+        self.image = buildParts(blocks, left, mid, right)
         self.rect.size = self.image.get_size()
 
     def drawWithCamera(self, camera):
@@ -347,33 +317,9 @@ class Spike(SceneEntity):
         :param screen: pygame.Surface, the screen to draw the wall onto.
         """
         super().__init__(screen)
-        self.image = self.resize(blocks, orientation, image)
+        self.image = replicate(blocks, orientation, image)
         self.rect = pg.Rect(x, y, 0, 0)
         self.rect.size = self.image.get_size()
-
-    def resize(self, num, orientation, image):
-        """
-        Adds more spikes in the specified orientation (vertical or horizontal).
-
-        :param num: Integer, the total number of blocks the final wall has.
-        :param orientation: String, either 'v' or 'h' for vertical or horizontal.
-        :param image: pygame.Surface, the image of the wall.
-        :return: pygame.Surface, the resized image of the platform
-        """
-        w, h = image.get_size()
-
-        if orientation == "h":
-            spike = pg.Surface((num * w, h))
-            for i in range(num):
-                spike.blit(image, (i*w, 0))
-
-        if orientation == "v":
-            spike = pg.Surface((w, num * h))
-            for i in range(num):
-                spike.blit(image, (0, i*h))
-
-        spike.set_colorkey(settings.COLOURS["black"])
-        return spike
 
     def drawWithCamera(self, camera):
         self.screen.blit(self.image, camera.apply(self))
