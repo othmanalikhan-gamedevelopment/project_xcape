@@ -137,9 +137,7 @@ class PigBoss(GameObject, pg.sprite.Sprite):
         self.attackDirectionX = "right"
         self.attackDirectionY = "down"
 
-        self.timer = 0
-        self.attackDelay = 700
-
+        self.attackTimer = 0
         self.isSweepAttack = False
         self.sweepDirection = "right"
         self.sweepOrigin = 0
@@ -155,37 +153,47 @@ class PigBoss(GameObject, pg.sprite.Sprite):
         self.animation.scaleAll(self.rect.size)
 
         self.dialogue = Dialogue(self.screen)
+        self.dialogue.add(dialogue.BOSS_0, 0, 0)
         self.dialogue.add(dialogue.BOSS_1, 0, 0)
         self.dialogue.add(dialogue.BOSS_2, 0, 0)
         self.dialogue.add(dialogue.BOSS_3, 0, 0)
         self.dialogue.add(dialogue.BOSS_4, 0, 0)
         self.dialogue.index = 1
         self.dialogueOrigin = pg.time.get_ticks()
+        self.dialogueDuration = 5000
 
-    # TODO:
-    # 4. Make the boss do a dunk attack from above
     def update(self):
+        rangeAttackX = 200
+        rangeAttackY = 20
+        chaseSpeedX = 5
+        chaseSpeedY = 5
+        minAttackDelay = 500
+        maxAttackDelay = 2000
+        sweepSpeed = 10
+        sweepDistance = 400
+
         self.updateAttackDirectionX()
         self.updateAttackDirectionY()
 
         if self.AIState == "chase":
-            if not self.inRangeX(200):
-                self.chaseHorizontally(5)
+            if not self.inRangeX(rangeAttackX):
+                self.chaseX(chaseSpeedX)
             else:
                 self.physics.fixVelocityX(0)
 
-            if not self.inRangeY(10):
-                self.chaseVertically(5)
+            if not self.inRangeY(rangeAttackY):
+                self.chaseY(chaseSpeedY)
             else:
                 self.physics.fixVelocityY(0)
 
-            if self.inRangeX(200) and self.inRangeY(10):
+            if self.inRangeX(rangeAttackX) and self.inRangeY(rangeAttackY):
                 self.AIState = "attack"
-                self.timer = pg.time.get_ticks()
+                self.attackTimer = pg.time.get_ticks()
 
         if self.AIState == "attack":
-            if pg.time.get_ticks() - self.timer > self.attackDelay:
-                self.sweepAttack(10, 400)
+            attackDelay = random.randint(minAttackDelay, maxAttackDelay)
+            if pg.time.get_ticks() - self.attackTimer > attackDelay:
+                self.sweepAttack(sweepSpeed, sweepDistance)
 
         self.updateDialogue()
         self.animation.update()
@@ -210,10 +218,16 @@ class PigBoss(GameObject, pg.sprite.Sprite):
         elapsed = pg.time.get_ticks()
 
         # Changes the dialogue line every three seconds
-        if abs(elapsed - self.dialogueOrigin) > 3000:
+        if abs(elapsed - self.dialogueOrigin) > self.dialogueDuration:
             self.dialogueOrigin = pg.time.get_ticks()
             r = random.randint(0, len(self.dialogue.bubbles)-1)
-            self.dialogue.index = r
+            # Hacky method to increase the chance for the 0th dialogue to proc
+            zero = random.randint(0, 1)
+
+            if zero == 0 or r == 0:
+                self.dialogue.index = 0
+            else:
+                self.dialogue.index = r
 
         # Forces the dialogue bubble to follow the boss
         x, y = self.rect.center
@@ -281,7 +295,7 @@ class PigBoss(GameObject, pg.sprite.Sprite):
             self.AIState = "chase"
             self.isSweepAttack = False
 
-    def chaseVertically(self, speed):
+    def chaseY(self, speed):
         """
         Chases the target vertically.
 
@@ -294,7 +308,7 @@ class PigBoss(GameObject, pg.sprite.Sprite):
         else:
             self.physics.fixVelocityY(0)
 
-    def chaseHorizontally(self, speed):
+    def chaseX(self, speed):
         """
         Chases the target horizontally.
 
