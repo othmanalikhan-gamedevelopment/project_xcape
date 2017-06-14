@@ -66,8 +66,9 @@ class SinglePlayer(GameObject):
         self.collisionEngine = None
         self.pause = False
 
+        self.maxLives = 5
         self.lives = 5
-        self._loadUI(self.lives)
+        self._loadUI(self.maxLives, self.lives)
 
         self.nameToScene = \
             {
@@ -88,7 +89,7 @@ class SinglePlayer(GameObject):
 
         if event.type == pg.KEYDOWN:
             if event.key == pg.K_ESCAPE and self.lives != 0:
-                self._togglePause()
+                self._togglePauseMenu()
 
         if event.type == events.SCENE_EVENT:
             if event.category == "transition":
@@ -100,14 +101,19 @@ class SinglePlayer(GameObject):
                     except KeyError:
                         events.messageMenu("single_player", "transition", "win_menu")
 
+            if event.category == "complete":
+                if event.sender == "death_menu":
+                    self._loadUI(self.maxLives, self.lives)
+                    self._restartScene()
+                    self.pause = False
+
             if event.category == "death":
                 self.lives -= 1
-                events.messageMenu("single_player", "health", self.lives)
-
                 if self.lives == 0:
                     self._showGameOver()
                 else:
-                    self._restartScene()
+                    self.pause = True
+                    events.messageMenu("single_player", "transition", "death_menu")
 
     def update(self):
         if not self.pause and self.scene:
@@ -138,14 +144,16 @@ class SinglePlayer(GameObject):
         self.camera.follow(self.scene.players[0])
         # self.camera.follow(self.scene.walls[0])
 
-    def _loadUI(self, health):
+    def _loadUI(self, maxHealth, currentHealth):
         """
         Triggers an event to display the UI menu.
 
-        :param health: Integer, the number of hearts to display on the UI.
+        :param currentHealth: Integer, the number of full hearts to display.
+        :param maxHealth: Integer, the number of empty hearts to display.
         """
         events.messageMenu("single_player", "transition", "solo_ui_menu")
-        events.messageMenu("single_player", "health", health)
+        events.messageMenu("single_player", "max_health", maxHealth)
+        events.messageMenu("single_player", "health", currentHealth)
 
     def _restartScene(self):
         """
@@ -161,7 +169,7 @@ class SinglePlayer(GameObject):
         self.pause = True
         events.messageMenu("single_player", "transition", "game_over_menu")
 
-    def _togglePause(self):
+    def _togglePauseMenu(self):
         """
         Pauses the game and triggers the pause menu and vice-versa.
         """
