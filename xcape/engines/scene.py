@@ -129,7 +129,7 @@ class SinglePlayer(GameObject):
         """
         Starts a new game.
         """
-        self._loadScene(self.nameToScene["scene_03"])
+        self._loadScene(self.nameToScene["scene_01"])
 
     def _loadScene(self, Scene):
         """

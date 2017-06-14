@@ -60,17 +60,22 @@ class Wall(SceneEntity):
     A wall entity that obstructs the player.
     """
 
-    def __init__(self, x, y, blocks, orientation, image, screen):
+    def __init__(self, x, y, blocks, orientation, images, screen):
         """
         :param x: Integer, the x-position of the wall.
         :param y: Integer, the y-position of the wall.
         :param blocks: Integer, the number of times to replicate the wall.
         :param orientation: String, either 'v' or 'h' for vertical or horizontal.
-        :param image: pygame.Surface, the image of the wall.
+        :param images: Tuple, containing either a single or three
+        pygame.Surfaces to build the platform.
         :param screen: pygame.Surface, the screen to draw the wall onto.
         """
         super().__init__(screen)
-        self.image = replicate(blocks, orientation, image)
+        if len(images) == 3:
+            self.image = buildParts(blocks, orientation, images)
+        elif len(images) == 1:
+            self.image = replicate(blocks, orientation, images[0])
+
         self.rect = pg.Rect(x, y, 0, 0)
         self.rect.size = self.image.get_size()
 
@@ -114,7 +119,8 @@ class SPlatform(BasePlatform):
         left = sceneResources["platforms"]["platform_1.png"]
         mid = sceneResources["platforms"]["platform_2.png"]
         right = sceneResources["platforms"]["platform_3.png"]
-        self.image = buildParts(blocks, left, mid, right)
+        images = [left, mid, right]
+        self.image = buildParts(blocks, "h", images)
         self.rect.size = self.image.get_size()
 
     def drawWithCamera(self, camera):
@@ -139,7 +145,8 @@ class DPlatform(BasePlatform):
         left = sceneResources["platforms"]["platform_1.png"]
         mid = sceneResources["platforms"]["platform_2.png"]
         right = sceneResources["platforms"]["platform_3.png"]
-        self.image = buildParts(blocks, left, mid, right)
+        images = [left, mid, right]
+        self.image = buildParts(blocks, "h", images)
         self.rect.size = self.image.get_size()
 
     def drawWithCamera(self, camera):

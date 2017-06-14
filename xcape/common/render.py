@@ -27,27 +27,34 @@ def addBackground(surface, colour="white"):
     return background
 
 
-def buildParts(blocks, leftImage, midImage, rightImage):
+def buildParts(blocks, orientation, images):
     """
     Builds the image that consists of three separate parts, and allows
     scaling of the middle image so that the output image has greater length.
 
     :param blocks: Integer, the number of times to replicate the mid image.
-    :param leftImage: pygame.Surface, the left image.
-    :param midImage: pygame.Surface, the mid image.
-    :param rightImage: pygame.Surface, the right image.
+    :param orientation: String, either 'v' or 'h' for vertical or horizontal.
+    :param images: Tuple, containing three pygame.Surfaces to build from.
     :return: pygame.Surface, the built image.
     """
-    lw, lh = leftImage.get_size()
-    mw, mh = midImage.get_size()
-    rw, rh = rightImage.get_size()
+    w0, h0 = images[0].get_size()
+    w1, h1 = images[1].get_size()
+    w2, h2 = images[2].get_size()
 
-    # Creating image
-    img = pg.Surface((lw + blocks*mw + rw, mh))
-    img.blit(leftImage, (0, 0))
-    for i in range(blocks):
-        img.blit(midImage, (lw + i*mw, 0))
-    img.blit(rightImage, (lw + blocks*mw, 0))
+    if orientation == "h":
+        img = pg.Surface((w0 + blocks*w1 + w2, h0))
+        img.blit(images[0], (0, 0))
+        for i in range(blocks):
+            img.blit(images[1], (w0 + i*w1, 0))
+        img.blit(images[2], (w0 + blocks*w1, 0))
+        print(img)
+
+    if orientation == "v":
+        img = pg.Surface((w0, h0 + blocks*h1 + h2))
+        img.blit(images[0], (0, 0))
+        for i in range(blocks):
+            img.blit(images[1], (0, h0 + i*h1))
+        img.blit(images[2], (0, h0 + blocks*h1))
 
     # Removing black pixels on newly created surface
     img.set_colorkey(settings.COLOURS["black"])
@@ -77,7 +84,7 @@ def replicate(amount, orientation, image):
             img.blit(image, (0, i*h))
 
     img.set_colorkey(settings.COLOURS["black"])
-    img = img.convert()
+    img = img.convert_alpha()
     return img
 
 

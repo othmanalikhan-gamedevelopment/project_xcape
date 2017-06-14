@@ -148,8 +148,6 @@ class SoloScene01(BaseScene):
         self.rect.size = self.image.get_size()
 
         self.players = self.addPlayers()
-        self.bosses = self.addBosses()
-        self.bosses[0].follow(self.players[0])
 
         self.walls = self.addWalls()
         self.sPlatforms = self.addSPlatforms()
@@ -158,7 +156,6 @@ class SoloScene01(BaseScene):
 
     def handleEvent(self, event):
         [p.handleEvent(event) for p in self.players]
-        [b.handleEvent(event) for b in self.bosses]
 
         if event.type == events.SCENE_EVENT:
             [d.handleEvent(event) for d in self.doors]
@@ -167,7 +164,6 @@ class SoloScene01(BaseScene):
         [s.update() for s in self.switches]
         [d.update() for d in self.doors]
         [p.update() for p in self.players]
-        [b.update() for b in self.bosses]
 
     def drawWithCamera(self, camera):
         self.screen.fill(settings.COLOURS["black_red"])
@@ -178,7 +174,6 @@ class SoloScene01(BaseScene):
         [s.drawWithCamera(camera) for s in self.switches]
         [p.drawWithCamera(camera) for p in self.sPlatforms]
         [p.drawWithCamera(camera) for p in self.players]
-        [b.drawWithCamera(camera) for b in self.bosses]
 
     def addPlayers(self):
         spawn = (300, 300)
@@ -196,27 +191,27 @@ class SoloScene01(BaseScene):
         wall = sceneResources["walls"]
         boundaries = \
         [
-            Wall(0, 10, 8, "v", wall["boundary_left.png"], self.screen),
-            Wall(19, 478, 4, "h", wall["boundary_bot.png"], self.screen),
-            Wall(320, 478, 5, "h", wall["boundary_bot.png"], self.screen),
-            Wall(628, 138, 6, "v", wall["boundary_right.png"], self.screen),
-            Wall(164, 138, 8, "h", wall["boundary_top.png"], self.screen),
-            Wall(160, 138, 1, "v", wall["corner_top_left.png"], self.screen),
-            Wall(160, 10, 2, "v", wall["boundary_right.png"], self.screen),
-            Wall(628, 138, 1, "v", wall["upper_corner_right.png"], self.screen),
-            Wall(0, 478, 1, "h", wall["inner_corner_left.png"], self.screen),
-            Wall(628, 478, 1, "h", wall["inner_corner_right.png"], self.screen),
-            Wall(240, 478, 1, "h", wall["inner_corner_right.png"], self.screen),
-            Wall(240, 426, 1, "h", wall["corner_bot_right.png"], self.screen),
-            Wall(308, 426, 1, "h", wall["corner_bot_left.png"], self.screen),
-            Wall(320, 478, 1, "h", wall["inner_corner_left.png"], self.screen)
+            Wall(0, 10, 8, "v", [wall["boundary_left.png"]], self.screen),
+            Wall(19, 478, 4, "h", [wall["boundary_bot.png"]], self.screen),
+            Wall(320, 478, 5, "h", [wall["boundary_bot.png"]], self.screen),
+            Wall(628, 138, 6, "v", [wall["boundary_right.png"]], self.screen),
+            Wall(164, 138, 8, "h", [wall["boundary_top.png"]], self.screen),
+            Wall(160, 138, 1, "v", [wall["corner_top_left.png"]], self.screen),
+            Wall(160, 10, 2, "v", [wall["boundary_right.png"]], self.screen),
+            Wall(628, 138, 1, "v", [wall["upper_corner_right.png"]], self.screen),
+            Wall(0, 478, 1, "h", [wall["inner_corner_left.png"]], self.screen),
+            Wall(628, 478, 1, "h", [wall["inner_corner_right.png"]], self.screen),
+            Wall(240, 478, 1, "h", [wall["inner_corner_right.png"]], self.screen),
+            Wall(240, 426, 1, "h", [wall["corner_bot_right.png"]], self.screen),
+            Wall(308, 426, 1, "h", [wall["corner_bot_left.png"]], self.screen),
+            Wall(320, 478, 1, "h", [wall["inner_corner_left.png"]], self.screen)
         ]
 
         obstacles = \
         [
-            Wall(48, 418, 1, "h", wall["block_left.png"], self.screen),
-            Wall(108, 418, 1, "h", wall["block_right.png"], self.screen),
-            Wall(170, 450, 1, "h", wall["block_small.png"], self.screen),
+            Wall(48, 418, 1, "h", [wall["block_left.png"]], self.screen),
+            Wall(108, 418, 1, "h", [wall["block_right.png"]], self.screen),
+            Wall(170, 450, 1, "h", [wall["block_small.png"]], self.screen),
         ]
         return boundaries + obstacles
 
@@ -301,29 +296,31 @@ class SoloScene02(BaseScene):
 
     def addWalls(self):
         wall = sceneResources["walls"]
+        platWall = [wall["plat_top.png"],
+                    wall["plat_mid.png"],
+                    wall["plat_bot.png"]]
+
         boundaries = \
         [
-            Wall(0, 50, 8, "v", wall["boundary_left.png"], self.screen),
-            Wall(0, 548, 15, "h", wall["boundary_bot.png"], self.screen),
-            Wall(0, 548, 1, "h", wall["inner_corner_left.png"], self.screen),
-            Wall(952, 50, 8, "v", wall["boundary_right.png"], self.screen),
-            Wall(952, 548, 1, "h", wall["inner_corner_right.png"], self.screen)
+            Wall(0, 50, 8, "v", [wall["boundary_left.png"]], self.screen),
+            Wall(0, 548, 15, "h", [wall["boundary_bot.png"]], self.screen),
+            Wall(0, 548, 1, "h", [wall["inner_corner_left.png"]], self.screen),
+            Wall(952, 50, 8, "v", [wall["boundary_right.png"]], self.screen),
+            Wall(952, 548, 1, "h", [wall["inner_corner_right.png"]], self.screen)
         ]
 
         obstacles = \
         [
-            Wall(210, 300, 1, "h", wall["block_left.png"], self.screen),
-            Wall(265, 300, 1, "h", wall["block_right.png"], self.screen),
+            Wall(210, 300, 1, "h", [wall["block_left.png"]], self.screen),
+            Wall(265, 300, 1, "h", [wall["block_right.png"]], self.screen),
 
-            Wall(435, 490, 1, "h", wall["block_left.png"], self.screen),
-            Wall(490, 490, 1, "h", wall["block_right.png"], self.screen),
+            Wall(435, 490, 1, "h", [wall["block_left.png"]], self.screen),
+            Wall(490, 490, 1, "h", [wall["block_right.png"]], self.screen),
 
-            Wall(655, 300, 1, "h", wall["block_left.png"], self.screen),
-            Wall(710, 300, 1, "h", wall["block_right.png"], self.screen),
+            Wall(655, 300, 1, "h", [wall["block_left.png"]], self.screen),
+            Wall(710, 300, 1, "h", [wall["block_right.png"]], self.screen),
 
-            Wall(770, 169, 2, "v", wall["plat_mid.png"], self.screen),
-            Wall(770, 297, 1, "v", wall["plat_bot.png"], self.screen),
-            Wall(770, 105, 1, "v", wall["plat_top.png"], self.screen),
+            Wall(770, 105, 2, "v", platWall, self.screen),
         ]
 
         return boundaries + obstacles
@@ -436,43 +433,42 @@ class SoloScene03(BaseScene):
     def addWalls(self):
         wall = sceneResources["walls"]
         pillar = sceneResources["pillars"]
+
+        pillarWall = [pillar["steel_top.png"],
+                      pillar["steel_mid.png"],
+                      pillar["steel_bot.png"]]
+        platWall = [wall["plat_top.png"],
+                    wall["plat_mid.png"],
+                    wall["plat_bot.png"]]
+        blockWall = [wall["block_left.png"],
+                     wall["block_mid.png"],
+                     wall["block_right.png"]]
+
         boundaries = \
         [
-            Wall(739, 0, 5, "h", wall["boundary_top.png"], self.screen),
-            Wall(99, 0, 5, "h", wall["boundary_top.png"], self.screen),
-            Wall(0, 64, 7, "v", wall["boundary_left.png"], self.screen),
-            Wall(1102, 60, 7, "v", wall["boundary_right.png"], self.screen),
+            Wall(739, 0, 5, "h", [wall["boundary_top.png"]], self.screen),
+            Wall(99, 0, 5, "h", [wall["boundary_top.png"]], self.screen),
+            Wall(0, 64, 7, "v", [wall["boundary_left.png"]], self.screen),
+            Wall(1102, 60, 7, "v", [wall["boundary_right.png"]], self.screen),
 
-            Wall(587, 367, 2, "v", wall["boundary_left.png"], self.screen),
-            Wall(507, 367, 2, "v", wall["boundary_right.png"], self.screen),
+            Wall(587, 367, 2, "v", [wall["boundary_left.png"]], self.screen),
+            Wall(507, 367, 2, "v", [wall["boundary_right.png"]], self.screen),
         ]
 
         obstacles = \
         [
-            Wall(363, 70, 2, "v", pillar["steel_mid.png"], self.screen),
-            Wall(363, 163, 1, "v", pillar["steel_bot.png"], self.screen),
-            Wall(363, 52, 1, "v", pillar["steel_top.png"], self.screen),
+            Wall(363, 52, 2, "v", pillarWall, self.screen),
+            Wall(738, 52, 2, "v", pillarWall, self.screen),
 
-            Wall(738, 70, 2, "v", pillar["steel_mid.png"], self.screen),
-            Wall(738, 163, 1, "v", pillar["steel_bot.png"], self.screen),
-            Wall(738, 52, 1, "v", pillar["steel_top.png"], self.screen),
+            Wall(167, 182, 2, "h", blockWall, self.screen),
+            Wall(735, 182, 2, "h", blockWall, self.screen),
 
-            Wall(227, 182, 2, "h", wall["block_mid.png"], self.screen),
-            Wall(167, 182, 1, "h", wall["block_left.png"], self.screen),
-            Wall(355, 182, 1, "h", wall["block_right.png"], self.screen),
+            Wall(543, 198, 1, "h", [wall["block_small.png"]], self.screen),
+            Wall(575, 363, 1, "v", [wall["corner_bot_left.png"]], self.screen),
+            Wall(507, 363, 1, "h", [wall["corner_bot_right.png"]], self.screen),
 
-            Wall(795, 182, 2, "h", wall["block_mid.png"], self.screen),
-            Wall(735, 182, 1, "h", wall["block_left.png"], self.screen),
-            Wall(923, 182, 1, "h", wall["block_right.png"], self.screen),
-
-            Wall(543, 198, 1, "h", wall["block_small.png"], self.screen),
-            Wall(575, 363, 1, "v", wall["corner_bot_left.png"], self.screen),
-            Wall(507, 363, 1, "h", wall["corner_bot_right.png"], self.screen),
-
-            Wall(375, 487, 1, "v", wall["plat_mid.png"], self.screen),
-            Wall(375, 423, 1, "v", wall["plat_top.png"], self.screen),
-            Wall(703, 487, 1, "v", wall["plat_mid.png"], self.screen),
-            Wall(703, 423, 1, "v", wall["plat_top.png"], self.screen),
+            Wall(375, 423, 1, "v", platWall, self.screen),
+            Wall(703, 423, 1, "v", platWall, self.screen),
         ]
 
         return boundaries + obstacles
