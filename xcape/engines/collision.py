@@ -139,6 +139,37 @@ class CollisionEngine(GameObject):
             if not pg.Rect.contains(boundary, player):
                 events.messageScene("collision_engine", "death")
 
+    def _resolveBasicCollision(self, moving, group):
+        """
+        Resolves any collisions between a moving object and a group of
+        objects such that the moving object cannot pass through such objects.
+
+        :param moving: GameObject instance, representing a moving scene entity.
+        :param group: List, containing GameObject instance in a scene.
+        :return:
+        """
+        hits = pg.sprite.spritecollide(moving, group, False)
+
+        for wall in hits:
+            direction = self._checkCollisionDirection(moving, wall)
+
+            if direction == "bottom":
+                moving.rect.bottom = wall.rect.top
+                moving.physics.velocity.y = 0
+                moving.isOnGround = True
+
+            elif direction == "left":
+                moving.rect.left = wall.rect.right
+                moving.physics.velocity.x = 0
+
+            elif direction == "top":
+                moving.rect.top = wall.rect.bottom
+                moving.physics.velocity.y = 0
+
+            elif direction == "right":
+                moving.rect.right = wall.rect.left
+                moving.physics.velocity.x = 0
+
     def _checkCollisionDirection(self, moving, static):
         """
         Checks if the moving game object has collided with the static game
@@ -202,33 +233,3 @@ class CollisionEngine(GameObject):
             elif isCollideRight:
                 return "right"
 
-    def _resolveBasicCollision(self, moving, group):
-        """
-        Resolves any collisions between a moving object and a group of
-        objects such that the moving object cannot pass through such objects.
-
-        :param moving: GameObject instance, representing a moving scene entity.
-        :param group: List, containing GameObject instance in a scene.
-        :return:
-        """
-        hits = pg.sprite.spritecollide(moving, group, False)
-
-        for wall in hits:
-            direction = self._checkCollisionDirection(moving, wall)
-
-            if direction == "bottom":
-                moving.rect.bottom = wall.rect.top
-                moving.physics.velocity.y = 0
-                moving.isOnGround = True
-
-            elif direction == "left":
-                moving.rect.left = wall.rect.right
-                moving.physics.velocity.x = 0
-
-            elif direction == "top":
-                moving.rect.top = wall.rect.bottom
-                moving.physics.velocity.y = 0
-
-            elif direction == "right":
-                moving.rect.right = wall.rect.left
-                moving.physics.velocity.x = 0

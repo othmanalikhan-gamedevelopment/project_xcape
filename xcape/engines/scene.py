@@ -73,11 +73,13 @@ class SinglePlayer(GameObject):
             {
                 "scene_01": scenes.SoloScene01,
                 "scene_02": scenes.SoloScene02,
+                "scene_03": scenes.SoloScene03,
             }
         self.numToScene = \
             {
                 1: scenes.SoloScene01,
                 2: scenes.SoloScene02,
+                3: scenes.SoloScene03,
             }
 
     def handleEvent(self, event):
@@ -121,7 +123,7 @@ class SinglePlayer(GameObject):
         """
         Starts a new game.
         """
-        self._loadScene(self.nameToScene["scene_01"])
+        self._loadScene(self.nameToScene["scene_03"])
 
     def _loadScene(self, Scene):
         """

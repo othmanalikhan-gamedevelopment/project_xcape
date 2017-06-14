@@ -201,7 +201,8 @@ class MPlatform(BasePlatform):
         self.B = B
         self.dx = dx
         self.dy = dy
-        self.isDirection = True
+        self.isDirectionX = True
+        self.isDirectionY = True
 
     def update(self):
         # Physics update at start because it seems there is a mismatch of clock
@@ -214,14 +215,22 @@ class MPlatform(BasePlatform):
         xBoundA, yBoundA = self.A
         xBoundB, yBoundB = self.B
 
-        if self.rect.x > xBoundB and self.isDirection:
+        if self.rect.x > xBoundB and self.isDirectionX:
             self.dx *= -1
-            self.isDirection = False
-        if self.rect.x < xBoundA and not self.isDirection:
+            self.isDirectionX = False
+        if self.rect.x < xBoundA and not self.isDirectionX:
             self.dx *= -1
-            self.isDirection = True
+            self.isDirectionX = True
+
+        if self.rect.y > yBoundB and self.isDirectionY:
+            self.dy *= -1
+            self.isDirectionY = False
+        if self.rect.y < yBoundA and not self.isDirectionY:
+            self.dy *= -1
+            self.isDirectionY = True
 
         self.physics.addDisplacementX("move", self.dx)
+        self.physics.addDisplacementY("move", self.dy)
 
     def drawWithCamera(self, camera):
         self.screen.blit(self.image, camera.apply(self))
