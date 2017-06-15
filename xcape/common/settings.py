@@ -1,6 +1,7 @@
 """
 Contains a list of basic game settings.
 """
+import pygame as pg
 
 WIDTH = 640
 HEIGHT = 480
@@ -22,3 +23,15 @@ COLOURS = {
     "yellow": (255, 255, 0),
 }
 
+KEYBINDS_P1 = \
+{
+    "jump": pg.K_UP,
+    "move_left": pg.K_LEFT,
+    "move_right": pg.K_RIGHT,
+}
+KEYBINDS_P2 = \
+{
+    "jump": pg.K_w,
+    "move_left": pg.K_a,
+    "move_right": pg.K_d,
+}

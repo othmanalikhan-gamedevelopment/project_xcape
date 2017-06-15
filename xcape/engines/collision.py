@@ -34,7 +34,7 @@ class CollisionEngine(GameObject):
         self.resolveMPlatformCollisions()
 
         self.resolveSpikeCollisions()
-        # self.resolveBossCollisions()
+        self.resolveBossCollisions()
         self.resolveBoundaryCollision()
 
     def resolveWallCollisions(self):
@@ -117,7 +117,7 @@ class CollisionEngine(GameObject):
 
             hits = pg.sprite.spritecollide(player, self.scene.spikes, False)
             if hits:
-                events.messageScene("collision_engine", "death")
+                events.messageScene("collision_engine", "death", player.num)
 
     def resolveBossCollisions(self):
         """
@@ -127,7 +127,7 @@ class CollisionEngine(GameObject):
 
             hits = pg.sprite.spritecollide(player, self.scene.bosses, False)
             if hits:
-                events.messageScene("collision_engine", "death")
+                events.messageScene("collision_engine", "death", player.num)
 
     def resolveBoundaryCollision(self):
         """
@@ -137,7 +137,7 @@ class CollisionEngine(GameObject):
 
         for player in self.scene.players:
             if not pg.Rect.contains(boundary, player):
-                events.messageScene("collision_engine", "death")
+                events.messageScene("collision_engine", "death", player.num)
 
     def _resolveBasicCollision(self, moving, group):
         """

@@ -33,6 +33,7 @@ class MenuEngine(GameObject):
                 "game_over_menu": menus.GameOverMenu,
                 "pause_menu": menus.PauseMenu,
                 "solo_ui_menu": menus.SoloUIMenu,
+                "coop_ui_menu": menus.CoopUIMenu,
                 "win_menu": menus.WinMenu,
                 "death_menu": menus.DeathMenu,
             }

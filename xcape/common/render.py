@@ -47,7 +47,6 @@ def buildParts(blocks, orientation, images):
         for i in range(blocks):
             img.blit(images[1], (w0 + i*w1, 0))
         img.blit(images[2], (w0 + blocks*w1, 0))
-        print(img)
 
     if orientation == "v":
         img = pg.Surface((w0, h0 + blocks*h1 + h2))
@@ -151,13 +150,12 @@ class WrappedTextLabel:
         :param size: Integer, the size of the font.
         :param colour: String, the name of the colour to be used.
         :param wrap: Integer, the max amount of characters per line.
-        :param x: Integer, the x-position of the text.
-        :param y: Integer, the y-position of the text.
-
         :param width: Integer, the width of the output image.
         :param height: Integer, the height of the output image.
         :param indent: Integer, the indent of the lines in the image.
         :param spacing: Integer, the spacing between lines in the image.
+        :param x: Integer, the x-position of the text.
+        :param y: Integer, the y-position of the text.
 
         """
         font = pg.font.SysFont(settings.FONT, size)
@@ -167,6 +165,28 @@ class WrappedTextLabel:
                                       width, height, indent, spacing)
         self.rect = pg.Rect(x, y, 0, 0)
         self.rect.size = self.image.get_size()
+
+
+    def wrap(self, text, font, width, height, indent, spacing):
+        """
+        Wraps the text for the given.
+
+        :param text: String, the text to render.
+        :param font: pygame.font.Font, representing the font to use.
+        :param width: Integer, the width of the output image.
+        :param height: Integer, the height of the output image.
+        :param indent: Integer, the indent of the lines in the image.
+        :param spacing: Integer, the spacing between lines in the image.
+        :return: pygame.Surface, the image of the rendered lines.
+        """
+        c = settings.COLOURS[colour]
+        images = [font.render(l, True, c) for l in lines]
+
+        merged = pg.Surface((width, height))
+        merged.fill(settings.COLOURS["white"])
+        [merged.blit(img, (indent, n*spacing)) for n, img in enumerate(images)]
+        return merged
+
 
     def renderLines(self, lines, font, colour, width, height, indent, spacing):
         """
@@ -204,7 +224,7 @@ class Dialogue(GameObject):
         self.index = 0
 
     def draw(self):
-        if self.index != 0:
+        if self.index >= 0:
             self.bubbles[self.index].draw()
 
     def drawWithCamera(self, camera):
@@ -213,18 +233,19 @@ class Dialogue(GameObject):
 
         :param camera: Camera instance, shifts the position of the drawn animation.
         """
-        if self.index != 0:
+        if self.index >= 0:
             self.bubbles[self.index].drawWithCamera(camera)
 
-    def add(self, text, x, y):
+    def add(self, text, x, y, bubbleType="right"):
         """
         Adds a dialogue bubble.
 
         :param text: Text, the text in the bubble.
         :param x: Integer, the x-position of the text.
         :param y: Integer, the y-position of the text.
+        :param bubbleType: String, either 'right', 'left', or 'caption'.
         """
-        bubble = _Bubble(text, x, y, self.screen)
+        bubble = _Bubble(text, bubbleType, x, y, self.screen)
         self.bubbles.append(bubble)
 
 
@@ -233,32 +254,47 @@ class _Bubble(GameObject):
     Represents a dialogue bubble.
     """
 
-    def __init__(self, text, x, y, screen):
+    def __init__(self, text, bubbleType, x, y, screen):
         """
         :param text: Text, the text in the bubble.
+        :param bubbleType: String, either 'right', 'left', or 'caption'.
         :param x: Integer, the x-position of the text.
         :param y: Integer, the y-position of the text.
         :param screen: pygame.Surface, representing the screen.
         """
+        self.types = \
+            {
+                "right": "globe_right.png",
+                "caption": "globe_caption.png",
+                "left": "globe_left.png",
+            }
+
+        self.text = text
+        self.image = self.generate(text, bubbleType)
         self.rect = pg.Rect(x, y, 0, 0)
+        self.rect.size = self.image.get_size()
         self.screen = screen
 
+    def generate(self, text, bubbleType):
+        """
+        Generates the image of the bubble with text in it.
+
+        :param text: Text, the text in the bubble.
+        :param bubbleType: String, either 'right', 'left', or 'caption'.
+        :return: pygame.Surface, the image of the bubble with text.
+        """
         text = WrappedTextLabel(text=str(text),
                                 size=18,
                                 colour="black",
-                                wrap=29,
+                                wrap=35,
                                 width=180,
                                 height=40,
                                 indent=10,
                                 spacing=20,
                                 x=0, y=0)
-        bubble = self._loadEmptyBubble()
+        bubble = self._loadEmptyBubble(self.types[bubbleType])
         bubble.blit(text.image, (8, 12))
-
-        self.image = bubble
-        self.rect = pg.Rect(x, y, 0, 0)
-        self.rect.size = bubble.get_size()
-        self.screen = screen
+        return bubble
 
     def draw(self):
         self.screen.blit(self.image, self.rect)
@@ -271,13 +307,14 @@ class _Bubble(GameObject):
         """
         self.screen.blit(self.image, camera.apply(self))
 
-    def _loadEmptyBubble(self):
+    def _loadEmptyBubble(self, name):
         """
         Loads an bubble image with no text on it.
 
+        :param name: String, the name of the globe image.
         :return: pygame.Surface, the image of the empty bubble.
         """
-        bubble = cutsceneResources["assets"]["globe_0.png"]
+        bubble = cutsceneResources["assets"][name]
         bubble = addBackground(bubble)
         bubble.set_colorkey(settings.COLOURS["blue"])
         return bubble

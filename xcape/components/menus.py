@@ -474,7 +474,7 @@ class FadeEffect(BaseMenu):
 
 class SoloUIMenu(BaseMenu):
     """
-    The UI in a scene.
+    The single player UI in a scene.
     """
 
     def __init__(self, screen):
@@ -490,7 +490,7 @@ class SoloUIMenu(BaseMenu):
         if event.type == events.MENU_EVENT:
             if event.category == "max_health":
                 maxHP = event.data
-                self.setLives(maxHP)
+                self.setMaxLives(maxHP)
 
             if event.category == "health":
                 currentHP = event.data
@@ -507,9 +507,9 @@ class SoloUIMenu(BaseMenu):
         for live in self.lives:
             live.animation.draw()
 
-    def setLives(self, numLives):
+    def setMaxLives(self, numLives):
         """
-        Adds lives to the health bar.
+        Sets the maximum number of hearts on the health bar.
 
         :param numLives: Integer, the number of lives.
         """
@@ -517,9 +517,89 @@ class SoloUIMenu(BaseMenu):
         for i in range(numLives):
             label = ImageLabel(self.x + i*self.dx, self.y, None, self.screen)
             label.state = "life"
-            label.animation.add("no_life", [assets["no_life.png"]], float('inf'))
-            label.animation.add("life", [assets["life.png"]], float('inf'))
+            label.animation.add("no_life",
+                                [assets["no_life.png"]],
+                                float('inf'))
+            label.animation.add("life",
+                                [assets["life_default.png"]],
+                                float('inf'))
             self.lives.append(label)
+
+
+class CoopUIMenu(BaseMenu):
+    """
+    The mutliplayer UI in a scene.
+    """
+
+    def __init__(self, screen):
+        super().__init__(screen)
+        self.rect = pg.Rect(0, 0, 0, 0)
+
+        self.x1 = 50
+        self.y1 = 50
+        self.x2 = 450
+        self.y2 = 50
+        self.spacing = 30
+
+        self.livesP1 = []
+        self.livesP2 = []
+
+    def handleEvent(self, event):
+        if event.type == events.MENU_EVENT:
+            if event.category == "max_health":
+                maxHP = event.data
+                self.setMaxLives(maxHP)
+
+            if event.category == "health":
+                currentHP = event.data
+
+                # for heart in self.lives:
+                #     heart.state = "no_life"
+                # for heart in range(currentHP):
+                #     self.lives[heart].state = "life"
+
+    def update(self):
+        [l.animation.update() for l in self.livesP1]
+        [l.animation.update() for l in self.livesP2]
+
+    def draw(self):
+        [l.animation.draw() for l in self.livesP1]
+        [l.animation.draw() for l in self.livesP2]
+
+    def setMaxLives(self, lives):
+        """
+        Sets the maximum number of hearts on the health bar.
+
+        :param lives: List, containing integers representing lives for players.
+        """
+        assets = menuResources["assets"]
+
+        maxHealthP1 = lives[0]
+        maxHealthP2 = lives[1]
+
+        for i in range(maxHealthP1):
+            label = ImageLabel(self.x1 + i*self.spacing, self.y1,
+                               None, self.screen)
+            label.state = "life"
+            label.animation.add("no_life",
+                                [assets["no_life.png"]],
+                                float('inf'))
+            label.animation.add("life",
+                                [assets["life_default.png"]],
+                                float('inf'))
+            self.livesP1.append(label)
+
+        for i in range(maxHealthP2):
+            label = ImageLabel(self.x2 + i*self.spacing, self.y2,
+                               None, self.screen)
+            label.state = "life"
+            label.animation.add("no_life",
+                                [assets["no_life.png"]],
+                                float('inf'))
+            label.animation.add("life",
+                                [assets["life_default.png"]],
+                                float('inf'))
+            self.livesP2.append(label)
 
 
 class _SettingsLabel(GameObject):

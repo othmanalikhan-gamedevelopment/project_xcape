@@ -6,6 +6,7 @@ import random
 
 import pygame as pg
 
+import xcape.common.settings as settings
 import xcape.components.dialogue as dialogue
 from xcape.common.loader import characterResources
 from xcape.common.object import GameObject
@@ -26,6 +27,7 @@ class Player(GameObject, pg.sprite.Sprite):
         super().__init__()
         self.screen = screen
         self.rect = pg.Rect(0, 0, 50, 48)
+        self.num = 1
 
         self.state = "idle"
         self.orientation = "right"
@@ -41,25 +43,21 @@ class Player(GameObject, pg.sprite.Sprite):
         self.animation = AnimationComponent(self, enableOrientation=True)
         self.animation.add("idle", cat["idle"], float('inf'))
         self.animation.add("running", cat["running"], 400)
-
         self.animation.scaleAll(self.rect.size)
 
-        self.keybinds = \
-            {
-                "jump": pg.K_UP,
-                "move_left": pg.K_LEFT,
-                "move_right": pg.K_RIGHT,
-            }
+        self.keybinds = settings.KEYBINDS_P1
 
     def update(self):
         self.animation.update()
         self.physics.update()
 
         pressed = pg.key.get_pressed()
+        left = self.keybinds["move_left"]
+        right = self.keybinds["move_right"]
 
-        if pressed[pg.K_LEFT] and not pressed[pg.K_RIGHT]:
+        if pressed[left] and not pressed[right]:
             self.moveLeft()
-        if pressed[pg.K_RIGHT] and not pressed[pg.K_LEFT]:
+        if pressed[right] and not pressed[left]:
             self.moveRight()
 
     def handleEvent(self, event):

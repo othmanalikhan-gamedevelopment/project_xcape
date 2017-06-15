@@ -5,6 +5,7 @@ Responsible for containing all the cutscenes in game.
 import pygame as pg
 
 import xcape.common.events as events
+import xcape.components.dialogue as dialogue
 from xcape.common.loader import cutsceneResources
 from xcape.common.object import GameObject
 from xcape.common.render import Dialogue
@@ -43,7 +44,6 @@ class OfficeCutscene(BaseCutscene):
         super().__init__(screen)
         self.rect = pg.Rect(0, 0, 0, 0)
         intro = cutsceneResources["intro"]
-        assets = cutsceneResources["assets"]
 
         self.state = "talk_cat"
         self.animation = AnimationComponent(self)
@@ -51,14 +51,14 @@ class OfficeCutscene(BaseCutscene):
         self.animation.add("talk_cat", intro["office_cat"], 300)
 
         self.dialogue = Dialogue(self.screen)
-        self.dialogue.add(assets["office_1.png"], 358, 165)
-        self.dialogue.add(assets["office_2.png"], 166, 164)
-        self.dialogue.add(assets["office_3.png"], 358, 165)
-        self.dialogue.add(assets["office_4.png"], 166, 164)
+        self.dialogue.add(dialogue.OFFICE_1, 358, 165, "caption")
+        self.dialogue.add(dialogue.OFFICE_2, 166, 164, "left")
+        self.dialogue.add(dialogue.OFFICE_3, 358, 165)
+        self.dialogue.add(dialogue.OFFICE_4, 166, 164, "left")
 
         self.origin = pg.time.get_ticks()       # milliseconds
         self.elapsed = 0                        # milliseconds
-        self.speed = 1
+        self.speed = 100
         self.isSentMessage = False
 
     def handleEvent(self, event):
@@ -74,19 +74,19 @@ class OfficeCutscene(BaseCutscene):
 
         elif self.speed*3600 > self.elapsed:
             self.state = "talk_cat"
-            self.dialogue.index = 1
+            self.dialogue.index = 0
 
         elif self.speed*7200 > self.elapsed:
             self.state = "talk_dog"
-            self.dialogue.index = 2
+            self.dialogue.index = 1
 
         elif self.speed*10800 > self.elapsed:
             self.state = "talk_cat"
-            self.dialogue.index = 3
+            self.dialogue.index = 2
 
         elif self.speed*14400 >= self.elapsed:
             self.state = "talk_dog"
-            self.dialogue.index = 4
+            self.dialogue.index = 3
 
         else:
             self.messageNextScene()
