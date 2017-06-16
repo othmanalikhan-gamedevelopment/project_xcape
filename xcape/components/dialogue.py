@@ -1,5 +1,5 @@
 """
-Contains all the dialogue ingame used in speech bubbles.
+Contains all the dialogue used in speech bubbles.
 """
 
 BOSS_0 = "Mmmm..."
@@ -8,7 +8,9 @@ BOSS_2 = "When is a door not a door? When it is ajar!"
 BOSS_3 = "Why do java programmers wear glasses? Because they don't C#"
 BOSS_4 = "What do you call a bee that lives in America? A USB."
 
-##################################### CUTSCENES
+SCENE_SOLO_1 = "Chapter 1: It's rather cozy in here..."
+SCENE_SOLO_2 = "Chapter 2: And... this is... prison?"
+SCENE_SOLO_3 = "Chapter 3: Who even needs to escape... right?"
 
 OFFICE_1 = "cuéntame qué necesitas."
 OFFICE_2 = "necesito tus servicios como asesino."

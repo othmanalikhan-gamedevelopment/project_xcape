@@ -6,8 +6,10 @@ import pygame as pg
 
 import xcape.common.events as events
 import xcape.common.settings as settings
+import xcape.components.dialogue as dialogue
 from xcape.common.loader import sceneResources
 from xcape.common.object import GameObject
+from xcape.common.render import Dialogue
 from xcape.entities.characters import Player, PigBoss
 from xcape.entities.scene import (
     Wall, SPlatform, DPlatform, MPlatform, Switch, Door, Spike
@@ -154,6 +156,12 @@ class SoloScene01(BaseScene):
         self.switches = self.addSwitches()
         self.doors = self.addDoors()
 
+        self.elapsed = 0
+        self.origin = pg.time.get_ticks()
+        self.dialogue = Dialogue(self.screen)
+        self.dialogue.add(dialogue.SCENE_SOLO_1, 10, 410, "caption")
+        self.dialogue.index = 0
+
     def handleEvent(self, event):
         [p.handleEvent(event) for p in self.players]
 
@@ -161,6 +169,8 @@ class SoloScene01(BaseScene):
             [d.handleEvent(event) for d in self.doors]
 
     def update(self):
+        self.elapsed = pg.time.get_ticks() - self.origin
+
         [s.update() for s in self.switches]
         [d.update() for d in self.doors]
         [p.update() for p in self.players]
@@ -174,6 +184,9 @@ class SoloScene01(BaseScene):
         [s.drawWithCamera(camera) for s in self.switches]
         [p.drawWithCamera(camera) for p in self.sPlatforms]
         [p.drawWithCamera(camera) for p in self.players]
+
+        if 5000 > self.elapsed >= 0:
+            self.dialogue.draw()
 
     def addPlayers(self):
         spawn = (100, 0)
@@ -262,6 +275,12 @@ class SoloScene02(BaseScene):
         self.spikes = self.addSpikes()
         self.decorations = self.addDecorations()
 
+        self.elapsed = 0
+        self.origin = pg.time.get_ticks()
+        self.dialogue = Dialogue(self.screen)
+        self.dialogue.add(dialogue.SCENE_SOLO_2, 10, 410, "caption")
+        self.dialogue.index = 0
+
     def handleEvent(self, event):
         [p.handleEvent(event) for p in self.players]
         [b.handleEvent(event) for b in self.bosses]
@@ -270,6 +289,8 @@ class SoloScene02(BaseScene):
             [d.handleEvent(event) for d in self.doors]
 
     def update(self):
+        self.elapsed = pg.time.get_ticks() - self.origin
+
         [s.update() for s in self.switches]
         [d.update() for d in self.doors]
         [p.update() for p in self.mPlatforms]
@@ -287,6 +308,9 @@ class SoloScene02(BaseScene):
         [p.drawWithCamera(camera) for p in self.mPlatforms]
         [p.drawWithCamera(camera) for p in self.dPlatforms]
         [p.drawWithCamera(camera) for p in self.players]
+
+        if 5000 > self.elapsed >= 0:
+            self.dialogue.draw()
 
     def addPlayers(self):
         spawn = (70, 510)
@@ -401,6 +425,12 @@ class SoloScene03(BaseScene):
         self.doors = self.addDoors()
         self.spikes = self.addSpikes()
 
+        self.elapsed = 0
+        self.origin = pg.time.get_ticks()
+        self.dialogue = Dialogue(self.screen)
+        self.dialogue.add(dialogue.SCENE_SOLO_3, 10, 410, "caption")
+        self.dialogue.index = 0
+
     def handleEvent(self, event):
         [p.handleEvent(event) for p in self.players]
 
@@ -408,6 +438,8 @@ class SoloScene03(BaseScene):
             [d.handleEvent(event) for d in self.doors]
 
     def update(self):
+        self.elapsed = pg.time.get_ticks() - self.origin
+
         [s.update() for s in self.switches]
         [d.update() for d in self.doors]
         [p.update() for p in self.mPlatforms]
@@ -423,6 +455,9 @@ class SoloScene03(BaseScene):
         [s.drawWithCamera(camera) for s in self.spikes]
         [p.drawWithCamera(camera) for p in self.mPlatforms]
         [p.drawWithCamera(camera) for p in self.players]
+
+        if 5000 > self.elapsed >= 0:
+            self.dialogue.draw()
 
     def addPlayers(self):
         spawn = (315, 128)
@@ -533,6 +568,12 @@ class CoopScene01(BaseScene):
         self.switches = self.addSwitches()
         self.doors = self.addDoors()
 
+        self.elapsed = 0
+        self.origin = pg.time.get_ticks()
+        self.dialogue = Dialogue(self.screen)
+        self.dialogue.add(dialogue.OFFICE_1, 10, 410, "caption")
+        self.dialogue.index = 0
+
     def handleEvent(self, event):
         [p.handleEvent(event) for p in self.players]
 
@@ -540,6 +581,8 @@ class CoopScene01(BaseScene):
             [d.handleEvent(event) for d in self.doors]
 
     def update(self):
+        self.elapsed = pg.time.get_ticks() - self.origin
+
         [s.update() for s in self.switches]
         [d.update() for d in self.doors]
         [p.update() for p in self.players]
@@ -553,6 +596,9 @@ class CoopScene01(BaseScene):
         [s.drawWithCamera(camera) for s in self.switches]
         [p.drawWithCamera(camera) for p in self.sPlatforms]
         [p.drawWithCamera(camera) for p in self.players]
+
+        if 5000 > self.elapsed >= 0:
+            self.dialogue.draw()
 
     def addPlayers(self):
         spawn = (100, 0)
