@@ -15,7 +15,7 @@ from xcape.components.cutscenes import Dialogue
 from xcape.components.physics import PhysicsComponent
 
 
-class Player(GameObject, pg.sprite.Sprite):
+class PlayerBase(GameObject, pg.sprite.Sprite):
     """
     The controllable character to be played.
     """
@@ -26,26 +26,21 @@ class Player(GameObject, pg.sprite.Sprite):
         """
         super().__init__()
         self.screen = screen
-        self.rect = pg.Rect(0, 0, 50, 48)
-        self.num = 1
+        self.rect = pg.Rect(0, 0, 0, 0)
+        self.num = 0
 
         self.state = "idle"
         self.orientation = "right"
-        self.lives = 3
+        self.lives = 5
 
         self.isOnGround = False
         self.jumpSpeed = -12
         self.moveSpeed = 9
 
         self.physics = PhysicsComponent(self)
-
-        cat = characterResources["cat"]
         self.animation = AnimationComponent(self, enableOrientation=True)
-        self.animation.add("idle", cat["idle"], float('inf'))
-        self.animation.add("running", cat["running"], 400)
-        self.animation.scaleAll(self.rect.size)
 
-        self.keybinds = settings.KEYBINDS_P1
+        self.keybinds = None
 
     def update(self):
         self.animation.update()
@@ -110,6 +105,49 @@ class Player(GameObject, pg.sprite.Sprite):
         """
         self.state = "idle"
         self.physics.velocity.x = 0
+
+
+class PlayerOne(PlayerBase):
+    """
+    The controllable player one.
+    """
+
+    def __init__(self, screen):
+        """
+        :param screen: pygame.Surface, representing the screen.
+        """
+        super().__init__(screen)
+        self.rect = pg.Rect(0, 0, 50, 48)
+        self.num = 1
+
+        cat = characterResources["cat_orange"]
+        self.animation.add("idle", cat["idle"], float('inf'))
+        self.animation.add("running", cat["running"], 400)
+        self.animation.scaleAll(self.rect.size)
+
+        self.keybinds = settings.KEYBINDS_P1
+
+
+class PlayerTwo(PlayerBase):
+    """
+    The controllable player two.
+    """
+
+    def __init__(self, screen):
+        """
+        :param screen: pygame.Surface, representing the screen.
+        """
+        super().__init__(screen)
+        self.rect = pg.Rect(0, 0, 50, 48)
+        self.num = 2
+
+        cat = characterResources["cat_blue"]
+        self.animation.add("idle", cat["idle"], float('inf'))
+        self.animation.add("running", cat["running"], 400)
+        self.animation.scaleAll(self.rect.size)
+
+        self.keybinds = settings.KEYBINDS_P2
+
 
 
 class PigBoss(GameObject, pg.sprite.Sprite):

@@ -10,7 +10,7 @@ import xcape.components.dialogue as dialogue
 from xcape.common.loader import sceneResources
 from xcape.common.object import GameObject
 from xcape.common.render import Dialogue
-from xcape.entities.characters import Player, PigBoss
+from xcape.entities.characters import PlayerOne, PlayerTwo, PigBoss
 from xcape.entities.scene import (
     Wall, SPlatform, DPlatform, MPlatform, Switch, Door, Spike
 )
@@ -190,7 +190,7 @@ class SoloScene01(BaseScene):
 
     def addPlayers(self):
         spawn = (100, 0)
-        player = [Player(self.screen)]
+        player = [PlayerOne(self.screen)]
         player[0].rect.center = spawn
         return player
 
@@ -314,7 +314,7 @@ class SoloScene02(BaseScene):
 
     def addPlayers(self):
         spawn = (70, 510)
-        player = [Player(self.screen)]
+        player = [PlayerOne(self.screen)]
         player[0].rect.center = spawn
         return player
 
@@ -461,7 +461,7 @@ class SoloScene03(BaseScene):
 
     def addPlayers(self):
         spawn = (315, 128)
-        player = [Player(self.screen)]
+        player = [PlayerOne(self.screen)]
         player[0].rect.center = spawn
         return player
 
@@ -602,11 +602,8 @@ class CoopScene01(BaseScene):
 
     def addPlayers(self):
         spawn = (100, 0)
-        p1 = Player(self.screen)
-        p2 = Player(self.screen)
-        p2.keybinds = settings.KEYBINDS_P2
-        print(p2.keybinds)
-        print(p1.keybinds)
+        p1 = PlayerOne(self.screen)
+        p2 = PlayerTwo(self.screen)
         p1.rect.center = (100, 0)
         p2.rect.center = (150, 0)
         players = [p1, p2]

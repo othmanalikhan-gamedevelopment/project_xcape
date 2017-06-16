@@ -518,10 +518,10 @@ class SoloUIMenu(BaseMenu):
             label = ImageLabel(self.x + i*self.dx, self.y, None, self.screen)
             label.state = "life"
             label.animation.add("no_life",
-                                [assets["no_life.png"]],
+                                [assets["life_empty.png"]],
                                 float('inf'))
             label.animation.add("life",
-                                [assets["life_default.png"]],
+                                [assets["life_gray.png"]],
                                 float('inf'))
             self.lives.append(label)
 
@@ -537,9 +537,22 @@ class CoopUIMenu(BaseMenu):
 
         self.x1 = 50
         self.y1 = 50
-        self.x2 = 450
-        self.y2 = 50
+        self.x2 = 50
+        self.y2 = 85
         self.spacing = 30
+
+        self.p1Text = TextLabel("P1",
+                                30,
+                                "orange",
+                                self.x1 - 35,
+                                self.y1 + 4,
+                                self.screen)
+        self.p2Text = TextLabel("P2",
+                                30,
+                                "navy_blue",
+                                self.x2 - 35,
+                                self.y2 + 4,
+                                self.screen)
 
         self.livesP1 = []
         self.livesP2 = []
@@ -566,6 +579,9 @@ class CoopUIMenu(BaseMenu):
         [l.animation.draw() for l in self.livesP1]
         [l.animation.draw() for l in self.livesP2]
 
+        self.p1Text.draw()
+        self.p2Text.draw()
+
     def setMaxLives(self, lives):
         """
         Sets the maximum number of hearts on the health bar.
@@ -582,10 +598,10 @@ class CoopUIMenu(BaseMenu):
                                None, self.screen)
             label.state = "life"
             label.animation.add("no_life",
-                                [assets["no_life.png"]],
+                                [assets["life_empty.png"]],
                                 float('inf'))
             label.animation.add("life",
-                                [assets["life_default.png"]],
+                                [assets["life_orange.png"]],
                                 float('inf'))
             self.livesP1.append(label)
 
@@ -594,10 +610,10 @@ class CoopUIMenu(BaseMenu):
                                None, self.screen)
             label.state = "life"
             label.animation.add("no_life",
-                                [assets["no_life.png"]],
+                                [assets["life_empty.png"]],
                                 float('inf'))
             label.animation.add("life",
-                                [assets["life_default.png"]],
+                                [assets["life_blue.png"]],
                                 float('inf'))
             self.livesP2.append(label)
 
