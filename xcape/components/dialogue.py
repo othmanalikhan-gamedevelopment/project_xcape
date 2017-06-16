@@ -10,11 +10,11 @@ BOSS_4 = "What do you call a bee that lives in America? A USB."
 
 ##################################### CUTSCENES
 
-# OFFICE_1 = "cuéntame qué necesitas"
-OFFICE_1 = "Why do java programmers wear glasses? Because they don't C#"
-OFFICE_2 = "necesito tus servicios como asesino"
+# OFFICE_1 = "cuéntame qué necesitas."
+OFFICE_1 = "cuéntame qué necesitas. asldkjsadlk klsjad skljasdajkl"
+OFFICE_2 = "necesito tus servicios como asesino."
 OFFICE_3 = "quién tiene que ser eliminado?"
-OFFICE_4 = "es el perro jefe de todo"
+OFFICE_4 = "es el perro jefe de todo."
 
 TELEPHONE_1 = "buenos dias llamo para informar..."
 TELEPHONE_2 = "atrapé a un gato robando"

@@ -58,7 +58,7 @@ class OfficeCutscene(BaseCutscene):
 
         self.origin = pg.time.get_ticks()       # milliseconds
         self.elapsed = 0                        # milliseconds
-        self.speed = 100
+        self.speed = 1
         self.isSentMessage = False
 
     def handleEvent(self, event):

@@ -2,8 +2,6 @@
 Responsible for containing common rendering functions.
 """
 
-import textwrap
-
 import pygame as pg
 
 from xcape.common import settings as settings
@@ -143,52 +141,90 @@ class WrappedTextLabel:
     Represents text that is wrapped.
     """
 
-    def __init__(self, text, size, colour, wrap,
-                 width, height, indent, spacing, x, y):
+    def __init__(self, text, size, colour, width, height, spacing, x, y):
         """
         :param text: String, the text to render.
         :param size: Integer, the size of the font.
         :param colour: String, the name of the colour to be used.
-        :param wrap: Integer, the max amount of characters per line.
         :param width: Integer, the width of the output image.
         :param height: Integer, the height of the output image.
-        :param indent: Integer, the indent of the lines in the image.
         :param spacing: Integer, the spacing between lines in the image.
         :param x: Integer, the x-position of the text.
         :param y: Integer, the y-position of the text.
 
         """
-        font = pg.font.SysFont(settings.FONT, size)
-        font.set_italic(True)
-        lines = textwrap.wrap(text, wrap)
-        self.image = self.renderLines(lines, font, colour,
-                                      width, height, indent, spacing)
+        lines, font = \
+            self.wrap(text, settings.FONT, size, width, height, spacing)
+        self.image = \
+            self.renderLines(lines, font, colour, width, height, spacing)
+
         self.rect = pg.Rect(x, y, 0, 0)
         self.rect.size = self.image.get_size()
 
-
-    def wrap(self, text, font, width, height, indent, spacing):
+    def wrap(self, text, fontPath, size, width, height, spacing):
         """
-        Wraps the text for the given.
+        Attempts to wrap the given text as best as possible.
 
-        :param text: String, the text to render.
-        :param font: pygame.font.Font, representing the font to use.
-        :param width: Integer, the width of the output image.
-        :param height: Integer, the height of the output image.
-        :param indent: Integer, the indent of the lines in the image.
+        The wrapped text will always be less than the specified width long.
+
+        :param text: String, the text to be wrapped.
+        :param fontPath: os.path, representing the path to the font to use.
+        :param size: Integer, the preferred size of the font to use.
+        :param width: Integer, the width of the rendered text image.
+        :param height: Integer, the height of the rendered text image.
         :param spacing: Integer, the spacing between lines in the image.
-        :return: pygame.Surface, the image of the rendered lines.
+        :return: List, containing strings which represent each line.
+        :return: 2-Tuple, as (lines, font).
         """
-        c = settings.COLOURS[colour]
-        images = [font.render(l, True, c) for l in lines]
+        for s in range(size, 12, -1):
+            font = pg.font.SysFont(fontPath, s)
+            lines, ws, hs = self._wrapWidthOnly(text, font, width, spacing)
 
-        merged = pg.Surface((width, height))
-        merged.fill(settings.COLOURS["white"])
-        [merged.blit(img, (indent, n*spacing)) for n, img in enumerate(images)]
-        return merged
+            print(lines, ws, hs, s, "\n")
+            if height > sum(hs):
+                return lines, font
 
+        raise ValueError("Insufficient space to wrap the font!")
 
-    def renderLines(self, lines, font, colour, width, height, indent, spacing):
+    def _wrapWidthOnly(self, text, font, width, spacing):
+        """
+        Wraps the text ensuring that each line is at most the given width
+        length.
+
+        This function does NOT take consider the heights of the lines.
+
+        :param text: String, the text to be wrapped.
+        :param font: pygame.font.Font, the font to be used (fixed size).
+        :param width: Integer, the width of the rendered text image.
+        :param spacing: Integer, the spacing between lines in the image.
+        :return: 3-Tuple, as (lines, widths, heights).
+        """
+        built = ""
+        lines = []
+        heights = []
+        widths = []
+
+        for word in text.split():
+            w, h = font.size(built + " " + word)
+
+            if width > w:
+                built += " " + word
+            else:
+                lines.append(built)
+                w, h = font.size(built)
+                heights.append(h + spacing)
+                widths.append(w)
+                built = word
+
+            built = built.strip()
+
+        lines.append(built)
+        w, h = font.size(built)
+        heights.append(h)
+        widths.append(w)
+        return lines, widths, heights
+
+    def renderLines(self, lines, font, colour, width, height, spacing):
         """
         Renders the given into an image.
 
@@ -197,7 +233,6 @@ class WrappedTextLabel:
         :param colour: String, the name of the colour to be used.
         :param width: Integer, the width of the output image.
         :param height: Integer, the height of the output image.
-        :param indent: Integer, the indent of the lines in the image.
         :param spacing: Integer, the spacing between lines in the image.
         :return: pygame.Surface, the image of the rendered lines.
         """
@@ -206,7 +241,8 @@ class WrappedTextLabel:
 
         merged = pg.Surface((width, height))
         merged.fill(settings.COLOURS["white"])
-        [merged.blit(img, (indent, n*spacing)) for n, img in enumerate(images)]
+        merged.set_colorkey(settings.COLOURS["white"])
+        [merged.blit(img, (0, n*spacing)) for n, img in enumerate(images)]
         return merged
 
 
@@ -284,16 +320,14 @@ class _Bubble(GameObject):
         :return: pygame.Surface, the image of the bubble with text.
         """
         text = WrappedTextLabel(text=str(text),
-                                size=18,
+                                size=22,
                                 colour="black",
-                                wrap=35,
-                                width=180,
-                                height=40,
-                                indent=10,
+                                width=172,
+                                height=55,
                                 spacing=20,
                                 x=0, y=0)
         bubble = self._loadEmptyBubble(self.types[bubbleType])
-        bubble.blit(text.image, (8, 12))
+        bubble.blit(text.image, (10, 10))
         return bubble
 
     def draw(self):
