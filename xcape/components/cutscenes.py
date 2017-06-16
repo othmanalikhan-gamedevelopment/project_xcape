@@ -45,16 +45,16 @@ class OfficeCutscene(BaseCutscene):
         self.rect = pg.Rect(0, 0, 0, 0)
         intro = cutsceneResources["intro"]
 
-        self.state = "talk_cat"
+        self.state = "office_cat"
         self.animation = AnimationComponent(self)
-        self.animation.add("talk_dog", intro["office_dog"], 300)
-        self.animation.add("talk_cat", intro["office_cat"], 300)
+        self.animation.add("office_dog", intro["office_dog"], 1500)
+        self.animation.add("office_cat", intro["office_cat"], 1500)
 
         self.dialogue = Dialogue(self.screen)
-        self.dialogue.add(dialogue.OFFICE_1, 358, 165, "caption")
-        self.dialogue.add(dialogue.OFFICE_2, 166, 164, "left")
-        self.dialogue.add(dialogue.OFFICE_3, 358, 165)
-        self.dialogue.add(dialogue.OFFICE_4, 166, 164, "left")
+        self.dialogue.add(dialogue.OFFICE_1, 240, 50, "left")
+        self.dialogue.add(dialogue.OFFICE_2, 370, 100)
+        self.dialogue.add(dialogue.OFFICE_3, 240, 50, "left")
+        self.dialogue.add(dialogue.OFFICE_4, 370, 100)
 
         self.origin = pg.time.get_ticks()       # milliseconds
         self.elapsed = 0                        # milliseconds
@@ -70,22 +70,22 @@ class OfficeCutscene(BaseCutscene):
         self.elapsed = pg.time.get_ticks() - self.origin
 
         if self.speed*500 > self.elapsed >= self.speed*0:
-            self.state = "talk_cat"
+            self.state = "office_cat"
 
         elif self.speed*3600 > self.elapsed:
-            self.state = "talk_cat"
+            self.state = "office_cat"
             self.dialogue.index = 0
 
         elif self.speed*7200 > self.elapsed:
-            self.state = "talk_dog"
+            self.state = "office_dog"
             self.dialogue.index = 1
 
         elif self.speed*10800 > self.elapsed:
-            self.state = "talk_cat"
+            self.state = "office_cat"
             self.dialogue.index = 2
 
         elif self.speed*14400 >= self.elapsed:
-            self.state = "talk_dog"
+            self.state = "office_dog"
             self.dialogue.index = 3
 
         else:
@@ -108,8 +108,6 @@ class OfficeCutscene(BaseCutscene):
             self.isSentMessage = True
 
 
-
-
 class TelephoneCutscene(BaseCutscene):
     """
     The cutscene where the dog is talking on the phone.
@@ -119,17 +117,17 @@ class TelephoneCutscene(BaseCutscene):
         super().__init__(screen)
         self.rect = pg.Rect(0, 0, 0, 0)
         intro = cutsceneResources["intro"]
-        assets = cutsceneResources["assets"]
 
-        self.state = "no_telephone"
-        self.animation = AnimationComponent(self)
-        self.animation.add("pick_telephone", intro["telephone"], 1100)
-        self.animation.add("no_telephone", [intro["telephone"][0]], float('inf'))
-        self.animation.add("hold_telephone", [intro["telephone"][4]], float('inf'))
+        self.state = "telephone_none"
+        self.animation = AnimationComponent(self, enableRepeat=False)
+        self.animation.add("telephone_none", intro["telephone_none"], float('inf'))
+        self.animation.add("telephone_pick", intro["telephone_pick"], 1100)
+        self.animation.add("telephone_hold", intro["telephone_hold"], float('inf'))
+        self.animation.add("telephone_put", intro["telephone_put"], 1100)
 
         self.dialogue = Dialogue(self.screen)
-        self.dialogue.add(assets["telephone_1.png"], 375, 100)
-        self.dialogue.add(assets["telephone_2.png"], 375, 100)
+        self.dialogue.add(dialogue.TELEPHONE_1, 350, 150, "left")
+        self.dialogue.add(dialogue.TELEPHONE_2, 350, 150, "left")
 
         self.origin = pg.time.get_ticks()       # milliseconds
         self.elapsed = 0                        # milliseconds
@@ -148,35 +146,31 @@ class TelephoneCutscene(BaseCutscene):
         self.elapsed = pg.time.get_ticks() - self.origin
 
         if self.speed*2000 > self.elapsed >= self.speed*0:
-            self.state = "no_telephone"
+            self.state = "telephone_none"
 
         elif self.speed*2800 > self.elapsed:
-            self.state = "pick_telephone"
+            self.state = "telephone_pick"
 
         elif self.speed*3300 > self.elapsed:
-            self.state = "hold_telephone"
+            self.state = "telephone_hold"
 
         elif self.speed*6300 > self.elapsed:
-            self.state = "hold_telephone"
-            self.dialogue.index = 1
-
-        elif self.speed*10300 > self.elapsed:
-            self.state = "hold_telephone"
-            self.dialogue.index = 2
-
-        elif self.speed*11300 > self.elapsed:
-            self.state = "hold_telephone"
+            self.state = "telephone_hold"
             self.dialogue.index = 0
 
+        elif self.speed*10300 > self.elapsed:
+            self.state = "telephone_hold"
+            self.dialogue.index = 1
+
+        elif self.speed*11300 > self.elapsed:
+            self.state = "telephone_hold"
+            self.dialogue.index = None
+
         elif self.speed*12100 > self.elapsed:
-            self.state = "pick_telephone"
-            self.animation.update()     # Needed to apply immediate update
-            if not self.isReversed:
-                self.animation.reverse()
-                self.isReversed = True
+            self.state = "telephone_put"
 
         elif self.speed*14000 > self.elapsed:
-            self.state = "no_telephone"
+            self.state = "telephone_none"
 
         else:
             if not self.isComplete:
@@ -201,19 +195,21 @@ class JailCutscene(BaseCutscene):
         super().__init__(screen)
         self.rect = pg.Rect(0, 0, 0, 0)
         intro = cutsceneResources["intro"]
-        assets = cutsceneResources["assets"]
 
-        self.state = "empty_jail"
-        self.animation = AnimationComponent(self)
-        self.animation.add("escort", intro["jail"], 2500)
-        self.animation.add("empty_jail", [intro["jail"][0]], float('inf'))
+        self.state = "jail"
+        self.animation = AnimationComponent(self, enableRepeat=False)
+        self.animation.add("fence_show", intro["jail_fence_show"], 2000)
+        self.animation.add("fence_static", intro["jail_fence_static"], float("inf"))
+        self.animation.add("fence_hide", intro["jail_fence_hide"], 2000)
+        self.animation.add("cat_static", intro["jail_cat_static"], float('inf'))
+        self.animation.add("cat_close", intro["jail_cat_close"], 3500)
 
         self.dialogue = Dialogue(self.screen)
-        self.dialogue.add(assets["jail_1.png"], 19, 25)
+        self.dialogue.add(dialogue.JAIL_1, 19, 25, "caption")
 
         self.origin = pg.time.get_ticks()       # milliseconds
         self.elapsed = 0                        # milliseconds
-        self.speed = 100
+        self.speed = 1
         self.isComplete = False
 
     def handleEvent(self, event):
@@ -224,16 +220,22 @@ class JailCutscene(BaseCutscene):
     def update(self):
         self.elapsed = pg.time.get_ticks() - self.origin
 
-        if self.speed*3000 > self.elapsed >= self.speed*0:
-            self.state = "empty_jail"
-            self.dialogue.index = 1
-
-        elif self.speed*5500 > self.elapsed:
-            self.state = "escort"
+        if self.speed*2000 > self.elapsed >= self.speed*0:
+            self.state = "fence_show"
             self.dialogue.index = 0
 
-        elif self.speed*6500 > self.elapsed:
-            self.state = "empty_jail"
+        elif self.speed*4000 > self.elapsed:
+            self.state = "fence_static"
+            self.dialogue.index = None
+
+        elif self.speed*6000 > self.elapsed:
+            self.state = "fence_hide"
+
+        elif self.speed*9500 > self.elapsed:
+            self.state = "cat_close"
+
+        elif self.speed*11500 > self.elapsed:
+            self.state = "cat_static"
 
         else:
             if not self.isComplete:

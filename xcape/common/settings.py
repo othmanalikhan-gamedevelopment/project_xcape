@@ -8,12 +8,9 @@ HEIGHT = 480
 FPS = 60
 TITLE = "Prison Xcape"
 
-FONT = "m04.TFF"
-# print(__file__)
-# FONT = os.path.join("C:\\", "Oz", "3_projects", "1_programming", "1_active",
-#                     "project_xcape", "prison_xcape", "fonts", "m04.TFF")
-# FONT = "times new roman"
-# print(pg.font.get_fonts())
+# Defaults to pygame's default font which supports various
+# non-English languages
+FONT = None
 
 COLOURS = {
     "black": (0, 0, 0),

@@ -10,13 +10,12 @@ BOSS_4 = "What do you call a bee that lives in America? A USB."
 
 ##################################### CUTSCENES
 
-# OFFICE_1 = "cuéntame qué necesitas."
-OFFICE_1 = "cuéntame qué necesitas. asldkjsadlk klsjad skljasdajkl"
+OFFICE_1 = "cuéntame qué necesitas."
 OFFICE_2 = "necesito tus servicios como asesino."
 OFFICE_3 = "quién tiene que ser eliminado?"
 OFFICE_4 = "es el perro jefe de todo."
 
 TELEPHONE_1 = "buenos dias llamo para informar..."
-TELEPHONE_2 = "atrapé a un gato robando"
+TELEPHONE_2 = "atrapé a un gato robando..."
 
 JAIL_1 = "Mientras tanto el gato es llevado a la carcel."

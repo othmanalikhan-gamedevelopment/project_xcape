@@ -141,27 +141,28 @@ class WrappedTextLabel:
     Represents text that is wrapped.
     """
 
-    def __init__(self, text, size, colour, width, height, spacing, x, y):
+    def __init__(self, text, minSize, maxSize, colour, width, height, spacing,
+                 x, y):
         """
         :param text: String, the text to render.
-        :param size: Integer, the size of the font.
+        :param minSize: Integer, the minimum size of the font.
+        :param maxSize: Integer, the maximum size of the font.
         :param colour: String, the name of the colour to be used.
         :param width: Integer, the width of the output image.
         :param height: Integer, the height of the output image.
         :param spacing: Integer, the spacing between lines in the image.
         :param x: Integer, the x-position of the text.
         :param y: Integer, the y-position of the text.
-
         """
         lines, font = \
-            self.wrap(text, settings.FONT, size, width, height, spacing)
+            self.wrap(text, settings.FONT, minSize, maxSize, width, height, spacing)
         self.image = \
             self.renderLines(lines, font, colour, width, height, spacing)
 
         self.rect = pg.Rect(x, y, 0, 0)
         self.rect.size = self.image.get_size()
 
-    def wrap(self, text, fontPath, size, width, height, spacing):
+    def wrap(self, text, fontPath, minSize, maxSize, width, height, spacing):
         """
         Attempts to wrap the given text as best as possible.
 
@@ -169,18 +170,18 @@ class WrappedTextLabel:
 
         :param text: String, the text to be wrapped.
         :param fontPath: os.path, representing the path to the font to use.
-        :param size: Integer, the preferred size of the font to use.
+        :param minSize: Integer, the minimium size of the font.
+        :param maxSize: Integer, the maximum size of the font.
         :param width: Integer, the width of the rendered text image.
         :param height: Integer, the height of the rendered text image.
         :param spacing: Integer, the spacing between lines in the image.
         :return: List, containing strings which represent each line.
         :return: 2-Tuple, as (lines, font).
         """
-        for s in range(size, 12, -1):
+        for s in range(maxSize, minSize, -1):
             font = pg.font.SysFont(fontPath, s)
             lines, ws, hs = self._wrapWidthOnly(text, font, width, spacing)
 
-            print(lines, ws, hs, s, "\n")
             if height > sum(hs):
                 return lines, font
 
@@ -257,10 +258,10 @@ class Dialogue(GameObject):
         """
         self.screen = screen
         self.bubbles = []
-        self.index = 0
+        self.index = None
 
     def draw(self):
-        if self.index >= 0:
+        if self.index is not None:
             self.bubbles[self.index].draw()
 
     def drawWithCamera(self, camera):
@@ -269,7 +270,7 @@ class Dialogue(GameObject):
 
         :param camera: Camera instance, shifts the position of the drawn animation.
         """
-        if self.index >= 0:
+        if self.index is not None:
             self.bubbles[self.index].drawWithCamera(camera)
 
     def add(self, text, x, y, bubbleType="right"):
@@ -320,10 +321,11 @@ class _Bubble(GameObject):
         :return: pygame.Surface, the image of the bubble with text.
         """
         text = WrappedTextLabel(text=str(text),
-                                size=22,
+                                minSize=16,
+                                maxSize=22,
                                 colour="black",
-                                width=172,
-                                height=55,
+                                width=177,
+                                height=65,
                                 spacing=20,
                                 x=0, y=0)
         bubble = self._loadEmptyBubble(self.types[bubbleType])
