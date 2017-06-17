@@ -25,6 +25,15 @@ class CollisionEngine(GameObject):
             if event.key == pg.K_RETURN:
                 self.resolveDoorCollisions()
 
+            try:
+                p1, p2 = self.scene.players
+                p1Jump = p1.keybinds["coop_jump"]
+                p2Jump = p2.keybinds["coop_jump"]
+                if event.key == p1Jump or event.key == p2Jump:
+                    self.resolvePlayerCollisions()
+            except ValueError:
+                pass
+
     def update(self):
         self.resolveWallCollisions()
         self.resolveSwitchCollisions()
@@ -36,6 +45,20 @@ class CollisionEngine(GameObject):
         self.resolveSpikeCollisions()
         self.resolveBossCollisions()
         self.resolveBoundaryCollision()
+
+    def resolvePlayerCollisions(self):
+        """
+        Resolves any collisions between players.
+        """
+        try:
+            p1, p2 = self.scene.players
+            if pg.sprite.collide_rect(p1, p2):
+                p1.physics.addVelocityY("collision", -30)
+                p1.physics.addVelocityX("collision", -30)
+                p2.physics.addVelocityY("collision", -30)
+                p2.physics.addVelocityX("collision", 30)
+        except ValueError:
+            pass
 
     def resolveWallCollisions(self):
         """
@@ -232,4 +255,3 @@ class CollisionEngine(GameObject):
                 return "top"
             elif isCollideRight:
                 return "right"
-

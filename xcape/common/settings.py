@@ -32,10 +32,12 @@ KEYBINDS_P1 = \
     "jump": pg.K_UP,
     "move_left": pg.K_LEFT,
     "move_right": pg.K_RIGHT,
+    "coop_jump": pg.K_DOWN,
 }
 KEYBINDS_P2 = \
 {
     "jump": pg.K_w,
     "move_left": pg.K_a,
     "move_right": pg.K_d,
+    "coop_jump": pg.K_s,
 }

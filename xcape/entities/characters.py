@@ -46,6 +46,11 @@ class PlayerBase(GameObject, pg.sprite.Sprite):
         self.animation.update()
         self.physics.update()
 
+        # Hacky solution to fix hit box sizes without tampering with the
+        # animation images directly (too much effort at this point)
+        w, h = self.rect.size
+        self.rect.size = (w-10, h)
+
         pressed = pg.key.get_pressed()
         left = self.keybinds["move_left"]
         right = self.keybinds["move_right"]
