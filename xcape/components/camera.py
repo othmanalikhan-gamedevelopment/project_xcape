@@ -5,6 +5,7 @@ Responsible for the camera in a scene.
 import pygame as pg
 
 from xcape.common.object import GameObject
+from xcape.components.physics import PhysicsComponent
 
 
 class SimpleCamera(GameObject):
@@ -25,14 +26,28 @@ class SimpleCamera(GameObject):
         self.HALF_WIDTH = WIDTH/2
         self.HALF_HEIGHT = HEIGHT/2
 
+        self.physics = PhysicsComponent(self)
+        self.physics.maxSpeed = 30
+
         self.following = None
-        self.view = pg.Rect(0, 0, self.WIDTH, self.HEIGHT)
+        self.rect = pg.Rect(0, 0, self.WIDTH, self.HEIGHT)
 
     def update(self):
-        x, y, _, _ = self.following.rect
-        _, _, w, h = self.view
+        # The initial position of the camera.
+        xFollow, yFollow, _, _ = self.following.rect
+        xStart, yStart, w, h = self.rect
 
-        self.view = pg.Rect(-x + self.HALF_WIDTH, -y + self.HALF_HEIGHT, w, h)
+        # The final expected position of the camera.
+        xFinal = -xFollow + self.HALF_WIDTH
+        yFinal = -yFollow + self.HALF_HEIGHT
+
+        # The camera speed is proportional to the difference.
+        dx = xFinal - xStart
+        dy = yFinal - yStart
+
+        self.physics.fixVelocityX(dx)
+        self.physics.fixVelocityY(dy)
+        self.physics.update()
 
     def follow(self, gameobject):
         """
@@ -50,4 +65,4 @@ class SimpleCamera(GameObject):
         :param gameobject: GameObject instance, the game object to follow.
         :return: pg.Rect, the shifted rectangle into the camera's view.
         """
-        return gameobject.rect.move(self.view.topleft)
+        return gameobject.rect.move(self.rect.topleft)

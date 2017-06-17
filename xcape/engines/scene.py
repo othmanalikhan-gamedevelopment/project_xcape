@@ -177,6 +177,7 @@ class SinglePlayer(GameObject):
             events.messageMenu("single_player", "transition", "pause_menu")
         else:
             events.messageMenu("single_player", "transition", "blank_menu")
+            self._loadUI(self.maxLives, self.lives)
 
 
 class MultiPlayer(GameObject):
@@ -213,6 +214,14 @@ class MultiPlayer(GameObject):
             isAlive = all([live != 0 for live in self.lives])
             if event.key == pg.K_ESCAPE and isAlive:
                 self._togglePauseMenu()
+
+            if event.key == pg.K_SPACE:
+                p1, p2 = self.scene.players
+                if self.camera.following == p1:
+                    self.camera.follow(p2)
+                else:
+                    self.camera.follow(p1)
+
 
         if event.type == events.SCENE_EVENT:
             if event.category == "transition":
@@ -303,3 +312,4 @@ class MultiPlayer(GameObject):
             events.messageMenu("multi_player", "transition", "pause_menu")
         else:
             events.messageMenu("multi_player", "transition", "blank_menu")
+            self._loadUI(self.maxLives, self.lives)

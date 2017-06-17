@@ -136,7 +136,8 @@ class MainMenu(BaseMenu):
                     events.messageMenu("main_menu", "transition", "blank_menu")
                     events.messageCutScene("main_menu", "transition", "office_cutscene")
                 if self.arrow.index == 1:
-                    pass
+                    events.messageMenu("main_menu", "transition", "blank_menu")
+                    events.messageScene("main_menu", "start_game", "coop")
                 if self.arrow.index == 2:
                     events.messageMenu("main_menu", "transition", "options_menu")
                 if self.arrow.index == 3:

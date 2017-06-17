@@ -149,7 +149,6 @@ class PlayerTwo(PlayerBase):
         self.keybinds = settings.KEYBINDS_P2
 
 
-
 class PigBoss(GameObject, pg.sprite.Sprite):
     """
     The controllable character to be played.
