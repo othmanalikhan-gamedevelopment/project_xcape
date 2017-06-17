@@ -90,6 +90,8 @@ class SinglePlayer(GameObject):
         if event.type == pg.KEYDOWN:
             if event.key == pg.K_ESCAPE and self.lives != 0:
                 self._togglePauseMenu()
+            if event.key == pg.K_RETURN:
+                self.camera.duration = 0
 
         if event.type == events.SCENE_EVENT:
             if event.category == "transition":
@@ -142,6 +144,7 @@ class SinglePlayer(GameObject):
 
         self.camera = SimpleCamera(settings.WIDTH, settings.HEIGHT)
         self.camera.follow(self.scene.players[0])
+        self.camera.followBriefly(self.scene.doors[0])
 
     def _loadUI(self, maxHealth, currentHealth):
         """
@@ -214,7 +217,8 @@ class MultiPlayer(GameObject):
             isAlive = all([live != 0 for live in self.lives])
             if event.key == pg.K_ESCAPE and isAlive:
                 self._togglePauseMenu()
-
+            if event.key == pg.K_RETURN:
+                self.camera.duration = 0
             if event.key == pg.K_SPACE:
                 p1, p2 = self.scene.players
                 if self.camera.following == p1:
@@ -277,6 +281,7 @@ class MultiPlayer(GameObject):
 
         self.camera = SimpleCamera(settings.WIDTH, settings.HEIGHT)
         self.camera.follow(self.scene.players[0])
+        self.camera.followBriefly(self.scene.doors[0])
 
     def _loadUI(self, maxHealth, health):
         """
