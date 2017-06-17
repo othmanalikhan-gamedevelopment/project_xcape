@@ -206,7 +206,7 @@ class MultiPlayer(GameObject):
             }
         self.numToScene = \
             {
-                1: scenes.SoloScene01,
+                1: scenes.CoopScene01,
             }
 
     def handleEvent(self, event):
@@ -225,7 +225,6 @@ class MultiPlayer(GameObject):
                     self.camera.follow(p2)
                 else:
                     self.camera.follow(p1)
-
 
         if event.type == events.SCENE_EVENT:
             if event.category == "transition":
@@ -246,7 +245,6 @@ class MultiPlayer(GameObject):
             if event.category == "death":
                 playerNum = event.data
                 self.lives[playerNum-1] -= 1
-
                 isAlive = all([live != 0 for live in self.lives])
                 if not isAlive:
                     self._showGameOver()
@@ -281,7 +279,7 @@ class MultiPlayer(GameObject):
 
         self.camera = SimpleCamera(settings.WIDTH, settings.HEIGHT)
         self.camera.follow(self.scene.players[0])
-        self.camera.followBriefly(self.scene.doors[0])
+        # self.camera.followBriefly(self.scene.doors[0])
 
     def _loadUI(self, maxHealth, health):
         """

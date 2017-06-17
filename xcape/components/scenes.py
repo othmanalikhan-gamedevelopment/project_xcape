@@ -10,9 +10,9 @@ import xcape.components.dialogue as dialogue
 from xcape.common.loader import sceneResources
 from xcape.common.object import GameObject
 from xcape.common.render import Dialogue
-from xcape.entities.characters import PlayerOne, PlayerTwo, PigBoss
+from xcape.entities.characters import PlayerOne, PlayerTwo
 from xcape.entities.scene import (
-    Wall, SPlatform, DPlatform, MPlatform, Switch, Door, Spike
+    Wall, SPlatform, DPlatform, MPlatform, Switch, Door, Spike, Decoration
 )
 
 
@@ -193,12 +193,6 @@ class SoloScene01(BaseScene):
         player = [PlayerOne(self.screen)]
         player[0].rect.center = spawn
         return player
-
-    def addBosses(self):
-        spawn = (100, 70)
-        boss = [PigBoss(self.screen)]
-        boss[0].rect.center = spawn
-        return boss
 
     def addWalls(self):
         wall = sceneResources["walls"]
@@ -399,7 +393,7 @@ class SoloScene02(BaseScene):
         deco = sceneResources["decorations"]
         decorations = \
         [
-            Spike(778, 81, 1, "h", deco["skull.png"], self.screen)
+            Decoration(778, 81, deco["skull.png"], self.screen)
         ]
         return decorations
 
@@ -564,15 +558,16 @@ class CoopScene01(BaseScene):
         self.players = self.addPlayers()
 
         self.walls = self.addWalls()
-        self.sPlatforms = self.addSPlatforms()
+        self.dPlatforms = self.addDPlatforms()
         self.switches = self.addSwitches()
         self.doors = self.addDoors()
+        self.decorations = self.addDecorations()
 
         self.elapsed = 0
         self.origin = pg.time.get_ticks()
         self.dialogue = Dialogue(self.screen)
-        self.dialogue.add(dialogue.OFFICE_1, 10, 410, "caption")
-        self.dialogue.index = 0
+        self.dialogue.add(dialogue.SCENE_COOP_1_A, 10, 410, "caption")
+        self.dialogue.add(dialogue.SCENE_COOP_1_B, 10, 410, "caption")
 
     def handleEvent(self, event):
         [p.handleEvent(event) for p in self.players]
@@ -592,77 +587,95 @@ class CoopScene01(BaseScene):
         self.screen.blit(self.image, camera.apply(self))
 
         [w.drawWithCamera(camera) for w in self.walls]
+        [d.drawWithCamera(camera) for d in self.decorations]
         [d.drawWithCamera(camera) for d in self.doors]
         [s.drawWithCamera(camera) for s in self.switches]
-        [p.drawWithCamera(camera) for p in self.sPlatforms]
+        [p.drawWithCamera(camera) for p in self.dPlatforms]
         [p.drawWithCamera(camera) for p in self.players]
 
         if 5000 > self.elapsed >= 0:
+            self.dialogue.index = 0
+            self.dialogue.draw()
+        elif 15000 > self.elapsed:
+            self.dialogue.index = 1
             self.dialogue.draw()
 
     def addPlayers(self):
-        spawn = (100, 0)
+        p1Spawn = (100, 400)
+        p2Spawn = (150, 400)
         p1 = PlayerOne(self.screen)
         p2 = PlayerTwo(self.screen)
-        p1.rect.center = (100, 0)
-        p2.rect.center = (150, 0)
+        p1.rect.center = p1Spawn
+        p2.rect.center = p2Spawn
         players = [p1, p2]
         return players
 
-    def addBosses(self):
-        spawn = (100, 70)
-        boss = [PigBoss(self.screen)]
-        boss[0].rect.center = spawn
-        return boss
-
     def addWalls(self):
         wall = sceneResources["walls"]
+
         boundaries = \
         [
             Wall(0, 10, 8, "v", [wall["boundary_left.png"]], self.screen),
-            Wall(19, 478, 4, "h", [wall["boundary_bot.png"]], self.screen),
-            Wall(320, 478, 5, "h", [wall["boundary_bot.png"]], self.screen),
+            Wall(19, 478, 3, "h", [wall["boundary_bot.png"]], self.screen),
+            Wall(0, 478, 1, "h", [wall["inner_corner_left.png"]], self.screen),
+            Wall(170, 260, 4, "v", [wall["boundary_right.png"]], self.screen),
+            Wall(170, 478, 1, "h", [wall["inner_corner_right.png"]], self.screen),
+
+            Wall(520, 478, 2, "h", [wall["boundary_bot.png"]], self.screen),
             Wall(628, 138, 6, "v", [wall["boundary_right.png"]], self.screen),
             Wall(164, 138, 8, "h", [wall["boundary_top.png"]], self.screen),
             Wall(160, 138, 1, "v", [wall["corner_top_left.png"]], self.screen),
             Wall(160, 10, 2, "v", [wall["boundary_right.png"]], self.screen),
             Wall(628, 138, 1, "v", [wall["upper_corner_right.png"]], self.screen),
-            Wall(0, 478, 1, "h", [wall["inner_corner_left.png"]], self.screen),
             Wall(628, 478, 1, "h", [wall["inner_corner_right.png"]], self.screen),
-            Wall(240, 478, 1, "h", [wall["inner_corner_right.png"]], self.screen),
-            Wall(240, 426, 1, "h", [wall["corner_bot_right.png"]], self.screen),
-            Wall(308, 426, 1, "h", [wall["corner_bot_left.png"]], self.screen),
-            Wall(320, 478, 1, "h", [wall["inner_corner_left.png"]], self.screen)
         ]
 
         obstacles = \
         [
             Wall(48, 418, 1, "h", [wall["block_left.png"]], self.screen),
             Wall(108, 418, 1, "h", [wall["block_right.png"]], self.screen),
-            Wall(170, 450, 1, "h", [wall["block_small.png"]], self.screen),
         ]
         return boundaries + obstacles
 
-    def addSPlatforms(self):
+    def addDPlatforms(self):
         platforms = \
         [
-            # SPlatform(260, 370, 2, self.screen),
-            SPlatform(475, 330, 1, self.screen),
-            SPlatform(240, 255, 2, self.screen)
+            DPlatform(240, 255, 5, self.screen),
+            DPlatform(240, 330, 4, self.screen),
         ]
         return platforms
 
     def addSwitches(self):
         switches = \
         [
-            Switch(295, 376, 1, self.screen),
-            Switch(524, 280, 2, self.screen),
-            Switch(295, 205, 3, self.screen)
+            Switch(300, 205, 1, self.screen),
+            Switch(350, 205, 2, self.screen),
+            Switch(400, 205, 3, self.screen),
+            Switch(450, 205, 4, self.screen),
+            Switch(500, 205, 5, self.screen),
+
+            Switch(250, 290, 5, self.screen),
+            Switch(300, 290, 6, self.screen),
+            Switch(350, 290, 7, self.screen),
+            Switch(400, 290, 8, self.screen),
+            Switch(450, 290, 9, self.screen),
+
+            Switch(250, 400, 10, self.screen),
         ]
         return switches
 
     def addDoors(self):
         door1 = Door(547, 370, 1, self.screen)
-        door1.waitForSwitches([1, 2, 3])
+        door1.waitForSwitches([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
         return [door1]
+
+    def addDecorations(self):
+        deco = sceneResources["decorations"]
+        decorations = \
+        [
+            Decoration(70, 393, deco["skull.png"], self.screen),
+            Decoration(90, 393, deco["skull.png"], self.screen),
+            Decoration(175, 236, deco["skull.png"], self.screen),
+        ]
+        return decorations
 

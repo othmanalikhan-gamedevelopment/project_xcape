@@ -12,6 +12,9 @@ SCENE_SOLO_1 = "Chapter 1: It's rather cozy in here..."
 SCENE_SOLO_2 = "Chapter 2: And... this is... prison?"
 SCENE_SOLO_3 = "Chapter 3: Who even needs to escape... right?"
 
+SCENE_COOP_1_A = "Chapter 1: I don't mind being buried next to you..."
+SCENE_COOP_1_B = "HINT: Find the coop jump button on the keyboard!"
+
 OFFICE_1 = "cuéntame qué necesitas."
 OFFICE_2 = "necesito tus servicios como asesino."
 OFFICE_3 = "quién tiene que ser eliminado?"

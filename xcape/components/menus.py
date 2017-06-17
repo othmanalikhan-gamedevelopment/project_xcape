@@ -561,16 +561,21 @@ class CoopUIMenu(BaseMenu):
     def handleEvent(self, event):
         if event.type == events.MENU_EVENT:
             if event.category == "max_health":
-                maxHP = event.data
-                self.setMaxLives(maxHP)
+                p1HP, p2HP = event.data
+                self.setMaxLives(p1HP, p2HP)
 
             if event.category == "health":
-                currentHP = event.data
+                p1HP, p2HP = event.data
 
-                # for heart in self.lives:
-                #     heart.state = "no_life"
-                # for heart in range(currentHP):
-                #     self.lives[heart].state = "life"
+                for heart in self.livesP1:
+                    heart.state = "no_life"
+                for i in range(p1HP):
+                    self.livesP1[i].state = "life"
+
+                for heart in self.livesP2:
+                    heart.state = "no_life"
+                for i in range(p2HP):
+                    self.livesP2[i].state = "life"
 
     def update(self):
         [l.animation.update() for l in self.livesP1]
@@ -583,18 +588,16 @@ class CoopUIMenu(BaseMenu):
         self.p1Text.draw()
         self.p2Text.draw()
 
-    def setMaxLives(self, lives):
+    def setMaxLives(self, livesP1, livesP2):
         """
         Sets the maximum number of hearts on the health bar.
 
-        :param lives: List, containing integers representing lives for players.
+        :param livesP1: Integer, the max number of lives for player 1.
+        :param livesP2: Integer, the max number of lives for player 2.
         """
         assets = menuResources["assets"]
 
-        maxHealthP1 = lives[0]
-        maxHealthP2 = lives[1]
-
-        for i in range(maxHealthP1):
+        for i in range(livesP1):
             label = ImageLabel(self.x1 + i*self.spacing, self.y1,
                                None, self.screen)
             label.state = "life"
@@ -606,7 +609,7 @@ class CoopUIMenu(BaseMenu):
                                 float('inf'))
             self.livesP1.append(label)
 
-        for i in range(maxHealthP2):
+        for i in range(livesP2):
             label = ImageLabel(self.x2 + i*self.spacing, self.y2,
                                None, self.screen)
             label.state = "life"
