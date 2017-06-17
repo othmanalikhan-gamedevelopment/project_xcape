@@ -203,10 +203,12 @@ class MultiPlayer(GameObject):
         self.nameToScene = \
             {
                 "scene_01": scenes.CoopScene01,
+                "scene_02": scenes.CoopScene02,
             }
         self.numToScene = \
             {
                 1: scenes.CoopScene01,
+                2: scenes.CoopScene02,
             }
 
     def handleEvent(self, event):
@@ -279,7 +281,7 @@ class MultiPlayer(GameObject):
 
         self.camera = SimpleCamera(settings.WIDTH, settings.HEIGHT)
         self.camera.follow(self.scene.players[0])
-        # self.camera.followBriefly(self.scene.doors[0])
+        self.camera.followBriefly(self.scene.doors[0])
 
     def _loadUI(self, maxHealth, health):
         """

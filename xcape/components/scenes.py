@@ -544,7 +544,7 @@ class SoloScene03(BaseScene):
 
 class CoopScene01(BaseScene):
     """
-    The first single player scene of the game.
+    The first multiplayer scene of the game.
     """
 
     def __init__(self, screen):
@@ -679,3 +679,170 @@ class CoopScene01(BaseScene):
         ]
         return decorations
 
+
+class CoopScene02(BaseScene):
+    """
+    The second multiplayer scene of the game.
+    """
+
+    def __init__(self, screen):
+        super().__init__(screen)
+        self.levelNum = 2
+
+        self.image = sceneResources["screens"]["scene_02.png"]
+        self.rect = pg.Rect(0, 0, 0, 0)
+        self.rect.size = self.image.get_size()
+
+        self.players = self.addPlayers()
+
+        self.walls = self.addWalls()
+        self.dPlatforms = self.addDPlatforms()
+        self.mPlatforms = self.addMPlatforms()
+        self.switches = self.addSwitches()
+        self.doors = self.addDoors()
+        self.spikes = self.addSpikes()
+        self.decorations = self.addDecorations()
+
+        self.elapsed = 0
+        self.origin = pg.time.get_ticks()
+        self.dialogue = Dialogue(self.screen)
+        self.dialogue.add(dialogue.SCENE_COOP_2, 10, 410, "caption")
+        self.dialogue.index = 0
+
+    def handleEvent(self, event):
+        [p.handleEvent(event) for p in self.players]
+        [b.handleEvent(event) for b in self.bosses]
+
+        if event.type == events.SCENE_EVENT:
+            [d.handleEvent(event) for d in self.doors]
+
+    def update(self):
+        self.elapsed = pg.time.get_ticks() - self.origin
+
+        [s.update() for s in self.switches]
+        [d.update() for d in self.doors]
+        [p.update() for p in self.mPlatforms]
+        [p.update() for p in self.players]
+
+    def drawWithCamera(self, camera):
+        self.screen.fill(settings.COLOURS["black_red"])
+        self.screen.blit(self.image, camera.apply(self))
+
+        [d.drawWithCamera(camera) for d in self.decorations]
+        [w.drawWithCamera(camera) for w in self.walls]
+        [s.drawWithCamera(camera) for s in self.switches]
+        [d.drawWithCamera(camera) for d in self.doors]
+        [s.drawWithCamera(camera) for s in self.spikes]
+        [p.drawWithCamera(camera) for p in self.mPlatforms]
+        [p.drawWithCamera(camera) for p in self.dPlatforms]
+        [p.drawWithCamera(camera) for p in self.players]
+
+        if 5000 > self.elapsed >= 0:
+            self.dialogue.draw()
+
+    def addPlayers(self):
+        p1Spawn = (70, 510)
+        p2Spawn = (90, 510)
+        p1 = PlayerOne(self.screen)
+        p2 = PlayerTwo(self.screen)
+        p1.rect.center = p1Spawn
+        p2.rect.center = p2Spawn
+        players = [p1, p2]
+        return players
+
+    def addWalls(self):
+        wall = sceneResources["walls"]
+        platWall = [wall["plat_top.png"],
+                    wall["plat_mid.png"],
+                    wall["plat_bot.png"]]
+
+        boundaries = \
+            [
+                Wall(50, 0, 8, "h", [wall["boundary_top.png"]], self.screen),
+                Wall(0, 50, 8, "v", [wall["boundary_left.png"]], self.screen),
+                Wall(0, 548, 15, "h", [wall["boundary_bot.png"]], self.screen),
+                Wall(0, 548, 1, "h", [wall["inner_corner_left.png"]], self.screen),
+                Wall(952, 50, 8, "v", [wall["boundary_right.png"]], self.screen),
+                Wall(952, 548, 1, "h", [wall["inner_corner_right.png"]], self.screen)
+            ]
+
+        obstacles = \
+            [
+                Wall(210, 300, 1, "h", [wall["block_left.png"]], self.screen),
+                Wall(265, 300, 1, "h", [wall["block_right.png"]], self.screen),
+
+                Wall(435, 490, 1, "h", [wall["block_left.png"]], self.screen),
+                Wall(490, 490, 1, "h", [wall["block_right.png"]], self.screen),
+
+                Wall(655, 300, 1, "h", [wall["block_left.png"]], self.screen),
+                Wall(710, 300, 1, "h", [wall["block_right.png"]], self.screen),
+
+                Wall(770, 105, 2, "v", platWall, self.screen),
+            ]
+
+        return boundaries + obstacles
+
+    def addDPlatforms(self):
+        platforms = \
+            [
+                DPlatform(170, 450, 1, self.screen),
+                DPlatform(60, 330, 0, self.screen),
+            ]
+        return platforms
+
+    def addMPlatforms(self):
+        vImage = sceneResources["platforms"]["moving_vertical.png"]
+        hImage = sceneResources["platforms"]["moving_horizontal.png"]
+
+        platforms = \
+            [
+                MPlatform((340, 100), (600, 500), 20, 20, self.screen, hImage),
+                MPlatform((660, 350), (660, 435), 0, 0, self.screen, vImage),
+                MPlatform((660, 435), (660, 530), 0, 0, self.screen, vImage),
+            ]
+        return platforms
+
+    def addSwitches(self):
+        switches = \
+            [
+                # Top
+                Switch(250, 200, 1, self.screen),
+                Switch(480, 200, 2, self.screen),
+                Switch(700, 200, 3, self.screen),
+
+                # Middle
+                Switch(370, 430, 4, self.screen),
+                Switch(480, 430, 5, self.screen),
+                Switch(590, 430, 6, self.screen),
+
+                # Corners
+                Switch(50, 50, 7, self.screen),
+                Switch(790, 60, 8, self.screen),
+            ]
+        return switches
+
+    def addDoors(self):
+        door1 = Door(865, 440, 1, self.screen)
+        door1.waitForSwitches([1, 2, 3, 4, 5, 6, 7, 8])
+        return [door1]
+
+    def addSpikes(self):
+        assets = sceneResources["spikes"]
+        spikes = \
+            [
+                # Floor
+                Spike(325, 525, 5, "h", assets["up.png"], self.screen),
+                Spike(550, 525, 5, "h", assets["up.png"], self.screen),
+
+                # Roof
+                Spike(300, 50, 20, "h", assets["down.png"], self.screen),
+            ]
+        return spikes
+
+    def addDecorations(self):
+        deco = sceneResources["decorations"]
+        decorations = \
+            [
+                Decoration(778, 81, deco["skull.png"], self.screen)
+            ]
+        return decorations

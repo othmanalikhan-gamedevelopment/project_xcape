@@ -32,7 +32,7 @@ class CoreEngine(GameObject):
         self.cutsceneEngine = CutSceneEngine(self.screen)
 
         events.messageScene("core_engine", "start_game", "coop")
-        events.messageScene("core_engine", "transition", "scene_01")
+        events.messageScene("core_engine", "transition", "scene_02")
         # events.messageMenu("core_engine", "transition", "splash_menu")
         # events.messageCutScene("core_engine", "transition", "office_cutscene")
 
