@@ -57,7 +57,7 @@ class PigBoss(GameObject, pg.sprite.Sprite):
         self.dialogue.add(dialogue.BOSS_2, 0, 0)
         self.dialogue.add(dialogue.BOSS_3, 0, 0)
         self.dialogue.add(dialogue.BOSS_4, 0, 0)
-        self.dialogue.index = 0
+        self.dialogue.index = None
         self.dialogueOrigin = pg.time.get_ticks()
         self.dialogueDuration = 5000
 
@@ -102,6 +102,8 @@ class PigBoss(GameObject, pg.sprite.Sprite):
             else:
                 self.initiateAttack()
 
+            self.AIState = "thinking"
+
         if self.AIState == "chase":
             self.chase(self.chaseRadius, self.chaseSpeed)
 
@@ -123,21 +125,21 @@ class PigBoss(GameObject, pg.sprite.Sprite):
         if abs(elapsed - self.dialogueOrigin) > self.dialogueDuration:
             self.dialogueOrigin = pg.time.get_ticks()
             r = random.randint(0, len(self.dialogue.bubbles)-1)
-            # Hacky method to increase the chance for the 0th dialogue to proc
+            # Hacky method to increase the chance for no dialogue
             zero = random.randint(0, 1)
 
             if zero == 0 or r == 0:
-                self.dialogue.index = 0
+                self.dialogue.index = None
             else:
                 self.dialogue.index = r
 
-        # Forces the dialogue bubble to follow the boss
-        x, y = self.rect.center
-        currentBubble = self.dialogue.bubbles[self.dialogue.index]
-        if self.orientation == "right":
-            currentBubble.rect.center = (x+80, y-55)
-        if self.orientation == "left":
-            currentBubble.rect.center = (x-15, y-55)
+                # Forces the dialogue bubble to follow the boss
+                x, y = self.rect.center
+                currentBubble = self.dialogue.bubbles[self.dialogue.index]
+                if self.orientation == "right":
+                    currentBubble.rect.center = (x+10, y-55)
+                if self.orientation == "left":
+                    currentBubble.rect.center = (x-80, y-55)
 
     def updateAnimationState(self):
         """
@@ -262,6 +264,36 @@ class PigBoss(GameObject, pg.sprite.Sprite):
         else:
             return False
 
+    def initiateAttack(self):
+        """
+        Initialises the attacking state of the character.
+        """
+        self.AIState = "attack"
+        self.travelOffset = self.physics.travelled
+
+        if not self.attackPatterns:
+            self.attackPatterns = self.generatePatterns(self.isSquarePattern,
+                                                        self.isTrianglePattern,
+                                                        self.isSpiralPattern,
+                                                        self.isSweepPattern,
+                                                        self.isStompPattern)
+
+        if not self.attackLoci:
+            nameToSpeed = \
+                {
+                    "sweep_right": 30,
+                    "sweep_left": 30,
+                    "stomp_bot": 30,
+                    "stomp_top": 30,
+                }
+            try:
+                name, self.attackLoci = self.attackPatterns.popitem()
+                self.attackSpeed = nameToSpeed[name]
+            except KeyError:
+                self.attackSpeed = 15
+
+        self.attackPoint = self.attackLoci.pop()
+
     def generatePatterns(self,
                          isSquare=True,
                          isTriangle=True,
@@ -323,33 +355,4 @@ class PigBoss(GameObject, pg.sprite.Sprite):
             patterns.update(stomp)
         return patterns
 
-    def initiateAttack(self):
-        """
-        Initialises the attacking state of the character.
-        """
-        self.AIState = "attack"
-        self.travelOffset = self.physics.travelled
-
-        if not self.attackPatterns:
-            self.attackPatterns = self.generatePatterns(self.isSquarePattern,
-                                                        self.isTrianglePattern,
-                                                        self.isSpiralPattern,
-                                                        self.isSweepPattern,
-                                                        self.isStompPattern)
-
-        if not self.attackLoci:
-            nameToSpeed = \
-                {
-                    "sweep_right": 30,
-                    "sweep_left": 30,
-                    "stomp_bot": 30,
-                    "stomp_top": 30,
-                }
-            try:
-                name, self.attackLoci = self.attackPatterns.popitem()
-                self.attackSpeed = nameToSpeed[name]
-            except KeyError:
-                self.attackSpeed = 15
-
-        self.attackPoint = self.attackLoci.pop()
 
