@@ -30,7 +30,7 @@ class CollisionEngine(GameObject):
                 p1Jump = p1.keybinds["coop_jump"]
                 p2Jump = p2.keybinds["coop_jump"]
                 if event.key == p1Jump or event.key == p2Jump:
-                    self.resolvePlayerCollisions()
+                    self.resolvePlayerCollisions(30)
             except ValueError:
                 pass
 
@@ -46,17 +46,28 @@ class CollisionEngine(GameObject):
         # self.resolveBossCollisions()
         self.resolveBoundaryCollision()
 
-    def resolvePlayerCollisions(self):
+    def resolvePlayerCollisions(self, explosionSpeed):
         """
         Resolves any collisions between players.
+
+        :param explosionSpeed: Integer, the speed at which both players fly
+        away from each other in the x-axis and y-axis respectively.
         """
         try:
             p1, p2 = self.scene.players
             if pg.sprite.collide_rect(p1, p2):
-                p1.physics.addVelocityY("collision", -30)
-                p1.physics.addVelocityX("collision", -30)
-                p2.physics.addVelocityY("collision", -30)
-                p2.physics.addVelocityX("collision", 30)
+                if p2.rect.x > p1.rect.x:
+                    p1.physics.addVelocityY("collision", -explosionSpeed)
+                    p1.physics.addVelocityX("collision", -explosionSpeed)
+                    p2.physics.addVelocityY("collision", -explosionSpeed)
+                    p2.physics.addVelocityX("collision", explosionSpeed)
+
+                else:
+                    p1.physics.addVelocityY("collision", -explosionSpeed)
+                    p1.physics.addVelocityX("collision", explosionSpeed)
+                    p2.physics.addVelocityY("collision", -explosionSpeed)
+                    p2.physics.addVelocityX("collision", -explosionSpeed)
+
         except ValueError:
             pass
 

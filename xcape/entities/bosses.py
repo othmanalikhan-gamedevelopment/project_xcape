@@ -67,21 +67,36 @@ class PigBoss(GameObject, pg.sprite.Sprite):
         self.following = None
         self.targets = []
 
-        self.isAttack = False
-        self.attackOrigin = Vector2()
-        self.attackDestin = Vector2()
-
-        self.attackTimer = 0
+        self._attackTimer = 0
         self.attacksDone = 0
         self.attacksMax = 3
-        self.attackLoci = [(200, 0), (0, 200), (-200, 0), (0, -200)]
+
+        self.attackPatterns = None
+        self.attackLoci = None
         self.attackPoint = None
+        self.attackSpeed = None
+        self.attackSpeedMin = 10
+        self.attackSpeedMax = 20
+        self.attackTravelled = 0
 
         self.chaseSpeed = 10
         self.chaseRadius = 200
         self.retreatSpeed = 10
         self.retreatRadius = 200
 
+    def generatePatterns(self):
+        """
+        Generates the attack patterns.
+
+        :return: Dictionary, mapping attack name to a list of points.
+        """
+        patterns = \
+        {
+            "square": [(0, 100), (100, 0), (0, -100), (-100, 0)],
+            "triangle": [(100, 100), (100, -100), (-200, 0)]
+        }
+
+        return patterns
 
     def update(self):
         self.updateAIState()
@@ -94,23 +109,19 @@ class PigBoss(GameObject, pg.sprite.Sprite):
         Updates the state of AI.
         """
         if self.AIState == "thinking":
-            try:
-                self.attackPoint = self.attackLoci.pop()
-                self.AIState = "attack"
-            except IndexError:
-                print("DONE")
-
-            # randomState = random.sample(["chase", "retreat"], 1)
-            # self.AIState = randomState[0]
+            self.initiateAttack()
 
         if self.AIState == "chase":
-            self.chase(100, 10)
+            self.chase(self.chaseRadius, self.chaseSpeed)
 
         if self.AIState == "retreat":
-            self.retreat(300, 10)
+            self.retreat(self.retreatRadius, self.retreatSpeed)
 
         if self.AIState == "attack":
-            self.attack(self.attackPoint, 10)
+            print(self.attackSpeed)
+            self.attack(self.attackPoint,
+                        self.attackSpeed,
+                        self.physics.travelled - self.travelOffset)
 
     def updateDialogueState(self):
         """
@@ -170,6 +181,23 @@ class PigBoss(GameObject, pg.sprite.Sprite):
         self.animation.drawWithCamera(camera)
         self.dialogue.drawWithCamera(camera)
 
+    def initiateAttack(self):
+        """
+        Initialises the attacking state of the character.
+        """
+        self.AIState = "attack"
+        self.travelOffset = self.physics.travelled
+
+        if not self.attackPatterns:
+            self.attackPatterns = self.generatePatterns()
+
+        if not self.attackLoci:
+            _, self.attackLoci = self.attackPatterns.popitem()
+            self.attackSpeed = random.randint(self.attackSpeedMin,
+                                              self.attackSpeedMax)
+
+        self.attackPoint = self.attackLoci.pop()
+
     def target(self, gameObjects):
         """
         Sets the target that the boss is hunting.
@@ -223,32 +251,22 @@ class PigBoss(GameObject, pg.sprite.Sprite):
             self.physics.fixVelocityY(0)
             self.AIState = "thinking"
 
-    def attack(self, translate, speed):
+    def attack(self, translate, speed, travelled):
         """
         Moves from the current location by the translation amount. The attack
         aspect is intended from the collision with any targets on the way.
 
-        :param translate: 2-Tuple, the destination to move to.
+        :param translate: 2-Tuple, the amount to translate by.
         :param speed: Integer, the speed to move while attacking.
+        :param travelled: Integer, the distance travelled from origin of attack.
         """
-        if not self.isAttack:
-            x, y = self.rect.center
-            self.attackOrigin = Vector2(x, y)
-            self.isAttack = True
-
-        x, y = self.rect.center
-        xo, yo = self.attackOrigin
-        xp, yp = translate
-
-        d = Vector2(xp, yp)
+        d = Vector2(translate)
         v = d.normalize()
         v.scale_to_length(speed)
         self.physics.fixVelocityX(v.x)
         self.physics.fixVelocityY(v.y)
 
-        travelled = Vector2(xo - x, yo - y)
-        if travelled.length() > d.length():
+        if travelled > d.length():
             self.physics.fixVelocityX(0)
             self.physics.fixVelocityY(0)
             self.AIState = "thinking"
-            self.isAttack = False

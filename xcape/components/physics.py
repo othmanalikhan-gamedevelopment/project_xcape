@@ -31,13 +31,12 @@ class PhysicsComponent(GameObject):
 
         self.gravity = Vector2(0, 2)
         self.isGravity = True
+        self.travelled = 0
 
         self._nameToDisX = OrderedDict()
         self._nameToDisY = OrderedDict()
         self._nameToVelX = OrderedDict()
         self._nameToVelY = OrderedDict()
-        self._nameToAccX = OrderedDict()
-        self._nameToAccY = OrderedDict()
 
         # Increasing the tick rate too much can cause choppiness!
         # This variable needs to be tweaked until it feels smooth enough.
@@ -68,6 +67,7 @@ class PhysicsComponent(GameObject):
         self.displacement.y += sum(self._nameToDisY.values())
         self.gameObject.rect.x += self.displacement.x
         self.gameObject.rect.y += self.displacement.y
+        self.travelled += self.displacement.length()
 
         # Displacement applied is NOT conserved
         self._nameToDisX.clear()
@@ -101,6 +101,7 @@ class PhysicsComponent(GameObject):
         self.velocity.y += sum(self._nameToVelY.values())
         self.gameObject.rect.x += self.velocity.x
         self.gameObject.rect.y += self.velocity.y
+        self.travelled += self.velocity.length()
 
         self._nameToVelX.clear()
         self._nameToVelY.clear()
