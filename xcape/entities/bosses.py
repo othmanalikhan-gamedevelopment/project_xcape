@@ -39,6 +39,7 @@ class PigBoss(GameObject, pg.sprite.Sprite):
     def _initialisePhysics(self):
         self.physics = PhysicsComponent(self)
         self.physics.isGravity = False
+        self.physics.maxSpeed = 100
         self.jumpSpeed = -15
         self.moveSpeed = 1
 
@@ -62,41 +63,25 @@ class PigBoss(GameObject, pg.sprite.Sprite):
 
     def _initialiseAI(self):
         self.AIState = "thinking"
-        self.attackDirectionX = "right"
-        self.attackDirectionY = "down"
         self.following = None
         self.targets = []
-
-        self._attackTimer = 0
-        self.attacksDone = 0
-        self.attacksMax = 3
 
         self.attackPatterns = None
         self.attackLoci = None
         self.attackPoint = None
-        self.attackSpeed = None
-        self.attackSpeedMin = 10
-        self.attackSpeedMax = 20
+        self.attackSpeed = 0
         self.attackTravelled = 0
 
-        self.chaseSpeed = 10
-        self.chaseRadius = 200
+        self.isSquarePattern = True
+        self.isTrianglePattern = True
+        self.isSpiralPattern = True
+        self.isSweepPattern = True
+        self.isStompPattern = True
+
+        self.chaseSpeed = 7
+        self.chaseRadius = 100
         self.retreatSpeed = 10
         self.retreatRadius = 200
-
-    def generatePatterns(self):
-        """
-        Generates the attack patterns.
-
-        :return: Dictionary, mapping attack name to a list of points.
-        """
-        patterns = \
-        {
-            "square": [(0, 100), (100, 0), (0, -100), (-100, 0)],
-            "triangle": [(100, 100), (100, -100), (-200, 0)]
-        }
-
-        return patterns
 
     def update(self):
         self.updateAIState()
@@ -109,7 +94,13 @@ class PigBoss(GameObject, pg.sprite.Sprite):
         Updates the state of AI.
         """
         if self.AIState == "thinking":
-            self.initiateAttack()
+            isFar = not self.isInRange(self.following.rect.center, self.chaseRadius)
+            isAttacking = self.attackLoci
+
+            if isFar and not isAttacking:
+                self.AIState = "chase"
+            else:
+                self.initiateAttack()
 
         if self.AIState == "chase":
             self.chase(self.chaseRadius, self.chaseSpeed)
@@ -118,7 +109,6 @@ class PigBoss(GameObject, pg.sprite.Sprite):
             self.retreat(self.retreatRadius, self.retreatSpeed)
 
         if self.AIState == "attack":
-            print(self.attackSpeed)
             self.attack(self.attackPoint,
                         self.attackSpeed,
                         self.physics.travelled - self.travelOffset)
@@ -180,23 +170,6 @@ class PigBoss(GameObject, pg.sprite.Sprite):
         """
         self.animation.drawWithCamera(camera)
         self.dialogue.drawWithCamera(camera)
-
-    def initiateAttack(self):
-        """
-        Initialises the attacking state of the character.
-        """
-        self.AIState = "attack"
-        self.travelOffset = self.physics.travelled
-
-        if not self.attackPatterns:
-            self.attackPatterns = self.generatePatterns()
-
-        if not self.attackLoci:
-            _, self.attackLoci = self.attackPatterns.popitem()
-            self.attackSpeed = random.randint(self.attackSpeedMin,
-                                              self.attackSpeedMax)
-
-        self.attackPoint = self.attackLoci.pop()
 
     def target(self, gameObjects):
         """
@@ -270,3 +243,113 @@ class PigBoss(GameObject, pg.sprite.Sprite):
             self.physics.fixVelocityX(0)
             self.physics.fixVelocityY(0)
             self.AIState = "thinking"
+
+    def isInRange(self, point, distance):
+        """
+        Checks whether the given point is within the specified distance.
+
+        :param point: 2-Tuple, containing the x and y coordinates.
+        :param distance: Number, the minimum distance to the point.
+        :return: Boolean, true if within range otherwise false.
+        """
+        x, y = self.rect.center
+        xp, yp = point
+
+        d = Vector2(x - xp, y  - yp)
+
+        if distance > d.length():
+            return True
+        else:
+            return False
+
+    def generatePatterns(self,
+                         isSquare=True,
+                         isTriangle=True,
+                         isSpiral=True,
+                         isSweep=True,
+                         isStomp=True):
+        """
+        Generates the attack patterns.
+
+        :param isSquare: Boolean, whether to include the pattern.
+        :param isTriangle: Boolean, whether to include the pattern.
+        :param isSpiral: Boolean, whether to include the pattern.
+        :param isSweep: Boolean, whether to include the pattern.
+        :param isStomp: Boolean, whether to include the pattern.
+        :return: Dictionary, mapping attack name to a list of points.
+        """
+        square = \
+        {
+            "square_right": [(0, 200), (200, 0), (0, -200), (-200, 0)],
+            "square_left": [(0, -200), (-200, 0), (0, 200), (200, 0)],
+        }
+        triangle = \
+        {
+            "triangle_wave_right": 3*[(100, 100), (100, -100)],
+            "triangle_wave_left": 3*[(-100, -100), (-100, 100)],
+        }
+        spiral = \
+        {
+            "spiral_top": [(150, 0), (0, 150), (-225, 0), (0, -225),
+                           (68, 0), (0, 68), (-101, 0), (0, -101),
+                           (30, 0), (0, 30), (-45, 0), (0, -45),
+                           (10, 0), (0, 10), (-15, 0), (0, -15)],
+            "spiral_bot": [(-150, 0), (0, -150), (225, 0), (0, 225),
+                           (-68, 0), (0, -68), (101, 0), (0, 101),
+                           (-30, 0), (0, -30), (45, 0), (0, 45),
+                           (-10, 0), (0, -10), (15, 0), (0, 15)],
+        }
+        sweep = \
+        {
+            "sweep_left": 5*[(500, 0), (0, 50), (-500, 0), (0, 50)],
+            "sweep_right": 5*[(-500, 0), (0, -50), (500, 0), (0, -50)],
+        }
+        stomp = \
+        {
+            "stomp_bot": 5*[(0, 300), (50, 0), (0, -300), (50, 0)],
+            "stomp_top": 5*[(0, -300), (-50, 0), (0, 300), (-50, 0)],
+        }
+
+        patterns = {}
+        if isSquare:
+            patterns.update(square)
+        if isTriangle:
+            patterns.update(triangle)
+        if isSpiral:
+            patterns.update(spiral)
+        if isSweep:
+            patterns.update(sweep)
+        if isStomp:
+            patterns.update(stomp)
+        return patterns
+
+    def initiateAttack(self):
+        """
+        Initialises the attacking state of the character.
+        """
+        self.AIState = "attack"
+        self.travelOffset = self.physics.travelled
+
+        if not self.attackPatterns:
+            self.attackPatterns = self.generatePatterns(self.isSquarePattern,
+                                                        self.isTrianglePattern,
+                                                        self.isSpiralPattern,
+                                                        self.isSweepPattern,
+                                                        self.isStompPattern)
+
+        if not self.attackLoci:
+            nameToSpeed = \
+                {
+                    "sweep_right": 30,
+                    "sweep_left": 30,
+                    "stomp_bot": 30,
+                    "stomp_top": 30,
+                }
+            try:
+                name, self.attackLoci = self.attackPatterns.popitem()
+                self.attackSpeed = nameToSpeed[name]
+            except KeyError:
+                self.attackSpeed = 15
+
+        self.attackPoint = self.attackLoci.pop()
+
