@@ -10,7 +10,8 @@ import xcape.components.dialogue as dialogue
 from xcape.common.loader import sceneResources
 from xcape.common.object import GameObject
 from xcape.common.render import Dialogue
-from xcape.entities.characters import PlayerOne, PlayerTwo
+from xcape.entities.bosses import PigBoss
+from xcape.entities.players import PlayerOne, PlayerTwo
 from xcape.entities.scene import (
     Wall, SPlatform, DPlatform, MPlatform, Switch, Door, Spike, Decoration
 )
@@ -846,3 +847,165 @@ class CoopScene02(BaseScene):
                 Decoration(778, 81, deco["skull.png"], self.screen)
             ]
         return decorations
+
+
+class CoopScene03(BaseScene):
+    """
+    The third multiplayer scene of the game.
+    """
+
+    def __init__(self, screen):
+        super().__init__(screen)
+        self.levelNum = 3
+
+        self.image = sceneResources["screens"]["scene_01.png"]
+        self.rect = pg.Rect(0, 0, 0, 0)
+        self.rect.size = self.image.get_size()
+
+        self.players = self.addPlayers()
+        self.bosses = self.addBosses()
+        self.bosses[0].target(self.players)
+
+        self.walls = self.addWalls()
+        self.mPlatforms = self.addMPlatforms()
+        self.switches = self.addSwitches()
+        self.doors = self.addDoors()
+        self.spikes = self.addSpikes()
+
+        self.elapsed = 0
+        self.origin = pg.time.get_ticks()
+        self.dialogue = Dialogue(self.screen)
+        self.dialogue.add(dialogue.SCENE_SOLO_3, 10, 410, "caption")
+        self.dialogue.index = 0
+
+    def handleEvent(self, event):
+        [p.handleEvent(event) for p in self.players]
+
+        if event.type == events.SCENE_EVENT:
+            [d.handleEvent(event) for d in self.doors]
+
+    def update(self):
+        self.elapsed = pg.time.get_ticks() - self.origin
+
+        [s.update() for s in self.switches]
+        [d.update() for d in self.doors]
+        [p.update() for p in self.mPlatforms]
+        [p.update() for p in self.players]
+        [b.update() for b in self.bosses]
+
+    def drawWithCamera(self, camera):
+        self.screen.fill(settings.COLOURS["black_red"])
+        self.screen.blit(self.image, camera.apply(self))
+
+        [w.drawWithCamera(camera) for w in self.walls]
+        [s.drawWithCamera(camera) for s in self.switches]
+        [d.drawWithCamera(camera) for d in self.doors]
+        [s.drawWithCamera(camera) for s in self.spikes]
+        [p.drawWithCamera(camera) for p in self.mPlatforms]
+        [p.drawWithCamera(camera) for p in self.players]
+        [b.drawWithCamera(camera) for b in self.bosses]
+
+        if 5000 > self.elapsed >= 0:
+            self.dialogue.draw()
+
+    def addPlayers(self):
+        p1Spawn = (315, 528)
+        p2Spawn = (335, 528)
+        p1 = PlayerOne(self.screen)
+        p2 = PlayerTwo(self.screen)
+        p1.rect.center = p1Spawn
+        p2.rect.center = p2Spawn
+        players = [p1, p2]
+        return players
+
+    def addBosses(self):
+        b1Spawn = (200, 550)
+        b1 = PigBoss(self.screen)
+        b1.rect.center = b1Spawn
+        bosses = [b1]
+        return bosses
+
+    def addWalls(self):
+        wall = sceneResources["walls"]
+        pillar = sceneResources["pillars"]
+
+        pillarWall = [pillar["steel_top.png"],
+                      pillar["steel_mid.png"],
+                      pillar["steel_bot.png"]]
+        platWall = [wall["plat_top.png"],
+                    wall["plat_mid.png"],
+                    wall["plat_bot.png"]]
+        blockWall = [wall["block_left.png"],
+                     wall["block_mid.png"],
+                     wall["block_right.png"]]
+
+        boundaries = \
+            [
+                Wall(0, 600, 20, "h", [wall["boundary_bot.png"]], self.screen),
+
+                # Wall(739, 0, 5, "h", [wall["boundary_top.png"]], self.screen),
+                # Wall(99, 0, 5, "h", [wall["boundary_top.png"]], self.screen),
+                # Wall(0, 64, 7, "v", [wall["boundary_left.png"]], self.screen),
+                # Wall(1102, 60, 7, "v", [wall["boundary_right.png"]], self.screen),
+
+                # Wall(587, 367, 2, "v", [wall["boundary_left.png"]], self.screen),
+                # Wall(507, 367, 2, "v", [wall["boundary_right.png"]], self.screen),
+            ]
+
+        obstacles = \
+            [
+                # Wall(363, 48, 6, "v", pillarWall, self.screen),
+                # Wall(738, 48, 6, "v", pillarWall, self.screen),
+
+                # Wall(167, 182, 5, "h", blockWall, self.screen),
+                # Wall(735, 182, 2, "h", blockWall, self.screen),
+
+                # Wall(543, 198, 1, "h", [wall["block_small.png"]], self.screen),
+                # Wall(575, 363, 1, "v", [wall["corner_bot_left.png"]], self.screen),
+                # Wall(507, 363, 1, "h", [wall["corner_bot_right.png"]], self.screen),
+
+                # Wall(375, 423, 1, "v", platWall, self.screen),
+                # Wall(703, 423, 1, "v", platWall, self.screen),
+            ]
+
+        return boundaries + obstacles
+
+    def addMPlatforms(self):
+        vImage = sceneResources["platforms"]["moving_vertical.png"]
+        hImage = sceneResources["platforms"]["moving_horizontal.png"]
+
+        platforms = \
+            [
+                # MPlatform((83, 250), (240, 400), 0, 3, self.screen, vImage),
+                # MPlatform((1035, 250), (250, 400), 0, 3, self.screen, vImage),
+                # MPlatform((215, 325), (310, 325), 3, 0, self.screen, hImage),
+                # MPlatform((849, 372), (950, 372), 3, 0, self.screen, hImage),
+                # MPlatform((420, 279), (700, 685), 3, 0, self.screen, hImage),
+            ]
+        return platforms
+
+    def addSwitches(self):
+        switches = \
+            [
+                Switch(565, 146, 1, self.screen),
+                Switch(565, 305, 2, self.screen),
+            ]
+        return switches
+
+    def addDoors(self):
+        door1 = Door(795, 74, 1, self.screen)
+        door1.waitForSwitches([1, 2])
+        return [door1]
+
+    def addSpikes(self):
+        spike = sceneResources["spikes"]
+        spikes = \
+            [
+                # Spike(415, 190, 2, "v", spike["left.png"], self.screen),
+                # Spike(711, 190, 2, "v", spike["right.png"], self.screen),
+
+                # Spike(45, 590, 16, "h", spike["up.png"], self.screen),
+                # Spike(765, 590, 16, "h", spike["up.png"], self.screen),
+            ]
+        return spikes
+

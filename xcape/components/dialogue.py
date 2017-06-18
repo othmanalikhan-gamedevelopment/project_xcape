@@ -15,6 +15,7 @@ SCENE_SOLO_3 = "Chapter 3: Who even needs to escape... right?"
 SCENE_COOP_1_A = "Chapter 1: I don't mind being buried next to you..."
 SCENE_COOP_1_B = "HINT: Find the coop jump button on the keyboard!"
 SCENE_COOP_2 = "Chapter 2: Déjà vu... or not?"
+SCENE_COOP_3 = "Chapter 3: Who let the pigs out?"
 
 OFFICE_1 = "cuéntame qué necesitas."
 OFFICE_2 = "necesito tus servicios como asesino."
