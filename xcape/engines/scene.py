@@ -144,7 +144,7 @@ class SinglePlayer(GameObject):
 
         self.camera = SimpleCamera(settings.WIDTH, settings.HEIGHT)
         self.camera.follow(self.scene.players[0])
-        self.camera.followBriefly(self.scene.doors[0])
+        self.camera.followBriefly(self.scene.doors[-1])
 
     def _loadUI(self, maxHealth, currentHealth):
         """
@@ -283,7 +283,7 @@ class MultiPlayer(GameObject):
 
         self.camera = SimpleCamera(settings.WIDTH, settings.HEIGHT)
         self.camera.follow(self.scene.players[0])
-        # self.camera.followBriefly(self.scene.doors[0])
+        self.camera.followBriefly(self.scene.doors[-1])
 
     def _loadUI(self, maxHealth, health):
         """

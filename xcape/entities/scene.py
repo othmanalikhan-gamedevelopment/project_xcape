@@ -286,6 +286,8 @@ class Door(SceneEntity):
                         self.openDoor()
                 except ValueError:
                     pass
+                except AttributeError:
+                    pass
 
     def update(self):
         self.animation.update()

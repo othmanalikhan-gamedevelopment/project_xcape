@@ -28,8 +28,8 @@ class PigBoss(GameObject, pg.sprite.Sprite):
         self.screen = screen
         self.rect = pg.Rect(0, 0, 100, 66)
 
-        self.state = "idle"
-        self.orientation = "right"
+        self.state = "running"
+        self.orientation = "left"
 
         self._initialisePhysics()
         self._initialiseAnimations()
@@ -62,7 +62,7 @@ class PigBoss(GameObject, pg.sprite.Sprite):
         self.dialogueDuration = 5000
 
     def _initialiseAI(self):
-        self.AIState = "thinking"
+        self.AIState = "no_aggro"
         self.following = None
         self.targets = []
 
@@ -79,9 +79,10 @@ class PigBoss(GameObject, pg.sprite.Sprite):
         self.isStompPattern = True
 
         self.chaseSpeed = 7
-        self.chaseRadius = 100
+        self.chaseRadius = 150
         self.retreatSpeed = 10
         self.retreatRadius = 200
+        self.aggroRadius = 300
 
     def update(self):
         self.updateAIState()
@@ -93,6 +94,11 @@ class PigBoss(GameObject, pg.sprite.Sprite):
         """
         Updates the state of AI.
         """
+        if self.AIState == "no_aggro":
+            isAggro = self.isInRange(self.following.rect.center, self.aggroRadius)
+            if isAggro:
+                self.AIState = "thinking"
+
         if self.AIState == "thinking":
             isFar = not self.isInRange(self.following.rect.center, self.chaseRadius)
             isAttacking = self.attackLoci
@@ -101,8 +107,6 @@ class PigBoss(GameObject, pg.sprite.Sprite):
                 self.AIState = "chase"
             else:
                 self.initiateAttack()
-
-            self.AIState = "thinking"
 
         if self.AIState == "chase":
             self.chase(self.chaseRadius, self.chaseSpeed)
@@ -125,21 +129,20 @@ class PigBoss(GameObject, pg.sprite.Sprite):
         if abs(elapsed - self.dialogueOrigin) > self.dialogueDuration:
             self.dialogueOrigin = pg.time.get_ticks()
             r = random.randint(0, len(self.dialogue.bubbles)-1)
-            # Hacky method to increase the chance for no dialogue
-            zero = random.randint(0, 1)
-
-            if zero == 0 or r == 0:
+            # Hacky solution to increase chances of proccing
+            if r == 0 or random.randint(0, 1) == 0:
                 self.dialogue.index = None
             else:
                 self.dialogue.index = r
 
-                # Forces the dialogue bubble to follow the boss
-                x, y = self.rect.center
-                currentBubble = self.dialogue.bubbles[self.dialogue.index]
-                if self.orientation == "right":
-                    currentBubble.rect.center = (x+10, y-55)
-                if self.orientation == "left":
-                    currentBubble.rect.center = (x-80, y-55)
+        # Forces the dialogue bubble to follow the boss
+        if self.dialogue.index:
+            x, y = self.rect.center
+            currentBubble = self.dialogue.bubbles[self.dialogue.index]
+            if self.orientation == "right":
+                currentBubble.rect.center = (x+10, y-55)
+            if self.orientation == "left":
+                currentBubble.rect.center = (x-80, y-55)
 
     def updateAnimationState(self):
         """
@@ -277,6 +280,11 @@ class PigBoss(GameObject, pg.sprite.Sprite):
                                                         self.isSpiralPattern,
                                                         self.isSweepPattern,
                                                         self.isStompPattern)
+            p1, p2 = self.targets
+            if self.following == p1:
+                self.following = p2
+            elif self.following == p2:
+                self.following = p1
 
         if not self.attackLoci:
             nameToSpeed = \

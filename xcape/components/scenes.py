@@ -567,8 +567,8 @@ class CoopScene01(BaseScene):
         self.elapsed = 0
         self.origin = pg.time.get_ticks()
         self.dialogue = Dialogue(self.screen)
-        self.dialogue.add(dialogue.SCENE_COOP_1_A, 10, 410, "caption")
-        self.dialogue.add(dialogue.SCENE_COOP_1_B, 10, 410, "caption")
+        self.dialogue.add(dialogue.SCENE_COOP_1A, 10, 410, "caption")
+        self.dialogue.add(dialogue.SCENE_COOP_1B, 10, 410, "caption")
 
     def handleEvent(self, event):
         [p.handleEvent(event) for p in self.players]
@@ -867,10 +867,13 @@ class CoopScene03(BaseScene):
         self.bosses[0].target(self.players)
 
         self.walls = self.addWalls()
+        self.sPlatforms = self.addSPlatforms()
+        self.dPlatforms = self.addDPlatforms()
         self.mPlatforms = self.addMPlatforms()
         self.switches = self.addSwitches()
         self.doors = self.addDoors()
         self.spikes = self.addSpikes()
+        self.decorations = self.addDecorations()
 
         self.elapsed = 0
         self.origin = pg.time.get_ticks()
@@ -901,7 +904,10 @@ class CoopScene03(BaseScene):
         [s.drawWithCamera(camera) for s in self.switches]
         [d.drawWithCamera(camera) for d in self.doors]
         [s.drawWithCamera(camera) for s in self.spikes]
+        [p.drawWithCamera(camera) for p in self.sPlatforms]
         [p.drawWithCamera(camera) for p in self.mPlatforms]
+        [p.drawWithCamera(camera) for p in self.dPlatforms]
+        [d.drawWithCamera(camera) for d in self.decorations]
         [p.drawWithCamera(camera) for p in self.players]
         [b.drawWithCamera(camera) for b in self.bosses]
 
@@ -909,8 +915,8 @@ class CoopScene03(BaseScene):
             self.dialogue.draw()
 
     def addPlayers(self):
-        p1Spawn = (315, 528)
-        p2Spawn = (335, 528)
+        p1Spawn = (330, 210)
+        p2Spawn = (330, 210)
         p1 = PlayerOne(self.screen)
         p2 = PlayerTwo(self.screen)
         p1.rect.center = p1Spawn
@@ -919,7 +925,7 @@ class CoopScene03(BaseScene):
         return players
 
     def addBosses(self):
-        b1Spawn = (200, 550)
+        b1Spawn = (970, 280)
         b1 = PigBoss(self.screen)
         b1.rect.center = b1Spawn
         bosses = [b1]
@@ -927,48 +933,40 @@ class CoopScene03(BaseScene):
 
     def addWalls(self):
         wall = sceneResources["walls"]
-        pillar = sceneResources["pillars"]
-
-        pillarWall = [pillar["steel_top.png"],
-                      pillar["steel_mid.png"],
-                      pillar["steel_bot.png"]]
-        platWall = [wall["plat_top.png"],
-                    wall["plat_mid.png"],
-                    wall["plat_bot.png"]]
         blockWall = [wall["block_left.png"],
                      wall["block_mid.png"],
                      wall["block_right.png"]]
 
         boundaries = \
             [
-                Wall(0, 600, 20, "h", [wall["boundary_bot.png"]], self.screen),
+                Wall(600, 0, 9, "v", [wall["boundary_right.png"]], self.screen),
 
-                # Wall(739, 0, 5, "h", [wall["boundary_top.png"]], self.screen),
-                # Wall(99, 0, 5, "h", [wall["boundary_top.png"]], self.screen),
-                # Wall(0, 64, 7, "v", [wall["boundary_left.png"]], self.screen),
-                # Wall(1102, 60, 7, "v", [wall["boundary_right.png"]], self.screen),
+                Wall(0, 750, 20, "h", [wall["boundary_bot.png"]], self.screen),
+                Wall(0, 0, 12, "v", [wall["boundary_left.png"]], self.screen),
+                Wall(0, 0, 20, "h", [wall["boundary_top.png"]], self.screen),
+                Wall(1250, 0, 12, "v", [wall["boundary_right.png"]], self.screen),
 
-                # Wall(587, 367, 2, "v", [wall["boundary_left.png"]], self.screen),
-                # Wall(507, 367, 2, "v", [wall["boundary_right.png"]], self.screen),
+
+                Wall(0, 0, 1, "v", [wall["upper_corner_left.png"]], self.screen),
+                Wall(0, 750, 1, "v", [wall["inner_corner_left.png"]], self.screen),
+                Wall(1250, 0, 1, "v", [wall["upper_corner_right.png"]], self.screen),
+                Wall(1250, 750, 1, "v", [wall["inner_corner_right.png"]], self.screen),
             ]
 
         obstacles = \
             [
-                # Wall(363, 48, 6, "v", pillarWall, self.screen),
-                # Wall(738, 48, 6, "v", pillarWall, self.screen),
-
-                # Wall(167, 182, 5, "h", blockWall, self.screen),
-                # Wall(735, 182, 2, "h", blockWall, self.screen),
-
-                # Wall(543, 198, 1, "h", [wall["block_small.png"]], self.screen),
-                # Wall(575, 363, 1, "v", [wall["corner_bot_left.png"]], self.screen),
-                # Wall(507, 363, 1, "h", [wall["corner_bot_right.png"]], self.screen),
-
-                # Wall(375, 423, 1, "v", platWall, self.screen),
-                # Wall(703, 423, 1, "v", platWall, self.screen),
+                Wall(167, 330, 3, "h", blockWall, self.screen),
+                Wall(220, 600, 1, "h", blockWall, self.screen),
             ]
 
         return boundaries + obstacles
+
+    def addSPlatforms(self):
+        platforms = \
+        [
+            SPlatform(240, 240, 2, self.screen),
+        ]
+        return platforms
 
     def addMPlatforms(self):
         vImage = sceneResources["platforms"]["moving_vertical.png"]
@@ -976,36 +974,100 @@ class CoopScene03(BaseScene):
 
         platforms = \
             [
-                # MPlatform((83, 250), (240, 400), 0, 3, self.screen, vImage),
-                # MPlatform((1035, 250), (250, 400), 0, 3, self.screen, vImage),
-                # MPlatform((215, 325), (310, 325), 3, 0, self.screen, hImage),
-                # MPlatform((849, 372), (950, 372), 3, 0, self.screen, hImage),
-                # MPlatform((420, 279), (700, 685), 3, 0, self.screen, hImage),
+                MPlatform((100, 100), (100, 600), 0, 20, self.screen, vImage),
+                MPlatform((130, 100), (130, 600), 0, 20, self.screen, vImage),
+                MPlatform((160, 100), (160, 600), 0, 20, self.screen, vImage),
+                MPlatform((190, 100), (190, 600), 0, 20, self.screen, vImage),
+                MPlatform((210, 100), (210, 600), 0, 20, self.screen, vImage),
+                MPlatform((240, 100), (240, 600), 0, 20, self.screen, vImage),
+
+                MPlatform((360, 100), (360, 600), 0, 20, self.screen, vImage),
+                MPlatform((390, 100), (390, 600), 0, 20, self.screen, vImage),
+                MPlatform((420, 100), (420, 600), 0, 20, self.screen, vImage),
+                MPlatform((450, 100), (450, 600), 0, 20, self.screen, vImage),
+                MPlatform((480, 100), (480, 600), 0, 20, self.screen, vImage),
+                MPlatform((510, 100), (410, 600), 0, 20, self.screen, vImage),
+
+                MPlatform((900, 200), (1000, 200), 10, 0, self.screen, hImage),
             ]
+        return platforms
+
+    def addDPlatforms(self):
+        platforms = \
+        [
+            DPlatform(900, 660, 1, self.screen),
+
+            DPlatform(650, 460, 1, self.screen),
+            DPlatform(1150, 460, 1, self.screen),
+
+            DPlatform(700, 260, 1, self.screen),
+            DPlatform(900, 360, 1, self.screen),
+            DPlatform(1100, 160, 1, self.screen),
+        ]
         return platforms
 
     def addSwitches(self):
         switches = \
             [
-                Switch(565, 146, 1, self.screen),
-                Switch(565, 305, 2, self.screen),
+                Switch(210, 200, 1, self.screen),
+                Switch(400, 200, 2, self.screen),
+                Switch(100, 100, 3, self.screen),
+                Switch(510, 100, 4, self.screen),
+                Switch(300, 480, 5, self.screen),
+                Switch(940, 600, 6, self.screen),
+
+                Switch(1200, 700, 7, self.screen),
+                Switch(940, 600, 8, self.screen),
+                Switch(940, 400, 9, self.screen),
+                Switch(650, 50, 10, self.screen),
             ]
         return switches
 
     def addDoors(self):
-        door1 = Door(795, 74, 1, self.screen)
-        door1.waitForSwitches([1, 2])
-        return [door1]
+        doors = \
+        [
+            Door(280, 133, 1, self.screen),
+            Door(1115, 55, 2, self.screen),
+        ]
+        doors[0].state = "open"
+        doors[1].waitForSwitches(list(range(1, 10)))
+        return doors
 
     def addSpikes(self):
-        spike = sceneResources["spikes"]
+        assets = sceneResources["spikes"]
         spikes = \
             [
-                # Spike(415, 190, 2, "v", spike["left.png"], self.screen),
-                # Spike(711, 190, 2, "v", spike["right.png"], self.screen),
+                Spike(50, 50, 26, "h", assets["down.png"], self.screen),
 
-                # Spike(45, 590, 16, "h", spike["up.png"], self.screen),
-                # Spike(765, 590, 16, "h", spike["up.png"], self.screen),
+                Spike(165, 305, 15, "h", assets["up.png"], self.screen),
+                Spike(165, 380, 15, "h", assets["down.png"], self.screen),
+
+                Spike(230, 575, 8, "h", assets["up.png"], self.screen),
             ]
         return spikes
 
+    def addDecorations(self):
+        deco = sceneResources["decorations"]
+        decorations = \
+            [
+                Decoration(500, 730, deco["skull.png"], self.screen),
+                Decoration(530, 730, deco["skull.png"], self.screen),
+                Decoration(560, 730, deco["skull.png"], self.screen),
+                Decoration(590, 730, deco["skull.png"], self.screen),
+                Decoration(620, 730, deco["skull.png"], self.screen),
+
+                Decoration(750, 730, deco["skull.png"], self.screen),
+                Decoration(780, 730, deco["skull.png"], self.screen),
+                Decoration(810, 730, deco["skull.png"], self.screen),
+                Decoration(840, 730, deco["skull.png"], self.screen),
+                Decoration(870, 730, deco["skull.png"], self.screen),
+                Decoration(900, 730, deco["skull.png"], self.screen),
+
+                Decoration(1000, 730, deco["skull.png"], self.screen),
+                Decoration(1030, 730, deco["skull.png"], self.screen),
+                Decoration(1060, 730, deco["skull.png"], self.screen),
+                Decoration(1090, 730, deco["skull.png"], self.screen),
+
+                Decoration(1200, 730, deco["skull.png"], self.screen),
+            ]
+        return decorations
