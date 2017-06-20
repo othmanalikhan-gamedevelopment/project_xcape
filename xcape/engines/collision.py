@@ -138,7 +138,7 @@ class CollisionEngine(GameObject):
             hits = pg.sprite.spritecollide(player, self.scene.doors, False)
             doorsClosed = [d for d in self.scene.doors if d.isClosed]
             if hits and not doorsClosed:
-                events.messageScene("collision_engine",
+                self.messageScene("collision_engine",
                                     "transition",
                                     self.scene.levelNum + 1)
 
@@ -150,7 +150,7 @@ class CollisionEngine(GameObject):
 
             hits = pg.sprite.spritecollide(player, self.scene.spikes, False)
             if hits:
-                events.messageScene("collision_engine", "death", player.num)
+                self.messageScene("collision_engine", "death", player.num)
 
     def resolveBossCollisions(self):
         """

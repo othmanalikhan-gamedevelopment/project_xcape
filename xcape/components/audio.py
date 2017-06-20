@@ -30,7 +30,7 @@ class AudioComponent(GameObject):
 
         self.origin = 0
         self.elapsed = 0
-        self.duration = 0
+        self.delay = 0
 
     def update(self):
         self.elapsed = pg.time.get_ticks() - self.origin
@@ -43,9 +43,9 @@ class AudioComponent(GameObject):
             self.elapsed = 0
 
         # Checking if to play next sound or repeat current sound
-        if self.elapsed > 1000*self.soundPlaying.get_length():
+        if self.elapsed > 1000*self.soundPlaying.get_length() + self.delay:
             try:
-                self.state, self.duration = self.stateToLink[self.state]
+                self.state, self.delay = self.stateToLink[self.state]
                 self.isSoundPlayed = False
             except KeyError:
                 if self.enableRepeat:
@@ -72,3 +72,16 @@ class AudioComponent(GameObject):
         """
         self.stateToLink[state1] = (state2, delay)
 
+    def changeState(self, state):
+        """
+        Changes to the given state safely.
+
+        :param state: String, the name of the state.
+        """
+        self.state = state
+
+        try:
+            _, self.delay = self.stateToLink[self.state]
+        except KeyError:
+            print("No delay linked to audio state {} for {}"
+                  .format(state, self.gameObject))

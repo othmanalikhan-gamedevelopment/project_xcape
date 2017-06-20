@@ -43,18 +43,22 @@ class SplashMenu(BaseMenu):
 
     def __init__(self, screen):
         super().__init__(screen)
+        self.effect = FadeEffect(screen)
+
         background = MENU_RESOURCES["screens"]["splash"][0]
         background = render.addBackground(background)
-
-        self.animation = RenderComponent(self)
-        self.animation.add("background", background)
+        self.render = RenderComponent(self)
+        self.render.add("background", background)
 
         self.audio = AudioComponent(self)
+        self.audio.add("door_knock", SFX_RESOURCES["door_knock"])
+        self.audio.add("door_open", SFX_RESOURCES["door_open"])
+        self.audio.add("door_close", SFX_RESOURCES["door_close"])
         self.audio.add("meow", SFX_RESOURCES["meow_1"])
-        self.audio.add("door", SFX_RESOURCES["door"])
-        self.audio.link("door", "meow", delay=1000)
-
-        self.effect = FadeEffect(screen)
+        self.audio.link("door_knock", "door_open", delay=1000)
+        self.audio.link("door_open", "meow")
+        self.audio.link("meow", "door_close")
+        self.audio.changeState("door_knock")
 
     def __str__(self):
         return "splash_menu"
@@ -62,11 +66,11 @@ class SplashMenu(BaseMenu):
     def handleEvent(self, event):
         if event.type == pg.KEYDOWN:
             if event.key == pg.K_RETURN:
-                events.messageMenu("splash_menu", "transition", "main_menu")
+                self.messageMenu("transition", "main_menu")
 
     def update(self):
         self.audio.update()
-        self.animation.update()
+        self.render.update()
 
         if not self.effect.isComplete:
             self.effect.update()
@@ -74,7 +78,7 @@ class SplashMenu(BaseMenu):
             self.messageMenu("transition", "main_menu")
 
     def draw(self):
-        self.animation.draw()
+        self.render.draw()
         self.effect.draw()
 
 
@@ -86,9 +90,9 @@ class MainMenu(BaseMenu):
     def __init__(self, screen):
         super().__init__(screen)
 
-        self.image = MENU_RESOURCES["screens"]["main.png"]
-        self.rect = pg.Rect(0, 0, 0, 0)
-        self.rect.size = self.image.get_size()
+        background = MENU_RESOURCES["screens"]["main"][0]
+        self.render = RenderComponent(self)
+        self.render.add("background", background)
 
         self.totalOptions = 4
         self.fontSize = 22
@@ -124,7 +128,7 @@ class MainMenu(BaseMenu):
                                  self.screen)
         self.title = ImageLabel(60,
                                 55,
-                                MENU_RESOURCES["assets"]["title.png"],
+                                MENU_RESOURCES["assets"]["title"][0],
                                 self.screen)
         self.arrow = _Arrow(self.x - 40,
                             self.y + 28,
@@ -154,11 +158,12 @@ class MainMenu(BaseMenu):
                     quit()
 
     def update(self):
+        self.render.update()
         self.title.update()
         self.arrow.update()
 
     def draw(self):
-        self.screen.blit(self.image, self.rect)
+        self.render.draw()
         self.title.draw()
         self.option1.draw()
         self.option2.draw()
@@ -444,8 +449,8 @@ class FadeEffect(BaseMenu):
         self.time = 0.0
         self.timeStartLighten = 1.0
         self.timeEndLighten = 3.0
-        self.timeStartDarken = 4.0
-        self.timeEndDarken = 6.0
+        self.timeStartDarken = 5.0
+        self.timeEndDarken = 8.0
 
     def update(self):
         if not self.isComplete:
