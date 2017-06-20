@@ -5,9 +5,9 @@ Responsible for containing common rendering functions.
 import pygame as pg
 
 from xcape.common import settings as settings
-from xcape.common.loader import cutsceneResources
+from xcape.common.loader import CUTSCENE_RESOURCES
 from xcape.common.object import GameObject
-from xcape.components.animation import AnimationComponent
+from xcape.components.render import RenderComponent
 
 
 def addBackground(surface, colour="white"):
@@ -97,8 +97,8 @@ class ImageLabel(GameObject):
         :param image: pygame.Surface, representing the image to display.
         :param screen: pygame.Surface, representing the screen.
         """
-        self.state = "idle"
-        self.animation = AnimationComponent(self)
+        self.animationState = "idle"
+        self.animation = RenderComponent(self)
         self.animation.add("idle", [image], float('inf'))
         self.screen = screen
         self.rect = pg.Rect(x, y, 0, 0)
@@ -350,7 +350,7 @@ class _Bubble(GameObject):
         :param name: String, the name of the globe image.
         :return: pygame.Surface, the image of the empty bubble.
         """
-        bubble = cutsceneResources["assets"][name]
+        bubble = CUTSCENE_RESOURCES["assets"][name]
         bubble = addBackground(bubble)
         bubble.set_colorkey(settings.COLOURS["blue"])
         return bubble

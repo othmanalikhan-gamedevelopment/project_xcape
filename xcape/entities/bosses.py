@@ -8,11 +8,11 @@ import pygame as pg
 from pygame.math import Vector2
 
 import xcape.components.dialogue as dialogue
-from xcape.common.loader import characterResources
+from xcape.common.loader import CHARACTER_RESOURCES
 from xcape.common.object import GameObject
-from xcape.components.animation import AnimationComponent
 from xcape.components.cutscenes import Dialogue
 from xcape.components.physics import PhysicsComponent
+from xcape.components.render import RenderComponent
 
 
 class PigBoss(GameObject, pg.sprite.Sprite):
@@ -28,7 +28,7 @@ class PigBoss(GameObject, pg.sprite.Sprite):
         self.screen = screen
         self.rect = pg.Rect(0, 0, 100, 66)
 
-        self.state = "running"
+        self.animationState = "running"
         self.orientation = "left"
 
         self._initialisePhysics()
@@ -44,8 +44,8 @@ class PigBoss(GameObject, pg.sprite.Sprite):
         self.moveSpeed = 1
 
     def _initialiseAnimations(self):
-        pig = characterResources["pig"]
-        self.animation = AnimationComponent(self, enableOrientation=True)
+        pig = CHARACTER_RESOURCES["pig"]
+        self.animation = RenderComponent(self, enableOrientation=True)
         self.animation.add("idle", [pig["running"][0]], float('inf'))
         self.animation.add("running", pig["running"], 400)
         self.animation.scaleAll(self.rect.size)
@@ -149,18 +149,18 @@ class PigBoss(GameObject, pg.sprite.Sprite):
         Updates the state of the animation.
         """
         if self.physics.velocity.x > 0:
-            self.state = "running"
+            self.animationState = "running"
             self.orientation = "right"
 
         if self.physics.velocity.x < 0:
-            self.state = "running"
+            self.animationState = "running"
             self.orientation = "left"
 
         if self.physics.velocity.y > 0:
-            self.state = "running"
+            self.animationState = "running"
 
         if self.physics.velocity.x > 0:
-            self.state = "running"
+            self.animationState = "running"
 
         self.animation.update()
 

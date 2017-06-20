@@ -4,7 +4,6 @@ The menu engine of the game.
 
 import pygame as pg
 
-import xcape.common.events as events
 import xcape.components.menus as menus
 from xcape.common.object import GameObject
 
@@ -42,7 +41,7 @@ class MenuEngine(GameObject):
         if self.menu:
             self.menu.handleEvent(event)
 
-        if event.type == events.MENU_EVENT:
+        if event.type == self.MENU_EVENT:
             if event.category == "transition":
                 try:
                     menu = self.nameToMenu[event.data]

@@ -4,12 +4,11 @@ Contains all the entities in a scene (excluding the players and bosses).
 
 import pygame as pg
 
-import xcape.common.events as events
-from xcape.common.loader import sceneResources
+from xcape.common.loader import SCENE_RESOURCES
 from xcape.common.object import GameObject
 from xcape.common.render import buildParts, replicate
-from xcape.components.animation import AnimationComponent
 from xcape.components.physics import PhysicsComponent
+from xcape.components.render import RenderComponent
 
 
 class SceneEntity(GameObject):
@@ -23,7 +22,7 @@ class SceneEntity(GameObject):
         """
         self.rect = pg.Rect(0, 0, 0, 0)
         self.screen = screen
-        self.state = "idle"
+        self.animationState = "idle"
 
     def drawWithCamera(self, camera):
         """
@@ -116,9 +115,9 @@ class SPlatform(BasePlatform):
         """
         super().__init__(x, y, screen)
 
-        left = sceneResources["platforms"]["platform_1.png"]
-        mid = sceneResources["platforms"]["platform_2.png"]
-        right = sceneResources["platforms"]["platform_3.png"]
+        left = SCENE_RESOURCES["platforms"]["platform_1.png"]
+        mid = SCENE_RESOURCES["platforms"]["platform_2.png"]
+        right = SCENE_RESOURCES["platforms"]["platform_3.png"]
         images = [left, mid, right]
         self.image = buildParts(blocks, "h", images)
         self.rect.size = self.image.get_size()
@@ -142,9 +141,9 @@ class DPlatform(BasePlatform):
         """
         super().__init__(x, y, screen)
 
-        left = sceneResources["platforms"]["platform_1.png"]
-        mid = sceneResources["platforms"]["platform_2.png"]
-        right = sceneResources["platforms"]["platform_3.png"]
+        left = SCENE_RESOURCES["platforms"]["platform_1.png"]
+        mid = SCENE_RESOURCES["platforms"]["platform_2.png"]
+        right = SCENE_RESOURCES["platforms"]["platform_3.png"]
         images = [left, mid, right]
         self.image = buildParts(blocks, "h", images)
         self.rect.size = self.image.get_size()
@@ -171,7 +170,7 @@ class MPlatform(BasePlatform):
         self.image = image
         self.rect.size = self.image.get_size()
 
-        self.state = "forward"
+        self.animationState = "forward"
         self.physics = PhysicsComponent(self)
         self.physics.isGravity = False
         self.A = A
@@ -230,11 +229,13 @@ class Switch(SceneEntity):
         self.buttonNum = switchNum
         self.isOn = True
 
-        button = sceneResources["buttons"]
-        self.state = "on"
-        self.animation = AnimationComponent(self, enableRepeat=False)
+        button = SCENE_RESOURCES["buttons"]
+        self.animationState = "on"
+        self.animation = RenderComponent(self, enableRepeat=False)
         self.animation.add("on", [button["switch"][0]], float('inf'))
         self.animation.add("off", button["switch"], 500)
+
+        # self.animation.addSound("off", soundPath)
 
     def update(self):
         self.animation.update()
@@ -247,7 +248,7 @@ class Switch(SceneEntity):
         Changes the state of the button to off and sends out an event.
         """
         self.isOn = False
-        self.state = "off"
+        self.animationState = "off"
         events.messageScene("Switch", "switch", (self.buttonNum, self.isOn))
 
 
@@ -269,14 +270,14 @@ class Door(SceneEntity):
         self.switchesWaiting = None
         self.isClosed = True
 
-        button = sceneResources["doors"]
-        self.state = "closed"
-        self.animation = AnimationComponent(self, enableRepeat=False)
+        button = SCENE_RESOURCES["doors"]
+        self.animationState = "closed"
+        self.animation = RenderComponent(self, enableRepeat=False)
         self.animation.add("open", [button["open.png"]], float('inf'))
         self.animation.add("closed", [button["closed.png"]], float('inf'))
 
     def handleEvent(self, event):
-        if event.type == events.SCENE_EVENT:
+        if event.type == self.MENU_EVENT:
             if event.category == "switch":
 
                 try:
@@ -309,7 +310,7 @@ class Door(SceneEntity):
         Changes the state of the door to open and sends out an event.
         """
         self.isClosed = False
-        self.state = "open"
+        self.animationState = "open"
         events.messageScene("Door", "door", (self.doorNum, self.isClosed))
 
 

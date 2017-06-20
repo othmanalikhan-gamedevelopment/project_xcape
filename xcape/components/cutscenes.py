@@ -4,12 +4,11 @@ Responsible for containing all the cutscenes in game.
 
 import pygame as pg
 
-import xcape.common.events as events
 import xcape.components.dialogue as dialogue
-from xcape.common.loader import cutsceneResources
+from xcape.common.loader import CUTSCENE_RESOURCES
 from xcape.common.object import GameObject
 from xcape.common.render import Dialogue
-from xcape.components.animation import AnimationComponent
+from xcape.components.render import RenderComponent
 
 
 class BaseCutscene(GameObject):
@@ -23,7 +22,7 @@ class BaseCutscene(GameObject):
         """
         self.screen = screen
         self.rect = pg.Rect(0, 0, 0, 0)
-        self.state = "idle"
+        self.animationState = "idle"
 
     def handleEvent(self, event):
         pass
@@ -43,10 +42,10 @@ class OfficeCutscene(BaseCutscene):
     def __init__(self, screen):
         super().__init__(screen)
         self.rect = pg.Rect(0, 0, 0, 0)
-        intro = cutsceneResources["intro"]
+        intro = CUTSCENE_RESOURCES["intro"]
 
-        self.state = "office_cat"
-        self.animation = AnimationComponent(self)
+        self.animationState = "office_cat"
+        self.animation = RenderComponent(self)
         self.animation.add("office_dog", intro["office_dog"], 1500)
         self.animation.add("office_cat", intro["office_cat"], 1500)
 
@@ -70,22 +69,22 @@ class OfficeCutscene(BaseCutscene):
         self.elapsed = pg.time.get_ticks() - self.origin
 
         if self.speed*500 > self.elapsed >= self.speed*0:
-            self.state = "office_cat"
+            self.animationState = "office_cat"
 
         elif self.speed*3600 > self.elapsed:
-            self.state = "office_cat"
+            self.animationState = "office_cat"
             self.dialogue.index = 0
 
         elif self.speed*7200 > self.elapsed:
-            self.state = "office_dog"
+            self.animationState = "office_dog"
             self.dialogue.index = 1
 
         elif self.speed*10800 > self.elapsed:
-            self.state = "office_cat"
+            self.animationState = "office_cat"
             self.dialogue.index = 2
 
         elif self.speed*14400 >= self.elapsed:
-            self.state = "office_dog"
+            self.animationState = "office_dog"
             self.dialogue.index = 3
 
         else:
@@ -116,10 +115,10 @@ class TelephoneCutscene(BaseCutscene):
     def __init__(self, screen):
         super().__init__(screen)
         self.rect = pg.Rect(0, 0, 0, 0)
-        intro = cutsceneResources["intro"]
+        intro = CUTSCENE_RESOURCES["intro"]
 
-        self.state = "telephone_none"
-        self.animation = AnimationComponent(self, enableRepeat=False)
+        self.animationState = "telephone_none"
+        self.animation = RenderComponent(self, enableRepeat=False)
         self.animation.add("telephone_none", intro["telephone_none"], float('inf'))
         self.animation.add("telephone_pick", intro["telephone_pick"], 1100)
         self.animation.add("telephone_hold", intro["telephone_hold"], float('inf'))
@@ -146,31 +145,31 @@ class TelephoneCutscene(BaseCutscene):
         self.elapsed = pg.time.get_ticks() - self.origin
 
         if self.speed*2000 > self.elapsed >= self.speed*0:
-            self.state = "telephone_none"
+            self.animationState = "telephone_none"
 
         elif self.speed*2800 > self.elapsed:
-            self.state = "telephone_pick"
+            self.animationState = "telephone_pick"
 
         elif self.speed*3300 > self.elapsed:
-            self.state = "telephone_hold"
+            self.animationState = "telephone_hold"
 
         elif self.speed*6300 > self.elapsed:
-            self.state = "telephone_hold"
+            self.animationState = "telephone_hold"
             self.dialogue.index = 0
 
         elif self.speed*10300 > self.elapsed:
-            self.state = "telephone_hold"
+            self.animationState = "telephone_hold"
             self.dialogue.index = 1
 
         elif self.speed*11300 > self.elapsed:
-            self.state = "telephone_hold"
+            self.animationState = "telephone_hold"
             self.dialogue.index = None
 
         elif self.speed*12100 > self.elapsed:
-            self.state = "telephone_put"
+            self.animationState = "telephone_put"
 
         elif self.speed*14000 > self.elapsed:
-            self.state = "telephone_none"
+            self.animationState = "telephone_none"
 
         else:
             if not self.isComplete:
@@ -194,10 +193,10 @@ class JailCutscene(BaseCutscene):
     def __init__(self, screen):
         super().__init__(screen)
         self.rect = pg.Rect(0, 0, 0, 0)
-        intro = cutsceneResources["intro"]
+        intro = CUTSCENE_RESOURCES["intro"]
 
-        self.state = "jail"
-        self.animation = AnimationComponent(self, enableRepeat=False)
+        self.animationState = "jail"
+        self.animation = RenderComponent(self, enableRepeat=False)
         self.animation.add("fence_show", intro["jail_fence_show"], 2000)
         self.animation.add("fence_static", intro["jail_fence_static"], float("inf"))
         self.animation.add("fence_hide", intro["jail_fence_hide"], 2000)
@@ -221,21 +220,21 @@ class JailCutscene(BaseCutscene):
         self.elapsed = pg.time.get_ticks() - self.origin
 
         if self.speed*2000 > self.elapsed >= self.speed*0:
-            self.state = "fence_show"
+            self.animationState = "fence_show"
             self.dialogue.index = 0
 
         elif self.speed*4000 > self.elapsed:
-            self.state = "fence_static"
+            self.animationState = "fence_static"
             self.dialogue.index = None
 
         elif self.speed*6000 > self.elapsed:
-            self.state = "fence_hide"
+            self.animationState = "fence_hide"
 
         elif self.speed*9500 > self.elapsed:
-            self.state = "cat_close"
+            self.animationState = "cat_close"
 
         elif self.speed*11500 > self.elapsed:
-            self.state = "cat_static"
+            self.animationState = "cat_static"
 
         else:
             if not self.isComplete:

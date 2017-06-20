@@ -4,7 +4,6 @@ The collision engine of the game.
 import pygame as pg
 from pygame.math import Vector2
 
-import xcape.common.events as events
 from xcape.common.object import GameObject
 
 

@@ -4,10 +4,9 @@ Responsible for containing all the menus in game.
 
 import pygame as pg
 
-import xcape.common.events as events
 import xcape.common.settings as settings
 import xcape.components.dialogue as dialogue
-from xcape.common.loader import sceneResources
+from xcape.common.loader import SCENE_RESOURCES
 from xcape.common.object import GameObject
 from xcape.common.render import Dialogue
 from xcape.entities.bosses import PigBoss
@@ -146,7 +145,7 @@ class SoloScene01(BaseScene):
         super().__init__(screen)
         self.levelNum = 1
 
-        self.image = sceneResources["screens"]["scene_01.png"]
+        self.image = SCENE_RESOURCES["screens"]["scene_01.png"]
         self.rect = pg.Rect(0, 0, 0, 0)
         self.rect.size = self.image.get_size()
 
@@ -166,7 +165,7 @@ class SoloScene01(BaseScene):
     def handleEvent(self, event):
         [p.handleEvent(event) for p in self.players]
 
-        if event.type == events.SCENE_EVENT:
+        if event.type == self.MENU_EVENT:
             [d.handleEvent(event) for d in self.doors]
 
     def update(self):
@@ -196,7 +195,7 @@ class SoloScene01(BaseScene):
         return player
 
     def addWalls(self):
-        wall = sceneResources["walls"]
+        wall = SCENE_RESOURCES["walls"]
         boundaries = \
         [
             Wall(0, 10, 8, "v", [wall["boundary_left.png"]], self.screen),
@@ -256,7 +255,7 @@ class SoloScene02(BaseScene):
         super().__init__(screen)
         self.levelNum = 2
 
-        self.image = sceneResources["screens"]["scene_02.png"]
+        self.image = SCENE_RESOURCES["screens"]["scene_02.png"]
         self.rect = pg.Rect(0, 0, 0, 0)
         self.rect.size = self.image.get_size()
 
@@ -280,7 +279,7 @@ class SoloScene02(BaseScene):
         [p.handleEvent(event) for p in self.players]
         [b.handleEvent(event) for b in self.bosses]
 
-        if event.type == events.SCENE_EVENT:
+        if event.type == self.MENU_EVENT:
             [d.handleEvent(event) for d in self.doors]
 
     def update(self):
@@ -314,7 +313,7 @@ class SoloScene02(BaseScene):
         return player
 
     def addWalls(self):
-        wall = sceneResources["walls"]
+        wall = SCENE_RESOURCES["walls"]
         platWall = [wall["plat_top.png"],
                     wall["plat_mid.png"],
                     wall["plat_bot.png"]]
@@ -353,8 +352,8 @@ class SoloScene02(BaseScene):
         return platforms
 
     def addMPlatforms(self):
-        vImage = sceneResources["platforms"]["moving_vertical.png"]
-        hImage = sceneResources["platforms"]["moving_horizontal.png"]
+        vImage = SCENE_RESOURCES["platforms"]["moving_vertical.png"]
+        hImage = SCENE_RESOURCES["platforms"]["moving_horizontal.png"]
 
         platforms = \
         [
@@ -382,7 +381,7 @@ class SoloScene02(BaseScene):
         return [door1]
 
     def addSpikes(self):
-        spike = sceneResources["spikes"]
+        spike = SCENE_RESOURCES["spikes"]
         spikes = \
         [
             Spike(325, 525, 5, "h", spike["up.png"], self.screen),
@@ -391,7 +390,7 @@ class SoloScene02(BaseScene):
         return spikes
 
     def addDecorations(self):
-        deco = sceneResources["decorations"]
+        deco = SCENE_RESOURCES["decorations"]
         decorations = \
         [
             Decoration(778, 81, deco["skull.png"], self.screen)
@@ -408,7 +407,7 @@ class SoloScene03(BaseScene):
         super().__init__(screen)
         self.levelNum = 3
 
-        self.image = sceneResources["screens"]["scene_03.png"]
+        self.image = SCENE_RESOURCES["screens"]["scene_03.png"]
         self.rect = pg.Rect(0, 0, 0, 0)
         self.rect.size = self.image.get_size()
 
@@ -429,7 +428,7 @@ class SoloScene03(BaseScene):
     def handleEvent(self, event):
         [p.handleEvent(event) for p in self.players]
 
-        if event.type == events.SCENE_EVENT:
+        if event.type == self.MENU_EVENT:
             [d.handleEvent(event) for d in self.doors]
 
     def update(self):
@@ -461,8 +460,8 @@ class SoloScene03(BaseScene):
         return player
 
     def addWalls(self):
-        wall = sceneResources["walls"]
-        pillar = sceneResources["pillars"]
+        wall = SCENE_RESOURCES["walls"]
+        pillar = SCENE_RESOURCES["pillars"]
 
         pillarWall = [pillar["steel_top.png"],
                       pillar["steel_mid.png"],
@@ -504,8 +503,8 @@ class SoloScene03(BaseScene):
         return boundaries + obstacles
 
     def addMPlatforms(self):
-        vImage = sceneResources["platforms"]["moving_vertical.png"]
-        hImage = sceneResources["platforms"]["moving_horizontal.png"]
+        vImage = SCENE_RESOURCES["platforms"]["moving_vertical.png"]
+        hImage = SCENE_RESOURCES["platforms"]["moving_horizontal.png"]
 
         platforms = \
             [
@@ -531,7 +530,7 @@ class SoloScene03(BaseScene):
         return [door1]
 
     def addSpikes(self):
-        spike = sceneResources["spikes"]
+        spike = SCENE_RESOURCES["spikes"]
         spikes = \
             [
                 Spike(415, 190, 2, "v", spike["left.png"], self.screen),
@@ -552,7 +551,7 @@ class CoopScene01(BaseScene):
         super().__init__(screen)
         self.levelNum = 1
 
-        self.image = sceneResources["screens"]["scene_01.png"]
+        self.image = SCENE_RESOURCES["screens"]["scene_01.png"]
         self.rect = pg.Rect(0, 0, 0, 0)
         self.rect.size = self.image.get_size()
 
@@ -573,7 +572,7 @@ class CoopScene01(BaseScene):
     def handleEvent(self, event):
         [p.handleEvent(event) for p in self.players]
 
-        if event.type == events.SCENE_EVENT:
+        if event.type == self.MENU_EVENT:
             [d.handleEvent(event) for d in self.doors]
 
     def update(self):
@@ -612,7 +611,7 @@ class CoopScene01(BaseScene):
         return players
 
     def addWalls(self):
-        wall = sceneResources["walls"]
+        wall = SCENE_RESOURCES["walls"]
 
         boundaries = \
         [
@@ -671,7 +670,7 @@ class CoopScene01(BaseScene):
         return [door1]
 
     def addDecorations(self):
-        deco = sceneResources["decorations"]
+        deco = SCENE_RESOURCES["decorations"]
         decorations = \
         [
             Decoration(70, 393, deco["skull.png"], self.screen),
@@ -690,7 +689,7 @@ class CoopScene02(BaseScene):
         super().__init__(screen)
         self.levelNum = 2
 
-        self.image = sceneResources["screens"]["scene_02.png"]
+        self.image = SCENE_RESOURCES["screens"]["scene_02.png"]
         self.rect = pg.Rect(0, 0, 0, 0)
         self.rect.size = self.image.get_size()
 
@@ -714,7 +713,7 @@ class CoopScene02(BaseScene):
         [p.handleEvent(event) for p in self.players]
         [b.handleEvent(event) for b in self.bosses]
 
-        if event.type == events.SCENE_EVENT:
+        if event.type == self.MENU_EVENT:
             [d.handleEvent(event) for d in self.doors]
 
     def update(self):
@@ -752,7 +751,7 @@ class CoopScene02(BaseScene):
         return players
 
     def addWalls(self):
-        wall = sceneResources["walls"]
+        wall = SCENE_RESOURCES["walls"]
         platWall = [wall["plat_top.png"],
                     wall["plat_mid.png"],
                     wall["plat_bot.png"]]
@@ -792,8 +791,8 @@ class CoopScene02(BaseScene):
         return platforms
 
     def addMPlatforms(self):
-        vImage = sceneResources["platforms"]["moving_vertical.png"]
-        hImage = sceneResources["platforms"]["moving_horizontal.png"]
+        vImage = SCENE_RESOURCES["platforms"]["moving_vertical.png"]
+        hImage = SCENE_RESOURCES["platforms"]["moving_horizontal.png"]
 
         platforms = \
             [
@@ -828,7 +827,7 @@ class CoopScene02(BaseScene):
         return [door1]
 
     def addSpikes(self):
-        assets = sceneResources["spikes"]
+        assets = SCENE_RESOURCES["spikes"]
         spikes = \
             [
                 # Floor
@@ -841,7 +840,7 @@ class CoopScene02(BaseScene):
         return spikes
 
     def addDecorations(self):
-        deco = sceneResources["decorations"]
+        deco = SCENE_RESOURCES["decorations"]
         decorations = \
             [
                 Decoration(778, 81, deco["skull.png"], self.screen)
@@ -858,7 +857,7 @@ class CoopScene03(BaseScene):
         super().__init__(screen)
         self.levelNum = 3
 
-        self.image = sceneResources["screens"]["scene_01.png"]
+        self.image = SCENE_RESOURCES["screens"]["scene_01.png"]
         self.rect = pg.Rect(0, 0, 0, 0)
         self.rect.size = self.image.get_size()
 
@@ -884,7 +883,7 @@ class CoopScene03(BaseScene):
     def handleEvent(self, event):
         [p.handleEvent(event) for p in self.players]
 
-        if event.type == events.SCENE_EVENT:
+        if event.type == self.MENU_EVENT:
             [d.handleEvent(event) for d in self.doors]
 
     def update(self):
@@ -932,7 +931,7 @@ class CoopScene03(BaseScene):
         return bosses
 
     def addWalls(self):
-        wall = sceneResources["walls"]
+        wall = SCENE_RESOURCES["walls"]
         blockWall = [wall["block_left.png"],
                      wall["block_mid.png"],
                      wall["block_right.png"]]
@@ -969,8 +968,8 @@ class CoopScene03(BaseScene):
         return platforms
 
     def addMPlatforms(self):
-        vImage = sceneResources["platforms"]["moving_vertical.png"]
-        hImage = sceneResources["platforms"]["moving_horizontal.png"]
+        vImage = SCENE_RESOURCES["platforms"]["moving_vertical.png"]
+        hImage = SCENE_RESOURCES["platforms"]["moving_horizontal.png"]
 
         platforms = \
             [
@@ -1034,7 +1033,7 @@ class CoopScene03(BaseScene):
         return doors
 
     def addSpikes(self):
-        assets = sceneResources["spikes"]
+        assets = SCENE_RESOURCES["spikes"]
         spikes = \
             [
                 Spike(50, 50, 26, "h", assets["down.png"], self.screen),
@@ -1047,7 +1046,7 @@ class CoopScene03(BaseScene):
         return spikes
 
     def addDecorations(self):
-        deco = sceneResources["decorations"]
+        deco = SCENE_RESOURCES["decorations"]
         decorations = \
             [
                 Decoration(500, 730, deco["skull.png"], self.screen),

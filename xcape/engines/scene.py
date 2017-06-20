@@ -3,7 +3,6 @@ The scene engine of the game.
 """
 import pygame as pg
 
-import xcape.common.events as events
 import xcape.common.settings as settings
 import xcape.components.scenes as scenes
 from xcape.common.object import GameObject
@@ -29,7 +28,7 @@ class SceneEngine(GameObject):
         if self.mode:
             self.mode.handleEvent(event)
 
-        if event.type == events.SCENE_EVENT:
+        if event.type == self.MENU_EVENT:
             if event.category == "start_game":
                 if event.data == "solo":
                     self.mode = SinglePlayer(self.screen)
@@ -93,7 +92,7 @@ class SinglePlayer(GameObject):
             if event.key == pg.K_RETURN:
                 self.camera.duration = 0
 
-        if event.type == events.SCENE_EVENT:
+        if event.type == self.MENU_EVENT:
             if event.category == "transition":
                 try:
                     self._loadScene(self.nameToScene[event.data])
@@ -230,7 +229,7 @@ class MultiPlayer(GameObject):
                 else:
                     self.camera.follow(p1)
 
-        if event.type == events.SCENE_EVENT:
+        if event.type == self.MENU_EVENT:
             if event.category == "transition":
                 try:
                     self._loadScene(self.nameToScene[event.data])

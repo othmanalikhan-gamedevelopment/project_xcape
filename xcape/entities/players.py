@@ -5,10 +5,10 @@ Contains all playable characters.
 import pygame as pg
 
 import xcape.common.settings as settings
-from xcape.common.loader import characterResources
+from xcape.common.loader import CHARACTER_RESOURCES
 from xcape.common.object import GameObject
-from xcape.components.animation import AnimationComponent
 from xcape.components.physics import PhysicsComponent
+from xcape.components.render import RenderComponent
 
 
 class PlayerBase(GameObject, pg.sprite.Sprite):
@@ -25,7 +25,7 @@ class PlayerBase(GameObject, pg.sprite.Sprite):
         self.rect = pg.Rect(0, 0, 0, 0)
         self.num = 0
 
-        self.state = "idle"
+        self.animationState = "idle"
         self.orientation = "right"
         self.lives = 5
 
@@ -34,7 +34,7 @@ class PlayerBase(GameObject, pg.sprite.Sprite):
         self.moveSpeed = 9
 
         self.physics = PhysicsComponent(self)
-        self.animation = AnimationComponent(self, enableOrientation=True)
+        self.animation = RenderComponent(self, enableOrientation=True)
 
         self.keybinds = None
 
@@ -88,7 +88,7 @@ class PlayerBase(GameObject, pg.sprite.Sprite):
         """
         Moves the character left.
         """
-        self.state = "running"
+        self.animationState = "running"
         self.orientation = "left"
         self.physics.addDisplacementX("move", -self.moveSpeed)
 
@@ -96,7 +96,7 @@ class PlayerBase(GameObject, pg.sprite.Sprite):
         """
         Moves the character right.
         """
-        self.state = "running"
+        self.animationState = "running"
         self.orientation = "right"
         self.physics.addDisplacementX("move", self.moveSpeed)
 
@@ -104,7 +104,7 @@ class PlayerBase(GameObject, pg.sprite.Sprite):
         """
         Stops the character.
         """
-        self.state = "idle"
+        self.animationState = "idle"
         self.physics.velocity.x = 0
 
 
@@ -121,7 +121,7 @@ class PlayerOne(PlayerBase):
         self.rect = pg.Rect(0, 0, 50, 48)
         self.num = 1
 
-        cat = characterResources["cat_orange"]
+        cat = CHARACTER_RESOURCES["cat_orange"]
         self.animation.add("idle", cat["idle"], float('inf'))
         self.animation.add("running", cat["running"], 400)
         self.animation.scaleAll(self.rect.size)
@@ -142,7 +142,7 @@ class PlayerTwo(PlayerBase):
         self.rect = pg.Rect(0, 0, 50, 48)
         self.num = 2
 
-        cat = characterResources["cat_blue"]
+        cat = CHARACTER_RESOURCES["cat_blue"]
         self.animation.add("idle", cat["idle"], float('inf'))
         self.animation.add("running", cat["running"], 400)
         self.animation.scaleAll(self.rect.size)

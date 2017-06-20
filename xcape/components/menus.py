@@ -4,13 +4,13 @@ Responsible for containing all the menus in game.
 
 import pygame as pg
 
-import xcape.common.events as events
 import xcape.common.render as render
 import xcape.common.settings as settings
-from xcape.common.loader import menuResources
+from xcape.common.loader import MENU_RESOURCES, SFX_RESOURCES
 from xcape.common.object import GameObject
 from xcape.common.render import TextLabel, ImageLabel
-from xcape.components.animation import AnimationComponent
+from xcape.components.audio import AudioComponent
+from xcape.components.render import RenderComponent
 
 
 class BaseMenu(GameObject):
@@ -24,7 +24,7 @@ class BaseMenu(GameObject):
         """
         self.screen = screen
         self.rect = pg.Rect(0, 0, 0, 0)
-        self.state = "idle"
+        self.animationState = "idle"
 
     def handleEvent(self, event):
         pass
@@ -43,13 +43,21 @@ class SplashMenu(BaseMenu):
 
     def __init__(self, screen):
         super().__init__(screen)
-        background = menuResources["screens"]["splash.png"]
+        background = MENU_RESOURCES["screens"]["splash"][0]
         background = render.addBackground(background)
-        self.image = background
-        self.rect = pg.Rect(0, 0, 0, 0)
-        self.rect.size = self.image.get_size()
+
+        self.animation = RenderComponent(self)
+        self.animation.add("background", background)
+
+        self.audio = AudioComponent(self)
+        self.audio.add("meow", SFX_RESOURCES["meow_1"])
+        self.audio.add("door", SFX_RESOURCES["door"])
+        self.audio.link("door", "meow", delay=1000)
 
         self.effect = FadeEffect(screen)
+
+    def __str__(self):
+        return "splash_menu"
 
     def handleEvent(self, event):
         if event.type == pg.KEYDOWN:
@@ -57,14 +65,16 @@ class SplashMenu(BaseMenu):
                 events.messageMenu("splash_menu", "transition", "main_menu")
 
     def update(self):
-        if self.effect.isComplete:
-            events.messageMenu("splash_menu", "transition", "main_menu")
-        else:
-            self.screen.blit(self.image, self.rect)
+        self.audio.update()
+        self.animation.update()
+
+        if not self.effect.isComplete:
             self.effect.update()
+        else:
+            self.messageMenu("transition", "main_menu")
 
     def draw(self):
-        self.screen.blit(self.image, self.rect)
+        self.animation.draw()
         self.effect.draw()
 
 
@@ -76,7 +86,7 @@ class MainMenu(BaseMenu):
     def __init__(self, screen):
         super().__init__(screen)
 
-        self.image = menuResources["screens"]["main.png"]
+        self.image = MENU_RESOURCES["screens"]["main.png"]
         self.rect = pg.Rect(0, 0, 0, 0)
         self.rect.size = self.image.get_size()
 
@@ -114,7 +124,7 @@ class MainMenu(BaseMenu):
                                  self.screen)
         self.title = ImageLabel(60,
                                 55,
-                                menuResources["assets"]["title.png"],
+                                MENU_RESOURCES["assets"]["title.png"],
                                 self.screen)
         self.arrow = _Arrow(self.x - 40,
                             self.y + 28,
@@ -165,7 +175,7 @@ class OptionsMenu(BaseMenu):
     def __init__(self, screen):
         super().__init__(screen)
 
-        self.image = menuResources["screens"]["options.png"]
+        self.image = MENU_RESOURCES["screens"]["options.png"]
         self.rect = pg.Rect(0, 0, 0, 0)
         self.rect.size = self.image.get_size()
 
@@ -194,7 +204,7 @@ class OptionsMenu(BaseMenu):
                                         screen)
 
         self.escapeImage = ImageLabel(25, 440,
-                                      menuResources["assets"]["esc.png"],
+                                      MENU_RESOURCES["assets"]["esc.png"],
                                       screen)
         self.escapeText = TextLabel("Esc para volver",
                                     14, fontColour,
@@ -308,7 +318,7 @@ class GameOverMenu(BaseMenu):
     def __init__(self, screen):
         super().__init__(screen)
 
-        self.image = menuResources["screens"]["game_over.png"]
+        self.image = MENU_RESOURCES["screens"]["game_over.png"]
         self.rect = pg.Rect(0, 0, 0, 0)
         self.rect.size = self.image.get_size()
 
@@ -343,7 +353,7 @@ class WinMenu(BaseMenu):
     def __init__(self, screen):
         super().__init__(screen)
 
-        self.image = menuResources["screens"]["fade.png"]
+        self.image = MENU_RESOURCES["screens"]["fade.png"]
         self.rect = pg.Rect(0, 0, 0, 0)
         self.rect.size = self.image.get_size()
 
@@ -379,7 +389,7 @@ class PauseMenu(BaseMenu):
         super().__init__(screen)
         self.rect = pg.Rect(0, 0, 0, 0)
 
-        self.image = menuResources["screens"]["fade.png"]
+        self.image = MENU_RESOURCES["screens"]["fade.png"]
         self.rect = pg.Rect(0, 0, 0, 0)
         self.rect.size = self.image.get_size()
 
@@ -488,7 +498,7 @@ class SoloUIMenu(BaseMenu):
         self.lives = []
 
     def handleEvent(self, event):
-        if event.type == events.MENU_EVENT:
+        if event.type == self.MENU_EVENT:
             if event.category == "max_health":
                 maxHP = event.data
                 self.setMaxLives(maxHP)
@@ -514,7 +524,7 @@ class SoloUIMenu(BaseMenu):
 
         :param numLives: Integer, the number of lives.
         """
-        assets = menuResources["assets"]
+        assets = MENU_RESOURCES["assets"]
         for i in range(numLives):
             label = ImageLabel(self.x + i*self.dx, self.y, None, self.screen)
             label.state = "life"
@@ -559,7 +569,7 @@ class CoopUIMenu(BaseMenu):
         self.livesP2 = []
 
     def handleEvent(self, event):
-        if event.type == events.MENU_EVENT:
+        if event.type == self.MENU_EVENT:
             if event.category == "max_health":
                 p1HP, p2HP = event.data
                 self.setMaxLives(p1HP, p2HP)
@@ -595,7 +605,7 @@ class CoopUIMenu(BaseMenu):
         :param livesP1: Integer, the max number of lives for player 1.
         :param livesP2: Integer, the max number of lives for player 2.
         """
-        assets = menuResources["assets"]
+        assets = MENU_RESOURCES["assets"]
 
         for i in range(livesP1):
             label = ImageLabel(self.x1 + i*self.spacing, self.y1,
@@ -696,9 +706,9 @@ class _Arrow(GameObject):
         self.screen = screen
         self.index = 0
 
-        self.state = "idle"
-        self.animation = AnimationComponent(self)
-        self.animation.add("idle", menuResources["assets"]["coin"], 350)
+        self.animationState = "idle"
+        self.animation = RenderComponent(self)
+        self.animation.add("idle", MENU_RESOURCES["assets"]["coin"], 350)
 
     def update(self):
         self.animation.update()
