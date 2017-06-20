@@ -11,6 +11,7 @@ import pygame as pg
 import xcape.common.settings as settings
 
 pg.init()
+pg.mixer.pre_init(44100, 16, 2, 4096)
 pg.display.set_caption(settings.TITLE)
 pg.display.set_mode((settings.WIDTH, settings.HEIGHT))
 
@@ -41,7 +42,7 @@ class CoreEngine(GameObject):
 
         # self.messageScene("start_game", "solo")
         # self.messageScene("transition", "scene_01")
-        self.messageMenu("transition", "splash_menu")
+        self.messageMenu("transition", "options_menu")
         # self.messageCutScene("transition", "office_cutscene")
 
     def __str__(self):

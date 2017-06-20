@@ -52,14 +52,14 @@ class SplashMenu(BaseMenu):
         self.render.add("background", background)
 
         self.audio = AudioComponent(self)
-        self.audio.add("door_knock", SFX_RESOURCES["door_knock"])
-        self.audio.add("door_open", SFX_RESOURCES["door_open"])
-        self.audio.add("door_close", SFX_RESOURCES["door_close"])
+        self.audio.add("door_knock", SFX_RESOURCES["splash_door_knock"])
+        self.audio.add("door_open", SFX_RESOURCES["splash_door_open"])
+        self.audio.add("door_close", SFX_RESOURCES["splash_door_close"])
         self.audio.add("meow", SFX_RESOURCES["meow_1"])
         self.audio.link("door_knock", "door_open", delay=1000)
         self.audio.link("door_open", "meow")
         self.audio.link("meow", "door_close")
-        self.audio.changeState("door_knock")
+        self.audio.setState("door_knock")
 
     def __str__(self):
         return "splash_menu"
@@ -83,6 +83,7 @@ class SplashMenu(BaseMenu):
         self.effect.draw()
 
 
+#TODO: Complete
 class MainMenu(BaseMenu):
     """
     The main menu of the game.
@@ -122,9 +123,9 @@ class MainMenu(BaseMenu):
                                  self.x,
                                  self.y + 4 * self.dy,
                                  self.screen)
-        self.title = ImageLabel(60,
+        self.title = ImageLabel(MENU_RESOURCES["assets"]["title"][0],
+                                60,
                                 55,
-                                MENU_RESOURCES["assets"]["title"][0],
                                 self.screen)
         self.arrow = _Arrow(self.x - 40,
                             self.y + 28,
@@ -136,6 +137,9 @@ class MainMenu(BaseMenu):
         background = MENU_RESOURCES["screens"]["main"][0]
         self.render = RenderComponent(self)
         self.render.add("background", background)
+
+        self.audio = AudioComponent(self, enableAutoPlay=False)
+        self.audio.add("click", SFX_RESOURCES["menu_click"])
 
     def __str__(self):
         return "main_menu"
@@ -149,6 +153,7 @@ class MainMenu(BaseMenu):
                 self.arrow.moveDown()
 
             if event.key == pg.K_RETURN:
+                self.audio.play("click")
                 if self.arrow.index == 0:
                     self.messageMenu("transition", "blank_menu")
                     self.messageCutScene("transition", "office_cutscene")
@@ -179,6 +184,7 @@ class MainMenu(BaseMenu):
         self.arrow.draw()
 
 
+#TODO: COMPLETE
 class OptionsMenu(BaseMenu):
     """
     The options menu of the game.
@@ -186,20 +192,10 @@ class OptionsMenu(BaseMenu):
 
     def __init__(self, screen):
         super().__init__(screen)
-
-        self.image = MENU_RESOURCES["screens"]["options.png"]
-        self.rect = pg.Rect(0, 0, 0, 0)
-        self.rect.size = self.image.get_size()
-
         fontSize = 22
         fontColour = "white"
         x, y = 230, 155
         dx, dy = 0, 50
-
-        self.arrow = _Arrow(x - 40, y - 10,
-                            dx, dy,
-                            2,
-                            screen)
 
         self.backgroundSetting = _SettingsLabel("Background Flip: ",
                                                 ["Vertical", "Horizontal"],
@@ -207,26 +203,32 @@ class OptionsMenu(BaseMenu):
                                                 x, y,
                                                 130,
                                                 screen)
-
         self.fullscreenSetting = _SettingsLabel("Full Screen: ",
-                                        ["Disable", "Enable"],
-                                        fontSize, fontColour,
-                                        x, y+dy,
-                                        130,
-                                        screen)
+                                                ["Disable", "Enable"],
+                                                fontSize, fontColour,
+                                                x, y+dy,
+                                                130,
+                                                screen)
 
-        self.escapeImage = ImageLabel(25, 440,
-                                      MENU_RESOURCES["assets"]["esc.png"],
-                                      screen)
-        self.escapeText = TextLabel("Esc para volver",
-                                    14, fontColour,
-                                    50, 445,
-                                    screen)
+        self.arrow = _Arrow(x - 40, y - 10, dx, dy, 2, screen)
+        self.escapeImage = ImageLabel(MENU_RESOURCES["assets"]["esc"], 25, 440, screen)
+        self.escapeText = TextLabel("Esc para volver", 14, fontColour, 50, 445, screen)
 
         self.effect = FadeEffect(self.screen)
         self.dt = self.effect.timeEndDarken - self.effect.timeStartDarken
         self.effect.timeStartDarken = float('inf')
         self.effect.timeEndDarken = float('inf')
+
+        background = MENU_RESOURCES["screens"]["options"][0]
+        self.render = RenderComponent(self)
+        self.render.add("background", background)
+
+        self.audio = AudioComponent(self, enableAutoPlay=False)
+        self.audio.add("click", SFX_RESOURCES["menu_click"])
+        self.audio.add("move", SFX_RESOURCES["menu_arrow"])
+
+    def __str__(self):
+        return "options_menu"
 
     def handleEvent(self, event):
         if event.type == pg.KEYDOWN:
@@ -248,9 +250,9 @@ class OptionsMenu(BaseMenu):
 
                 if event.key == pg.K_RETURN:
                     if self.backgroundSetting.index == 0:
-                        self.image = pg.transform.flip(self.image, True, False)
+                        self.render.flip(True, False)
                     if self.backgroundSetting.index == 1:
-                        self.image = pg.transform.flip(self.image, False, True)
+                        self.render.flip(False, True)
 
             if self.arrow.index == 1:
                 if event.key == pg.K_RIGHT:
@@ -265,27 +267,29 @@ class OptionsMenu(BaseMenu):
                         pg.display.set_mode((settings.WIDTH, settings.HEIGHT),
                                             pg.FULLSCREEN)
 
-                    events.messageMenu("options_menu", "screen")
-                    events.messageScene("options_menu", "screen")
-                    events.messageCutScene("options_menu", "screen")
+                    self.messageMenu("screen")
+                    self.messageScene("screen")
+                    self.messageCutScene("screen")
 
     def update(self):
+        self.render.update()
         self.backgroundSetting.update()
         self.fullscreenSetting.update()
-        self.arrow.update()
         self.escapeImage.update()
+        self.escapeText.update()
+        self.arrow.update()
         self.effect.update()
 
         if self.effect.isComplete:
-            events.messageMenu("options_menu", "transition", "main_menu")
+            self.messageMenu("transition", "main_menu")
 
     def draw(self):
-        self.screen.blit(self.image, self.rect)
+        self.render.draw()
         self.backgroundSetting.draw()
         self.fullscreenSetting.draw()
-        self.arrow.draw()
         self.escapeImage.draw()
         self.escapeText.draw()
+        self.arrow.draw()
         self.effect.draw()
 
 
@@ -643,6 +647,7 @@ class CoopUIMenu(BaseMenu):
             self.livesP2.append(label)
 
 
+#TODO: Complete
 class _SettingsLabel(GameObject):
     """
     Represents an option that the user can change.
@@ -666,12 +671,19 @@ class _SettingsLabel(GameObject):
         self.index = 0
         self.optionChosen = None
         self.name = TextLabel(settingName, size, colour, x, y, self.screen)
+
         self.options = [
             TextLabel(choice, size, colour, x + spacing, y, self.screen)
-            for choice in settingChoices]
+            for choice in settingChoices
+        ]
+
+        self.audio = AudioComponent(self, enableAutoPlay=False)
+        self.audio.add("switch", SFX_RESOURCES["menu_option_switch"])
 
     def update(self):
+        self.name.update()
         self.optionChosen = self.options[self.index]
+        self.optionChosen.update()
 
     def draw(self):
         self.name.draw()
@@ -681,6 +693,7 @@ class _SettingsLabel(GameObject):
         """
         Increments the selected option to the next option.
         """
+        self.audio.play("switch")
         self.index += 1
 
         if self.index > len(self.options)-1:
@@ -690,12 +703,14 @@ class _SettingsLabel(GameObject):
         """
         Decrements the selected option to the previous option.
         """
+        self.audio.play("switch")
         self.index -= 1
 
         if self.index < 0:
             self.index = len(self.options)-1
 
 
+#TODO: Complete
 class _Arrow(GameObject):
     """
     An arrow that highlights the option that the user is hovering over.
@@ -720,12 +735,11 @@ class _Arrow(GameObject):
         self.render = RenderComponent(self)
         self.render.add("idle", MENU_RESOURCES["assets"]["coin"], 350)
 
-        self.audio = AudioComponent(self)
-        self.audio.add("move", SFX_RESOURCES["arrow"])
+        self.audio = AudioComponent(self, enableAutoPlay=False)
+        self.audio.add("move", SFX_RESOURCES["menu_arrow"])
 
     def update(self):
         self.render.update()
-        self.audio.update()
 
     def draw(self):
         self.render.draw()
@@ -734,6 +748,7 @@ class _Arrow(GameObject):
         """
         Moves the arrow to the previous option number.
         """
+        self.audio.play("move")
         self.index -= 1
         self.rect.y -= self.dy
 
@@ -741,14 +756,15 @@ class _Arrow(GameObject):
             self.rect.y += self.totalOptions * self.dy
             self.index = (self.totalOptions-1)
 
-
     def moveDown(self):
         """
         Moves the arrow to the next option number.
         """
+        self.audio.play("move")
         self.index += 1
         self.rect.y += self.dy
 
         if self.index > self.totalOptions-1:
             self.rect.y -= self.totalOptions * self.dy
             self.index = 0
+

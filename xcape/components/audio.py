@@ -12,7 +12,7 @@ class AudioComponent(GameObject):
     Attaches to a game object to allow playing of audio.
     """
 
-    def __init__(self, gameObject, enableAutoPlay=False, enableRepeat=False):
+    def __init__(self, gameObject, enableAutoPlay=True, enableRepeat=False):
         """
         :param gameObject: GameObject instance, the instance to attach to.
         :param enableAutoPlay: Boolean, whether to play audio immediately.
@@ -53,8 +53,8 @@ class AudioComponent(GameObject):
         """
         Links a sound effect to a state and sets it as the current state.
 
-        :param sound: pygame.mixer.Sound, the sound effect object.
         :param state: String, the name of the state.
+        :param sound: pygame.mixer.Sound, the sound effect object.
         """
         self.state = state
         self.stateToSound[state] = sound
@@ -70,9 +70,18 @@ class AudioComponent(GameObject):
         """
         self.stateToLink[state1] = (state2, delay)
 
-    def changeState(self, state):
+    def play(self, state):
         """
-        Changes to the given state safely.
+        Plays the given sound effect immediately.
+
+        :param state: String, the name of the state.
+        """
+        sound = self.stateToSound[state]
+        sound.play()
+
+    def setState(self, state):
+        """
+        Sets to the given state safely.
 
         :param state: String, the name of the state.
         """
@@ -83,12 +92,6 @@ class AudioComponent(GameObject):
         except KeyError:
             print("No delay linked to audio state {} for {}"
                   .format(state, self.gameObject))
-
-    def play(self):
-        """
-        Plays the sound effect.
-        """
-        self.isPlaying = False
 
     def _playSound(self):
         """

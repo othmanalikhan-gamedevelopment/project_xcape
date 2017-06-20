@@ -175,7 +175,7 @@ class ImageLabel(GameObject):
     Represents an image that is intended to be drawn on screen.
     """
 
-    def __init__(self, x, y, image, screen):
+    def __init__(self, image, x, y, screen):
         """
         :param x: Integer, the x-position of the text.
         :param y: Integer, the y-position of the text.
@@ -194,6 +194,7 @@ class ImageLabel(GameObject):
         self.render.draw()
 
 
+# TODO: Complete
 class TextLabel(GameObject):
     """
     Represents text that is intended to be drawn on screen.
@@ -218,11 +219,11 @@ class TextLabel(GameObject):
         self.rect = pg.Rect(x, y, 0, 0)
         self.screen = screen
 
-    def draw(self):
-        self.render.draw()
-
     def update(self):
         self.render.update()
+
+    def draw(self):
+        self.render.draw()
 
 
 class WrappedTextLabel:
