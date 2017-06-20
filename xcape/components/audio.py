@@ -12,44 +12,42 @@ class AudioComponent(GameObject):
     Attaches to a game object to allow playing of audio.
     """
 
-    def __init__(self, gameObject, enableRepeat=False):
+    def __init__(self, gameObject, enableAutoPlay=False, enableRepeat=False):
         """
-        :param gameObject: GameObject instance, representing any object
-        inheriting from the GameObject class.
-        :param enableRepeat: Boolean, whether to repeat the animation endlessly.
+        :param gameObject: GameObject instance, the instance to attach to.
+        :param enableAutoPlay: Boolean, whether to play audio immediately.
+        :param enableRepeat: Boolean, whether to keep repeating audio.
         """
         self.state = None
 
         self.gameObject = gameObject
         self.enableRepeat = enableRepeat
+        self.enableAutoPlay = enableAutoPlay
 
         self.stateToSound = {}
         self.stateToLink = {}
-        self.soundPlaying = None
-        self.isSoundPlayed = False
+        self.timesPlayed = 0
+        self.sound = None
+
+        self.isPlaying = False
+        self.shouldPlay = False
 
         self.origin = 0
         self.elapsed = 0
         self.delay = 0
 
+        if self.enableAutoPlay:
+            self.shouldPlay = True
+
     def update(self):
         self.elapsed = pg.time.get_ticks() - self.origin
 
-        if not self.isSoundPlayed:
-            self.soundPlaying = self.stateToSound[self.state]
-            self.soundPlaying.play()
-            self.isSoundPlayed = True
-            self.origin = pg.time.get_ticks()
-            self.elapsed = 0
+        if not self.isPlaying and self.shouldPlay:
+            self._playSound()
 
-        # Checking if to play next sound or repeat current sound
-        if self.elapsed > 1000*self.soundPlaying.get_length() + self.delay:
-            try:
-                self.state, self.delay = self.stateToLink[self.state]
-                self.isSoundPlayed = False
-            except KeyError:
-                if self.enableRepeat:
-                    self.isSoundPlayed = False
+        if self.isPlaying:
+            if self.elapsed > 1000*self.sound.get_length() + self.delay:
+                self._changeState()
 
     def add(self, state, sound):
         """
@@ -85,3 +83,46 @@ class AudioComponent(GameObject):
         except KeyError:
             print("No delay linked to audio state {} for {}"
                   .format(state, self.gameObject))
+
+    def play(self):
+        """
+        Plays the sound effect.
+        """
+        self.isPlaying = False
+
+    def _playSound(self):
+        """
+        Plays the current sound once only.
+        """
+        self.sound = self.stateToSound[self.state]
+        self.sound.play()
+        self.timesPlayed += 1
+        self.isPlaying = True
+        self.shouldPlay = False
+        self._resetTimer()
+
+    def _changeState(self):
+        """
+        Changes the current state to the next linked state if it exists,
+        otherwise repeats the current sound if the repeating option is enabled.
+        """
+        try:
+            self.state, self.delay = self.stateToLink[self.state]
+            self.shouldPlay = True
+            self.timesPlayed = 0
+        except KeyError:
+            if self.enableRepeat:
+                self.shouldPlay = True
+            else:
+                self.shouldPlay = False
+            self.delay = 0
+        finally:
+            self.isPlaying = False
+            self._resetTimer()
+
+    def _resetTimer(self):
+        """
+        Resets the timer used for controlling transitioning of sound effects.
+        """
+        self.origin = pg.time.get_ticks()
+        self.elapsed = 0

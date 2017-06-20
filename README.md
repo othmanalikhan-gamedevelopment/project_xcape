@@ -30,4 +30,8 @@ Authors
 - Othman Alikhan, oz.alikhan@gmail.com
 
 
-https://www.soundjay.com: door, switch
+https://www.soundjay.com
+Door open
+Door close
+Door knock
+Switch

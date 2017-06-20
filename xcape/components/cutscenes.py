@@ -7,8 +7,7 @@ import pygame as pg
 import xcape.components.dialogue as dialogue
 from xcape.common.loader import CUTSCENE_RESOURCES
 from xcape.common.object import GameObject
-from xcape.common.render import Dialogue
-from xcape.components.render import RenderComponent
+from xcape.components.render import RenderComponent, Dialogue
 
 
 class BaseCutscene(GameObject):

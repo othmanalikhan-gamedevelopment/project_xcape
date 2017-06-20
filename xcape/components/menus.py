@@ -4,18 +4,18 @@ Responsible for containing all the menus in game.
 
 import pygame as pg
 
-import xcape.common.render as render
 import xcape.common.settings as settings
+import xcape.components.render
 from xcape.common.loader import MENU_RESOURCES, SFX_RESOURCES
 from xcape.common.object import GameObject
-from xcape.common.render import TextLabel, ImageLabel
 from xcape.components.audio import AudioComponent
-from xcape.components.render import RenderComponent
+from xcape.components.render import RenderComponent, ImageLabel, TextLabel
 
 
+# TODO: Complete
 class BaseMenu(GameObject):
     """
-    The base menu for any menu.
+    The base menu that should be inherited by all menus.
     """
 
     def __init__(self, screen):
@@ -27,15 +27,16 @@ class BaseMenu(GameObject):
         self.animationState = "idle"
 
     def handleEvent(self, event):
-        pass
+        raise NotImplementedError
 
     def update(self):
-        pass
+        raise NotImplementedError
 
     def draw(self):
-        pass
+        raise NotImplementedError
 
 
+# TODO: Complete
 class SplashMenu(BaseMenu):
     """
     The splash screen of the game.
@@ -46,7 +47,7 @@ class SplashMenu(BaseMenu):
         self.effect = FadeEffect(screen)
 
         background = MENU_RESOURCES["screens"]["splash"][0]
-        background = render.addBackground(background)
+        background = xcape.components.render.addBackground(background)
         self.render = RenderComponent(self)
         self.render.add("background", background)
 
@@ -89,11 +90,6 @@ class MainMenu(BaseMenu):
 
     def __init__(self, screen):
         super().__init__(screen)
-
-        background = MENU_RESOURCES["screens"]["main"][0]
-        self.render = RenderComponent(self)
-        self.render.add("background", background)
-
         self.totalOptions = 4
         self.fontSize = 22
         self.fontColour = "white"
@@ -137,6 +133,13 @@ class MainMenu(BaseMenu):
                             self.totalOptions,
                             self.screen)
 
+        background = MENU_RESOURCES["screens"]["main"][0]
+        self.render = RenderComponent(self)
+        self.render.add("background", background)
+
+    def __str__(self):
+        return "main_menu"
+
     def handleEvent(self, event):
         if event.type == pg.KEYDOWN:
 
@@ -147,18 +150,22 @@ class MainMenu(BaseMenu):
 
             if event.key == pg.K_RETURN:
                 if self.arrow.index == 0:
-                    events.messageMenu("main_menu", "transition", "blank_menu")
-                    events.messageCutScene("main_menu", "transition", "office_cutscene")
+                    self.messageMenu("transition", "blank_menu")
+                    self.messageCutScene("transition", "office_cutscene")
                 if self.arrow.index == 1:
-                    events.messageMenu("main_menu", "transition", "blank_menu")
-                    events.messageScene("main_menu", "start_game", "coop")
+                    self.messageMenu("transition", "blank_menu")
+                    self.messageScene("start_game", "coop")
                 if self.arrow.index == 2:
-                    events.messageMenu("main_menu", "transition", "options_menu")
+                    self.messageMenu("transition", "options_menu")
                 if self.arrow.index == 3:
                     quit()
 
     def update(self):
         self.render.update()
+        self.option1.update()
+        self.option2.update()
+        self.option3.update()
+        self.option4.update()
         self.title.update()
         self.arrow.update()
 
@@ -261,7 +268,6 @@ class OptionsMenu(BaseMenu):
                     events.messageMenu("options_menu", "screen")
                     events.messageScene("options_menu", "screen")
                     events.messageCutScene("options_menu", "screen")
-
 
     def update(self):
         self.backgroundSetting.update()
@@ -533,12 +539,12 @@ class SoloUIMenu(BaseMenu):
         for i in range(numLives):
             label = ImageLabel(self.x + i*self.dx, self.y, None, self.screen)
             label.state = "life"
-            label.animation.add("no_life",
-                                [assets["life_empty.png"]],
-                                float('inf'))
-            label.animation.add("life",
-                                [assets["life_gray.png"]],
-                                float('inf'))
+            label.render.add("no_life",
+                             [assets["life_empty.png"]],
+                             float('inf'))
+            label.render.add("life",
+                             [assets["life_gray.png"]],
+                             float('inf'))
             self.lives.append(label)
 
 
@@ -616,24 +622,24 @@ class CoopUIMenu(BaseMenu):
             label = ImageLabel(self.x1 + i*self.spacing, self.y1,
                                None, self.screen)
             label.state = "life"
-            label.animation.add("no_life",
-                                [assets["life_empty.png"]],
-                                float('inf'))
-            label.animation.add("life",
-                                [assets["life_orange.png"]],
-                                float('inf'))
+            label.render.add("no_life",
+                             [assets["life_empty.png"]],
+                             float('inf'))
+            label.render.add("life",
+                             [assets["life_orange.png"]],
+                             float('inf'))
             self.livesP1.append(label)
 
         for i in range(livesP2):
             label = ImageLabel(self.x2 + i*self.spacing, self.y2,
                                None, self.screen)
             label.state = "life"
-            label.animation.add("no_life",
-                                [assets["life_empty.png"]],
-                                float('inf'))
-            label.animation.add("life",
-                                [assets["life_blue.png"]],
-                                float('inf'))
+            label.render.add("no_life",
+                             [assets["life_empty.png"]],
+                             float('inf'))
+            label.render.add("life",
+                             [assets["life_blue.png"]],
+                             float('inf'))
             self.livesP2.append(label)
 
 
@@ -711,15 +717,18 @@ class _Arrow(GameObject):
         self.screen = screen
         self.index = 0
 
-        self.animationState = "idle"
-        self.animation = RenderComponent(self)
-        self.animation.add("idle", MENU_RESOURCES["assets"]["coin"], 350)
+        self.render = RenderComponent(self)
+        self.render.add("idle", MENU_RESOURCES["assets"]["coin"], 350)
+
+        self.audio = AudioComponent(self)
+        self.audio.add("move", SFX_RESOURCES["arrow"])
 
     def update(self):
-        self.animation.update()
+        self.render.update()
+        self.audio.update()
 
     def draw(self):
-        self.animation.draw()
+        self.render.draw()
 
     def moveUp(self):
         """
@@ -731,6 +740,7 @@ class _Arrow(GameObject):
         if self.index < 0:
             self.rect.y += self.totalOptions * self.dy
             self.index = (self.totalOptions-1)
+
 
     def moveDown(self):
         """

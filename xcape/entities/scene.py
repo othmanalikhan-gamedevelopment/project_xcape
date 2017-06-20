@@ -6,9 +6,8 @@ import pygame as pg
 
 from xcape.common.loader import SCENE_RESOURCES
 from xcape.common.object import GameObject
-from xcape.common.render import buildParts, replicate
 from xcape.components.physics import PhysicsComponent
-from xcape.components.render import RenderComponent
+from xcape.components.render import RenderComponent, buildParts, replicate
 
 
 class SceneEntity(GameObject):

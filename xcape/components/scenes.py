@@ -8,7 +8,7 @@ import xcape.common.settings as settings
 import xcape.components.dialogue as dialogue
 from xcape.common.loader import SCENE_RESOURCES
 from xcape.common.object import GameObject
-from xcape.common.render import Dialogue
+from xcape.components.render import Dialogue
 from xcape.entities.bosses import PigBoss
 from xcape.entities.players import PlayerOne, PlayerTwo
 from xcape.entities.scene import (

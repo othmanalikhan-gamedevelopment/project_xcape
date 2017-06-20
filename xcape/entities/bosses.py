@@ -10,9 +10,8 @@ from pygame.math import Vector2
 import xcape.components.dialogue as dialogue
 from xcape.common.loader import CHARACTER_RESOURCES
 from xcape.common.object import GameObject
-from xcape.components.cutscenes import Dialogue
 from xcape.components.physics import PhysicsComponent
-from xcape.components.render import RenderComponent
+from xcape.components.render import RenderComponent, Dialogue
 
 
 class PigBoss(GameObject, pg.sprite.Sprite):
