@@ -40,6 +40,10 @@ class RenderComponent(GameObject):
         self._gameObject = gameObject
 
     def update(self):
+        if not self.state:
+            raise ValueError("The state of the render component for '{}' has "
+                             "not been set!".format(self.gameObject))
+
         self._updateOrientation()
         self._updateAnimation()
         self.gameObject.rect.size = self.image.get_size()
@@ -167,6 +171,21 @@ class RenderComponent(GameObject):
         self.stateToAnimation[self.state] = flipped
 
     @property
+    def state(self):
+        return self._state
+
+    @state.setter
+    def state(self, value):
+        states = self.stateToAnimation.keys()
+        if value in states:
+            self._state = value
+            self._changeAnimation(value)
+        else:
+            raise ValueError("'{}' is in an invalid state! The states allowed "
+                             "for '{}' are '{}'"
+                             .format(value, self.gameObject, states))
+
+    @property
     def orientation(self):
         return self._orientation
 
@@ -178,20 +197,6 @@ class RenderComponent(GameObject):
         else:
             raise ValueError("The only orientations allowed are {} "
                              .format(faces))
-
-    @property
-    def state(self):
-        return self._state
-
-    @state.setter
-    def state(self, value):
-        states = self.stateToAnimation.keys()
-        if value in states:
-            self._state = value
-        else:
-            raise ValueError("'{}' is in an invalid state! The states allowed "
-                             "for '{}' are '{}'"
-                             .format(value, self.gameObject, states))
 
     @property
     def gameObject(self):
@@ -219,8 +224,13 @@ class ImageLabel(GameObject):
         """
         self.render = RenderComponent(self)
         self.render.add("background", image)
+        self.render.state = "background"
+
         self.rect = pg.Rect(x, y, 0, 0)
         self.screen = screen
+
+    def __str__(self):
+        return "image_label"
 
     def update(self):
         self.render.update()
@@ -250,9 +260,14 @@ class TextLabel(GameObject):
         image = font.render(text, True, settings.COLOURS[colour])
         self.render = RenderComponent(self)
         self.render.add("background", image)
+        self.render.state = "background"
 
+        self.text = text
         self.rect = pg.Rect(x, y, 0, 0)
         self.screen = screen
+
+    def __str__(self):
+        return "text_label: " + self.text
 
     def update(self):
         self.render.update()
@@ -261,6 +276,7 @@ class TextLabel(GameObject):
         self.render.draw()
 
 
+# TODO: Complete
 class WrappedTextLabel:
     """
     Represents text that is wrapped.
@@ -281,11 +297,37 @@ class WrappedTextLabel:
         """
         lines, font = \
             self.wrap(text, settings.FONT, minSize, maxSize, width, height, spacing)
-        self.image = \
+        image = \
             self.renderLines(lines, font, colour, width, height, spacing)
 
+        self.render = RenderComponent(self)
+        self.render.add("background", image)
+        self.render.state = "background"
         self.rect = pg.Rect(x, y, 0, 0)
-        self.rect.size = self.image.get_size()
+
+    def update(self):
+        self.render.update()
+
+    def renderLines(self, lines, font, colour, width, height, spacing):
+        """
+        Renders the given into an image.
+
+        :param lines: List, where each element is a string.
+        :param font: pygame.font.Font, representing the font to use.
+        :param colour: String, the name of the colour to be used.
+        :param width: Integer, the width of the output image.
+        :param height: Integer, the height of the output image.
+        :param spacing: Integer, the spacing between lines in the image.
+        :return: pygame.Surface, the image of the rendered lines.
+        """
+        c = settings.COLOURS[colour]
+        images = [font.render(l, True, c) for l in lines]
+
+        merged = pg.Surface((width, height))
+        merged.fill(settings.COLOURS["white"])
+        merged.set_colorkey(settings.COLOURS["white"])
+        [merged.blit(img, (0, n*spacing)) for n, img in enumerate(images)]
+        return merged
 
     def wrap(self, text, fontPath, minSize, maxSize, width, height, spacing):
         """
@@ -350,27 +392,6 @@ class WrappedTextLabel:
         widths.append(w)
         return lines, widths, heights
 
-    def renderLines(self, lines, font, colour, width, height, spacing):
-        """
-        Renders the given into an image.
-
-        :param lines: List, where each element is a string.
-        :param font: pygame.font.Font, representing the font to use.
-        :param colour: String, the name of the colour to be used.
-        :param width: Integer, the width of the output image.
-        :param height: Integer, the height of the output image.
-        :param spacing: Integer, the spacing between lines in the image.
-        :return: pygame.Surface, the image of the rendered lines.
-        """
-        c = settings.COLOURS[colour]
-        images = [font.render(l, True, c) for l in lines]
-
-        merged = pg.Surface((width, height))
-        merged.fill(settings.COLOURS["white"])
-        merged.set_colorkey(settings.COLOURS["white"])
-        [merged.blit(img, (0, n*spacing)) for n, img in enumerate(images)]
-        return merged
-
 
 # TODO: Complete
 class Dialogue(GameObject):
@@ -386,6 +407,9 @@ class Dialogue(GameObject):
         self.screen = screen
         self.allBubbles = []
         self.bubble = None
+
+    def __str__(self):
+        return "dialogue"
 
     def update(self):
         if self.bubble:
@@ -472,8 +496,9 @@ class _Bubble(GameObject):
                                 height=65,
                                 spacing=20,
                                 x=0, y=0)
+        text.update()   # Needed to define text.render.image property
         image = self._loadEmptyBubble(bubbleType)
-        image.blit(text.image, (10, 10))
+        image.blit(text.render.image, (10, 10))
         return image
 
     def _loadEmptyBubble(self, name):

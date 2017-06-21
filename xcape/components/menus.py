@@ -5,11 +5,12 @@ Responsible for containing all the menus in game.
 import pygame as pg
 
 import xcape.common.settings as settings
-import xcape.components.render
 from xcape.common.loader import MENU_RESOURCES, SFX_RESOURCES
 from xcape.common.object import GameObject
 from xcape.components.audio import AudioComponent
-from xcape.components.render import RenderComponent, ImageLabel, TextLabel
+from xcape.components.render import (
+    RenderComponent, ImageLabel, TextLabel, addBackground
+)
 
 
 # TODO: Complete
@@ -47,9 +48,10 @@ class SplashMenu(BaseMenu):
         self.effect = FadeEffect(screen)
 
         background = MENU_RESOURCES["screens"]["splash"][0]
-        background = xcape.components.render.addBackground(background)
+        background = addBackground(background)
         self.render = RenderComponent(self)
         self.render.add("background", background)
+        self.render.state = "background"
 
         self.audio = AudioComponent(self)
         self.audio.add("door_knock", SFX_RESOURCES["splash_door_knock"])
@@ -59,7 +61,7 @@ class SplashMenu(BaseMenu):
         self.audio.link("door_knock", "door_open", delay=1000)
         self.audio.link("door_open", "meow")
         self.audio.link("meow", "door_close")
-        self.audio.setState("door_knock")
+        self.audio.state = "door_knock"
 
     def __str__(self):
         return "splash_menu"
@@ -137,9 +139,11 @@ class MainMenu(BaseMenu):
         background = MENU_RESOURCES["screens"]["main"][0]
         self.render = RenderComponent(self)
         self.render.add("background", background)
+        self.render.state = "background"
 
         self.audio = AudioComponent(self, enableAutoPlay=False)
         self.audio.add("enter", SFX_RESOURCES["menu_enter"])
+        self.audio.state = "enter"
 
     def __str__(self):
         return "main_menu"
@@ -222,9 +226,11 @@ class OptionsMenu(BaseMenu):
         background = MENU_RESOURCES["screens"]["options"][0]
         self.render = RenderComponent(self)
         self.render.add("background", background)
+        self.render.state = "background"
 
         self.audio = AudioComponent(self, enableAutoPlay=False)
         self.audio.add("exit", SFX_RESOURCES["menu_exit"])
+        self.audio.state = "exit"
 
     def __str__(self):
         return "options_menu"
@@ -452,6 +458,7 @@ class FadeEffect(BaseMenu):
 
         self.render = RenderComponent(self)
         self.render.add("background", background)
+        self.render.state = "background"
 
         # Units are in seconds (use floats to reduce rounding errors)
         self.origin = pg.time.get_ticks()/1000
@@ -460,6 +467,9 @@ class FadeEffect(BaseMenu):
         self.timeEndLighten = 3.0
         self.timeStartDarken = 5.0
         self.timeEndDarken = 8.0
+
+    def __str__(self):
+        return "fade_effect"
 
     def update(self):
         self.render.update()
@@ -680,6 +690,10 @@ class _SettingsLabel(GameObject):
 
         self.audio = AudioComponent(self, enableAutoPlay=False)
         self.audio.add("switch", SFX_RESOURCES["menu_option_switch"])
+        self.audio.state = "switch"
+
+    def __str__(self):
+        return "settings_label"
 
     def update(self):
         self.name.update()
@@ -734,10 +748,15 @@ class _Arrow(GameObject):
         self.index = 0
 
         self.render = RenderComponent(self)
-        self.render.add("idle", MENU_RESOURCES["assets"]["coin"], 350)
+        self.render.add("spin", MENU_RESOURCES["assets"]["coin"], 350)
+        self.render.state = "spin"
 
         self.audio = AudioComponent(self, enableAutoPlay=False)
         self.audio.add("move", SFX_RESOURCES["menu_arrow"])
+        self.audio.state = "move"
+
+    def __str__(self):
+        return "arrow"
 
     def update(self):
         self.render.update()

@@ -42,8 +42,8 @@ class CoreEngine(GameObject):
 
         # self.messageScene("start_game", "solo")
         # self.messageScene("transition", "scene_01")
-        # self.messageMenu("transition", "splash_menu")
-        self.messageCutScene("transition", "office_cutscene")
+        self.messageMenu("transition", "splash_menu")
+        # self.messageCutScene("transition", "office_cutscene")
 
     def __str__(self):
         return "core_engine"
