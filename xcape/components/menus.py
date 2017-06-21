@@ -139,7 +139,7 @@ class MainMenu(BaseMenu):
         self.render.add("background", background)
 
         self.audio = AudioComponent(self, enableAutoPlay=False)
-        self.audio.add("click", SFX_RESOURCES["menu_click"])
+        self.audio.add("enter", SFX_RESOURCES["menu_enter"])
 
     def __str__(self):
         return "main_menu"
@@ -153,7 +153,7 @@ class MainMenu(BaseMenu):
                 self.arrow.moveDown()
 
             if event.key == pg.K_RETURN:
-                self.audio.play("click")
+                self.audio.play("enter")
                 if self.arrow.index == 0:
                     self.messageMenu("transition", "blank_menu")
                     self.messageCutScene("transition", "office_cutscene")
@@ -215,17 +215,16 @@ class OptionsMenu(BaseMenu):
         self.escapeText = TextLabel("Esc para volver", 14, fontColour, 50, 445, screen)
 
         self.effect = FadeEffect(self.screen)
-        self.dt = self.effect.timeEndDarken - self.effect.timeStartDarken
         self.effect.timeStartDarken = float('inf')
         self.effect.timeEndDarken = float('inf')
+        self.dt = 2
 
         background = MENU_RESOURCES["screens"]["options"][0]
         self.render = RenderComponent(self)
         self.render.add("background", background)
 
         self.audio = AudioComponent(self, enableAutoPlay=False)
-        self.audio.add("click", SFX_RESOURCES["menu_click"])
-        self.audio.add("move", SFX_RESOURCES["menu_arrow"])
+        self.audio.add("exit", SFX_RESOURCES["menu_exit"])
 
     def __str__(self):
         return "options_menu"
@@ -236,6 +235,7 @@ class OptionsMenu(BaseMenu):
             if event.key == pg.K_ESCAPE:
                 self.effect.timeStartDarken = self.effect.time
                 self.effect.timeEndDarken = self.effect.time + self.dt
+                self.audio.play("exit")
 
             if event.key == pg.K_UP:
                 self.arrow.moveUp()
@@ -247,7 +247,6 @@ class OptionsMenu(BaseMenu):
                     self.backgroundSetting.next()
                 if event.key == pg.K_LEFT:
                     self.backgroundSetting.previous()
-
                 if event.key == pg.K_RETURN:
                     if self.backgroundSetting.index == 0:
                         self.render.flip(True, False)
@@ -259,7 +258,6 @@ class OptionsMenu(BaseMenu):
                     self.fullscreenSetting.next()
                 if event.key == pg.K_LEFT:
                     self.fullscreenSetting.previous()
-
                 if event.key == pg.K_RETURN:
                     if self.fullscreenSetting.index == 0:
                         pg.display.set_mode((settings.WIDTH, settings.HEIGHT))
@@ -434,6 +432,7 @@ class PauseMenu(BaseMenu):
         self.pauseText.draw()
 
 
+#TODO: Complete
 class FadeEffect(BaseMenu):
     """
     Responsible for applying a transitioning fade of as follows:
@@ -450,9 +449,9 @@ class FadeEffect(BaseMenu):
         background = pg.Surface((settings.WIDTH, settings.HEIGHT))
         background.fill(settings.COLOURS["black"])
         background = background.convert()
-        self.image = background
-        self.rect = pg.Rect(0, 0, 0, 0)
-        self.rect.size = self.image.get_size()
+
+        self.render = RenderComponent(self)
+        self.render.add("background", background)
 
         # Units are in seconds (use floats to reduce rounding errors)
         self.origin = pg.time.get_ticks()/1000
@@ -463,6 +462,8 @@ class FadeEffect(BaseMenu):
         self.timeEndDarken = 8.0
 
     def update(self):
+        self.render.update()
+
         if not self.isComplete:
             self.time = pg.time.get_ticks()/1000 - self.origin
 
@@ -475,7 +476,7 @@ class FadeEffect(BaseMenu):
                 self.isComplete = True
 
     def draw(self):
-        self.screen.blit(self.image, self.rect)
+        self.render.draw()
 
     def lightenScreen(self):
         """
@@ -485,7 +486,7 @@ class FadeEffect(BaseMenu):
         duration = self.timeEndLighten - self.timeStartLighten
         percentComplete = current/duration
         self.transparentValue = (1-percentComplete) * 255
-        self.image.set_alpha(self.transparentValue)
+        self.render.image.set_alpha(self.transparentValue)
 
     def darkenScreen(self):
         """
@@ -495,7 +496,7 @@ class FadeEffect(BaseMenu):
         duration = self.timeEndDarken - self.timeStartDarken
         percentComplete = current/duration
         self.transparentValue = percentComplete * 255
-        self.image.set_alpha(self.transparentValue)
+        self.render.image.set_alpha(self.transparentValue)
 
 
 class SoloUIMenu(BaseMenu):

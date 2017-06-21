@@ -127,7 +127,7 @@ class PigBoss(GameObject, pg.sprite.Sprite):
         # Changes the dialogue line every three seconds
         if abs(elapsed - self.dialogueOrigin) > self.dialogueDuration:
             self.dialogueOrigin = pg.time.get_ticks()
-            r = random.randint(0, len(self.dialogue.bubbles)-1)
+            r = random.randint(0, len(self.dialogue.allBubbles) - 1)
             # Hacky solution to increase chances of proccing
             if r == 0 or random.randint(0, 1) == 0:
                 self.dialogue.index = None
@@ -137,7 +137,7 @@ class PigBoss(GameObject, pg.sprite.Sprite):
         # Forces the dialogue bubble to follow the boss
         if self.dialogue.index:
             x, y = self.rect.center
-            currentBubble = self.dialogue.bubbles[self.dialogue.index]
+            currentBubble = self.dialogue.allBubbles[self.dialogue.index]
             if self.orientation == "right":
                 currentBubble.rect.center = (x+10, y-55)
             if self.orientation == "left":

@@ -35,3 +35,7 @@ Door open
 Door close
 Door knock
 Switch
+
+
+# TODO:
+# Refactor any remaining self.animation

@@ -21,12 +21,8 @@ class RenderComponent(GameObject):
         :param enableOrientation: Boolean, whether to consider direction.
         :param enableRepeat: Boolean, whether to keep repeating the animation.
         """
-        self.gameObject = gameObject
         self.enableOrientation = enableOrientation
         self.enableRepeat = enableRepeat
-
-        self.state = None
-        self.orientation = None
 
         self.stateToAnimation = {}
         self.stateToTiming = {}
@@ -38,6 +34,10 @@ class RenderComponent(GameObject):
         self.origin = pg.time.get_ticks()
         self.elapsed = 0.0
         self.frameNum = 0
+
+        self._state = None
+        self._orientation = "right"
+        self._gameObject = gameObject
 
     def update(self):
         self._updateOrientation()
@@ -53,7 +53,7 @@ class RenderComponent(GameObject):
     def add(self, state, images, duration=1000):
         """
         Links a given state to a sequence of images that can be rendered as
-        an animation and sets it as the current state.
+        an animation.
 
         The timing of each frame in the animation is automatically partitioned
         such that each frame has uniform of length (and if a single image is
@@ -64,8 +64,6 @@ class RenderComponent(GameObject):
         :param images: List, containing pygame.Surface objects.
         :param duration: Integer, the length of the animation in milliseconds.
         """
-        self.state = state
-
         try:
             dt = duration / len(images)
             timings = [i*dt for i, _ in enumerate(images, start=1)]
@@ -133,7 +131,7 @@ class RenderComponent(GameObject):
         Ensures that the rendered image is facing either left or right correctly.
         """
         if self.enableOrientation:
-            if self.orientation == "left":
+            if self._orientation == "left":
                 self.image = pg.transform.flip(self.image, True, False)
 
     def _changeAnimation(self, name):
@@ -167,6 +165,43 @@ class RenderComponent(GameObject):
         """
         flipped = [effect(frame, *args) for frame in self.animation]
         self.stateToAnimation[self.state] = flipped
+
+    @property
+    def orientation(self):
+        return self._orientation
+
+    @orientation.setter
+    def orientation(self, value):
+        faces = ["left", "right", "up", "down"]
+        if value in faces:
+            self._orientation = value
+        else:
+            raise ValueError("The only orientations allowed are {} "
+                             .format(faces))
+
+    @property
+    def state(self):
+        return self._state
+
+    @state.setter
+    def state(self, value):
+        states = self.stateToAnimation.keys()
+        if value in states:
+            self._state = value
+        else:
+            raise ValueError("'{}' is in an invalid state! The states allowed "
+                             "for '{}' are '{}'"
+                             .format(value, self.gameObject, states))
+
+    @property
+    def gameObject(self):
+        return self._gameObject
+
+    @gameObject.setter
+    def gameObject(self, value):
+        if not hasattr(value, 'rect'):
+            raise AttributeError("'{}' does not have required 'rect' attribute"
+                                 .format(value))
 
 
 # TODO: Complete
@@ -337,6 +372,7 @@ class WrappedTextLabel:
         return merged
 
 
+# TODO: Complete
 class Dialogue(GameObject):
     """
     Represents a collection of dialogue bubbles that are intended to be drawn
@@ -348,25 +384,20 @@ class Dialogue(GameObject):
         :param screen: pygame.Surface, representing the screen.
         """
         self.screen = screen
-        self.bubbles = []
-        self.index = None
+        self.allBubbles = []
+        self.bubble = None
 
-    def draw(self):
-        if self.index is not None:
-            self.bubbles[self.index].draw()
+    def update(self):
+        if self.bubble:
+            self.bubble.update()
 
-    def drawWithCamera(self, camera):
-        """
-        Draws the dialogue on the screen, shifted by the camera.
-
-        :param camera: Camera instance, shifts the position of the drawn animation.
-        """
-        if self.index is not None:
-            self.bubbles[self.index].drawWithCamera(camera)
+    def draw(self, camera=None):
+        if self.bubble:
+            self.bubble.draw(camera)
 
     def add(self, text, x, y, bubbleType="right"):
         """
-        Adds a dialogue bubble.
+        Adds a dialogue bubble and sets it as the current bubble to display.
 
         :param text: Text, the text in the bubble.
         :param x: Integer, the x-position of the text.
@@ -374,9 +405,26 @@ class Dialogue(GameObject):
         :param bubbleType: String, either 'right', 'left', or 'caption'.
         """
         bubble = _Bubble(text, bubbleType, x, y, self.screen)
-        self.bubbles.append(bubble)
+        self.allBubbles.append(bubble)
+
+    @property
+    def index(self):
+        return self._index
+
+    @index.setter
+    def index(self, value):
+        if not self.allBubbles or value is None:
+            self._index = None
+            self.bubble = None
+        elif len(self.allBubbles) > value >= 0:
+            self._index = value
+            self.bubble = self.allBubbles[value]
+        else:
+            raise IndexError("There is no speech bubble with index {}!"
+                             .format(value))
 
 
+# TODO: Complete
 class _Bubble(GameObject):
     """
     Represents a dialogue bubble that can be drawn on screen.
@@ -390,18 +438,23 @@ class _Bubble(GameObject):
         :param y: Integer, the y-position of the text.
         :param screen: pygame.Surface, representing the screen.
         """
-        self.types = \
-            {
-                "right": "globe_right.png",
-                "caption": "globe_caption.png",
-                "left": "globe_left.png",
-            }
+        image = self.generate(text, bubbleType)
+        self.render = RenderComponent(self)
+        self.render.add("background", image)
+        self.render.state = "background"
+        self.rect = pg.Rect(x, y, 0, 0)
 
         self.text = text
-        self.image = self.generate(text, bubbleType)
-        self.rect = pg.Rect(x, y, 0, 0)
-        self.rect.size = self.image.get_size()
         self.screen = screen
+
+    def __str__(self):
+        return "Bubble: " + self.text
+
+    def update(self):
+        self.render.update()
+
+    def draw(self, camera=None):
+        self.render.draw(camera)
 
     def generate(self, text, bubbleType):
         """
@@ -419,20 +472,9 @@ class _Bubble(GameObject):
                                 height=65,
                                 spacing=20,
                                 x=0, y=0)
-        bubble = self._loadEmptyBubble(self.types[bubbleType])
-        bubble.blit(text.image, (10, 10))
-        return bubble
-
-    def draw(self):
-        self.screen.blit(self.image, self.rect)
-
-    def drawWithCamera(self, camera):
-        """
-        Draws the dialogue on the screen, shifted by the camera.
-
-        :param camera: Camera instance, shifts the position of the drawn animation.
-        """
-        self.screen.blit(self.image, camera.apply(self))
+        image = self._loadEmptyBubble(bubbleType)
+        image.blit(text.image, (10, 10))
+        return image
 
     def _loadEmptyBubble(self, name):
         """
@@ -441,12 +483,13 @@ class _Bubble(GameObject):
         :param name: String, the name of the globe image.
         :return: pygame.Surface, the image of the empty bubble.
         """
-        bubble = CUTSCENE_RESOURCES["assets"][name]
+        bubble = CUTSCENE_RESOURCES["globes"][name][0]
         bubble = addBackground(bubble)
         bubble.set_colorkey(settings.COLOURS["blue"])
         return bubble
 
 
+# TODO: Complete
 def addBackground(surface, colour="white"):
     """
     Adds a background with the given colour to the supplied surface.
@@ -462,6 +505,7 @@ def addBackground(surface, colour="white"):
     return background
 
 
+# TODO: Complete
 def buildParts(blocks, orientation, images):
     """
     Builds the image that consists of three separate parts, and allows
@@ -496,6 +540,7 @@ def buildParts(blocks, orientation, images):
     return img
 
 
+# TODO: Complete
 def replicate(amount, orientation, image):
     """
     Extends the image by duplicating it either vertically or horizontally.
