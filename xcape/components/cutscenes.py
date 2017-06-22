@@ -5,12 +5,12 @@ Responsible for containing all the cutscenes in game.
 import pygame as pg
 
 import xcape.components.dialogue as dialogue
-from xcape.common.loader import CUTSCENE_RESOURCES
+from xcape.common.loader import CUTSCENE_RESOURCES, SFX_RESOURCES
 from xcape.common.object import GameObject
+from xcape.components.audio import AudioComponent
 from xcape.components.render import RenderComponent, Dialogue
 
 
-# TODO: Complete
 class BaseCutscene(GameObject):
     """
     The base cutscene for any cutscene.
@@ -33,7 +33,7 @@ class BaseCutscene(GameObject):
         pass
 
 
-# TODO: Complete
+# TODO: Add audio
 class OfficeCutscene(BaseCutscene):
     """
     The cutscene where the dog and cat are talking in the office.
@@ -44,9 +44,16 @@ class OfficeCutscene(BaseCutscene):
         self.rect = pg.Rect(0, 0, 0, 0)
         office = CUTSCENE_RESOURCES["office"]
 
+        self.origin = pg.time.get_ticks()       # milliseconds
+        self.elapsed = 0                        # milliseconds
+        self._isSentMessage = False
+
         self.render = RenderComponent(self)
         self.render.add("office_dog", office["dog"], 1500)
         self.render.add("office_cat", office["cat"], 1500)
+
+        self.audio = AudioComponent(self, enableAutoPlay=False)
+        self.audio.add("meow_1", SFX_RESOURCES["meow_1"])
 
         self.dialogue = Dialogue(self.screen)
         self.dialogue.add(dialogue.OFFICE_1, 240, 50, "left")
@@ -54,10 +61,9 @@ class OfficeCutscene(BaseCutscene):
         self.dialogue.add(dialogue.OFFICE_3, 240, 50, "left")
         self.dialogue.add(dialogue.OFFICE_4, 370, 100)
 
-        self.origin = pg.time.get_ticks()       # milliseconds
-        self.elapsed = 0                        # milliseconds
-        self._speed = 1
-        self._isSentMessage = False
+        speed = 1
+        ts = [0, 1000, 1500, 4600, 8200, 11800, 15400]
+        self.timings = [speed*t for t in ts]
 
     def __str__(self):
         return "office_cutscene"
@@ -70,23 +76,23 @@ class OfficeCutscene(BaseCutscene):
     def update(self):
         self.elapsed = pg.time.get_ticks() - self.origin
 
-        if self._speed*500 > self.elapsed >= self._speed*0:
+        if self.timings[0] > self.elapsed:
+            self.render.state = "office_dog"
+            self.dialogue.index = None
+
+        elif self.timings[1] > self.elapsed:
             self.render.state = "office_cat"
             self.dialogue.index = 0
 
-        elif self._speed*3600 > self.elapsed:
-            self.render.state = "office_cat"
-            self.dialogue.index = 0
-
-        elif self._speed*7200 > self.elapsed:
+        elif self.timings[2] > self.elapsed:
             self.render.state = "office_dog"
             self.dialogue.index = 1
 
-        elif self._speed*10800 > self.elapsed:
+        elif self.timings[3] > self.elapsed:
             self.render.state = "office_cat"
             self.dialogue.index = 2
 
-        elif self._speed*14400 >= self.elapsed:
+        elif self.timings[4] >= self.elapsed:
             self.render.state = "office_dog"
             self.dialogue.index = 3
 
@@ -109,7 +115,7 @@ class OfficeCutscene(BaseCutscene):
             self._isSentMessage = True
 
 
-# TODO: Complete
+# TODO: Add audio
 class TelephoneCutscene(BaseCutscene):
     """
     The cutscene where the dog is talking on the phone.
@@ -120,21 +126,27 @@ class TelephoneCutscene(BaseCutscene):
         self.rect = pg.Rect(0, 0, 0, 0)
         telephone = CUTSCENE_RESOURCES["telephone"]
 
+        self.origin = pg.time.get_ticks()       # milliseconds
+        self.elapsed = 0                        # milliseconds
+        self._isComplete = False
+        self._isReversed = False
+
         self.render = RenderComponent(self, enableRepeat=False)
         self.render.add("telephone_none", telephone["none"])
         self.render.add("telephone_pick", telephone["pick"], 1100)
         self.render.add("telephone_hold", telephone["hold"])
         self.render.add("telephone_put", telephone["put"], 1100)
 
+        self.audio = AudioComponent(self)
+
         self.dialogue = Dialogue(self.screen)
         self.dialogue.add(dialogue.TELEPHONE_1, 350, 150, "left")
         self.dialogue.add(dialogue.TELEPHONE_2, 350, 150, "left")
 
-        self.origin = pg.time.get_ticks()       # milliseconds
-        self.elapsed = 0                        # milliseconds
-        self._speed = 1
-        self._isComplete = False
-        self._isReversed = False
+
+        speed = 1
+        ts = [2000, 2800, 3300, 6300, 10300, 11300, 12100, 14000]
+        self.timings = [speed*t for t in ts]
 
     def __str__(self):
         return "telephone_cutscene"
@@ -147,35 +159,35 @@ class TelephoneCutscene(BaseCutscene):
     def update(self):
         self.elapsed = pg.time.get_ticks() - self.origin
 
-        if self._speed*2000 > self.elapsed >= self._speed*0:
+        if self.timings[0] > self.elapsed:
             self.render.state = "telephone_none"
             self.dialogue.index = None
 
-        elif self._speed*2800 > self.elapsed:
+        elif self.timings[1] > self.elapsed:
             self.render.state = "telephone_pick"
             self.dialogue.index = None
 
-        elif self._speed*3300 > self.elapsed:
+        elif self.timings[2] > self.elapsed:
             self.render.state = "telephone_hold"
             self.dialogue.index = None
 
-        elif self._speed*6300 > self.elapsed:
+        elif self.timings[3] > self.elapsed:
             self.render.state = "telephone_hold"
             self.dialogue.index = 0
 
-        elif self._speed*10300 > self.elapsed:
+        elif self.timings[4] > self.elapsed:
             self.render.state = "telephone_hold"
             self.dialogue.index = 1
 
-        elif self._speed*11300 > self.elapsed:
+        elif self.timings[5] > self.elapsed:
             self.render.state = "telephone_hold"
             self.dialogue.index = None
 
-        elif self._speed*12100 > self.elapsed:
+        elif self.timings[6] > self.elapsed:
             self.render.state = "telephone_put"
             self.dialogue.index = None
 
-        elif self._speed*14000 > self.elapsed:
+        elif self.timings[7] > self.elapsed:
             self.render.state = "telephone_none"
             self.dialogue.index = None
 
@@ -192,7 +204,7 @@ class TelephoneCutscene(BaseCutscene):
         self.dialogue.draw()
 
 
-# TODO: Complete
+# TODO: Add audio
 class JailCutscene(BaseCutscene):
     """
     The cutscene where the cat is being escorted to jail.
@@ -203,6 +215,10 @@ class JailCutscene(BaseCutscene):
         self.rect = pg.Rect(0, 0, 0, 0)
         jail = CUTSCENE_RESOURCES["jail"]
 
+        self.origin = pg.time.get_ticks()       # milliseconds
+        self.elapsed = 0                        # milliseconds
+        self._isComplete = False
+
         self.render = RenderComponent(self, enableRepeat=False)
         self.render.add("fence_show", jail["fence_show"], 2000)
         self.render.add("fence_static", jail["fence_static"])
@@ -210,13 +226,14 @@ class JailCutscene(BaseCutscene):
         self.render.add("cat_static", jail["cat_static"])
         self.render.add("cat_close", jail["cat_close"], 3500)
 
+        self.audio = AudioComponent(self)
+
         self.dialogue = Dialogue(self.screen)
         self.dialogue.add(dialogue.JAIL_1, 19, 25, "caption")
 
-        self.origin = pg.time.get_ticks()       # milliseconds
-        self.elapsed = 0                        # milliseconds
-        self.speed = 1
-        self.isComplete = False
+        speed = 1
+        ts = [2000, 4000, 6000, 9500, 11500]
+        self.timings = [speed*t for t in ts]
 
     def __str__(self):
         return "jail_cutscene"
@@ -229,29 +246,29 @@ class JailCutscene(BaseCutscene):
     def update(self):
         self.elapsed = pg.time.get_ticks() - self.origin
 
-        if self.speed*2000 > self.elapsed >= self.speed*0:
+        if self.timings[0] > self.elapsed:
             self.render.state = "fence_show"
             self.dialogue.index = 0
 
-        elif self.speed*4000 > self.elapsed:
+        elif self.timings[1] > self.elapsed:
             self.render.state = "fence_static"
             self.dialogue.index = None
 
-        elif self.speed*6000 > self.elapsed:
+        elif self.timings[2] > self.elapsed:
             self.render.state = "fence_hide"
             self.dialogue.index = None
 
-        elif self.speed*9500 > self.elapsed:
+        elif self.timings[3] > self.elapsed:
             self.render.state = "cat_close"
             self.dialogue.index = None
 
-        elif self.speed*11500 > self.elapsed:
+        elif self.timings[4] > self.elapsed:
             self.render.state = "cat_static"
             self.dialogue.index = None
 
         else:
-            if not self.isComplete:
-                self.isComplete = True
+            if not self._isComplete:
+                self._isComplete = True
                 self._messageStart()
 
         self.dialogue.update()

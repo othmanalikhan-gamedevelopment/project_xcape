@@ -4,35 +4,14 @@ Contains all the entities in a scene (excluding the players and bosses).
 
 import pygame as pg
 
-from xcape.common.loader import SCENE_RESOURCES
+from xcape.common.loader import SCENE_RESOURCES, SFX_RESOURCES
 from xcape.common.object import GameObject
+from xcape.components.audio import AudioComponent
 from xcape.components.physics import PhysicsComponent
 from xcape.components.render import RenderComponent, buildParts, replicate
 
 
-class SceneEntity(GameObject):
-    """
-    Represents an the base of an entity in a scene.
-    """
-
-    def __init__(self, screen):
-        """
-        :param screen: pygame.Surface, representing the screen.
-        """
-        self.rect = pg.Rect(0, 0, 0, 0)
-        self.screen = screen
-        self.animationState = "idle"
-
-    def drawWithCamera(self, camera):
-        """
-        Draws the player on the screen, shifted by the camera.
-
-        :param camera: Camera instance, shifts the position of the drawn animation.
-        """
-        pass
-
-
-class Decoration(SceneEntity):
+class Decoration(GameObject):
     """
     An entity that does nothing other than act as a background decoration.
     """
@@ -45,15 +24,19 @@ class Decoration(SceneEntity):
         :param screen: pygame.Surface, the screen to draw the wall onto.
         """
         super().__init__(screen)
-        self.image = image
+        self.render = RenderComponent(self)
+        self.render.add("idle", image)
+        self.render.state = "idle"
         self.rect = pg.Rect(x, y, 0, 0)
-        self.rect.size = self.image.get_size()
 
-    def drawWithCamera(self, camera):
+    def __str__(self):
+        return "decoration"
+
+    def draw(self, camera=None):
         self.screen.blit(self.image, camera.apply(self))
 
 
-class Wall(SceneEntity):
+class Wall(GameObject):
     """
     A wall entity that obstructs the player.
     """
@@ -68,39 +51,32 @@ class Wall(SceneEntity):
         pygame.Surfaces to build the platform.
         :param screen: pygame.Surface, the screen to draw the wall onto.
         """
-        super().__init__(screen)
+        self.screen = screen
+
         if len(images) == 3:
-            self.image = buildParts(blocks, orientation, images)
+            image = buildParts(blocks, orientation, images)
+            print("G")
         elif len(images) == 1:
-            self.image = replicate(blocks, orientation, images[0])
+            image = replicate(blocks, orientation, images[0])
+        else:
+            raise ValueError("A wall must have one or three images only!")
 
+        self.render = RenderComponent(self)
+        self.render.add("idle", image)
+        self.render.state = "idle"
         self.rect = pg.Rect(x, y, 0, 0)
-        self.rect.size = self.image.get_size()
 
-    def drawWithCamera(self, camera):
-        self.screen.blit(self.image, camera.apply(self))
+    def __str__(self):
+        return "wall"
 
+    def update(self):
+        self.render.update()
 
-class BasePlatform(SceneEntity):
-    """
-    A base platform that is to be inherited by other platforms.
-    """
-
-    def __init__(self, x, y, screen):
-        """
-        :param x: Integer, the x-position of the wall.
-        :param y: Integer, the y-position of the wall.
-        :param screen: pygame.Surface, the screen to draw the wall onto.
-        """
-        super().__init__(screen)
-        self.rect = pg.Rect(x, y, 0, 0)
-        self.image = None
-
-    def drawWithCamera(self, camera):
-        self.screen.blit(self.image, camera.apply(self))
+    def draw(self, camera=None):
+        self.render.draw(camera)
 
 
-class SPlatform(BasePlatform):
+class SPlatform(GameObject):
     """
     A static platform entity that the player can stand on.
     """
@@ -112,20 +88,29 @@ class SPlatform(BasePlatform):
         :param blocks: Integer, the number of times to replicate the wall.
         :param screen: pygame.Surface, the screen to draw the wall onto.
         """
-        super().__init__(x, y, screen)
+        self.screen = screen
 
-        left = SCENE_RESOURCES["platforms"]["platform_1.png"]
-        mid = SCENE_RESOURCES["platforms"]["platform_2.png"]
-        right = SCENE_RESOURCES["platforms"]["platform_3.png"]
-        images = [left, mid, right]
-        self.image = buildParts(blocks, "h", images)
-        self.rect.size = self.image.get_size()
+        left = SCENE_RESOURCES["platforms"]["platform_1"][0]
+        mid = SCENE_RESOURCES["platforms"]["platform_2"][0]
+        right = SCENE_RESOURCES["platforms"]["platform_3"][0]
+        image = buildParts(blocks, "h", [left, mid, right])
 
-    def drawWithCamera(self, camera):
-        self.screen.blit(self.image, camera.apply(self))
+        self.render = RenderComponent(self)
+        self.render.add("idle", image)
+        self.render.state = "idle"
+        self.rect = pg.Rect(x, y, 0, 0)
+
+    def __str__(self):
+        return "static_platform"
+
+    def update(self):
+        self.render.update()
+
+    def draw(self, camera=None):
+        self.render.draw(camera)
 
 
-class DPlatform(BasePlatform):
+class DPlatform(GameObject):
     """
     A directional platform entity that requires the player to jump from below
     to pass through.
@@ -138,20 +123,29 @@ class DPlatform(BasePlatform):
         :param blocks: Integer, the number of times to replicate the wall.
         :param screen: pygame.Surface, the screen to draw the wall onto.
         """
-        super().__init__(x, y, screen)
+        self.screen = screen
 
-        left = SCENE_RESOURCES["platforms"]["platform_1.png"]
-        mid = SCENE_RESOURCES["platforms"]["platform_2.png"]
-        right = SCENE_RESOURCES["platforms"]["platform_3.png"]
-        images = [left, mid, right]
-        self.image = buildParts(blocks, "h", images)
-        self.rect.size = self.image.get_size()
+        left = SCENE_RESOURCES["platforms"]["platform_1"]
+        mid = SCENE_RESOURCES["platforms"]["platform_2"]
+        right = SCENE_RESOURCES["platforms"]["platform_3"]
+        image = buildParts(blocks, "h", [left, mid, right])
 
-    def drawWithCamera(self, camera):
-        self.screen.blit(self.image, camera.apply(self))
+        self.render = RenderComponent(self)
+        self.render.add("idle", image)
+        self.render.state = "idle"
+        self.rect = pg.Rect(x, y, 0, 0)
+
+    def __str__(self):
+        return "directional_platform"
+
+    def update(self):
+        self.render.update()
+
+    def draw(self, camera=None):
+        self.render.draw()
 
 
-class MPlatform(BasePlatform):
+class MPlatform(GameObject):
     """
     A moving platform entity that constantly moves between two points.
     """
@@ -165,19 +159,24 @@ class MPlatform(BasePlatform):
         :param screen: pygame.Surface, the screen to draw the wall onto.
         :param image: pygame.Surface, the image of the platform.
         """
-        super().__init__(A[0], A[1], screen)
-        self.image = image
-        self.rect.size = self.image.get_size()
-
-        self.animationState = "forward"
-        self.physics = PhysicsComponent(self)
-        self.physics.isGravity = False
+        self.screen = screen
         self.A = A
         self.B = B
         self.dx = dx
         self.dy = dy
         self.isDirectionX = True
         self.isDirectionY = True
+
+        self.physics = PhysicsComponent(self)
+        self.physics.isGravity = False
+
+        self.render = RenderComponent(self)
+        self.render.add("idle", image)
+        self.render.state = "idle"
+        self.rect = pg.Rect(A[0], A[1], 0, 0)
+
+    def __str__(self):
+        return "moving_platform"
 
     def update(self):
         # Physics update at start because it seems there is a mismatch of clock
@@ -207,11 +206,13 @@ class MPlatform(BasePlatform):
         self.physics.addDisplacementX("move", self.dx)
         self.physics.addDisplacementY("move", self.dy)
 
-    def drawWithCamera(self, camera):
-        self.screen.blit(self.image, camera.apply(self))
+        self.render.update()
+
+    def draw(self, camera=None):
+        self.render.draw(camera)
 
 
-class Switch(SceneEntity):
+class Switch(GameObject):
     """
     A switch entity that the player can turn on and off.
     """
@@ -223,35 +224,41 @@ class Switch(SceneEntity):
         :param switchNum: Integer, identifying the number of the button.
         :param screen: pygame.Surface, the screen to draw the wall onto.
         """
-        super().__init__(screen)
-        self.rect = pg.Rect(x, y, 0, 0)
-        self.buttonNum = switchNum
+        self.screen = screen
+        self.num = switchNum
         self.isOn = True
 
         button = SCENE_RESOURCES["buttons"]
-        self.animationState = "on"
-        self.animation = RenderComponent(self, enableRepeat=False)
-        self.animation.add("on", [button["switch"][0]], float('inf'))
-        self.animation.add("off", button["switch"], 500)
+        self.render = RenderComponent(self, enableRepeat=False)
+        self.render.add("on", [button["switch"][0]])
+        self.render.add("off", button["switch"], 500)
+        self.render.state = "on"
+        self.rect = pg.Rect(x, y, 0, 0)
 
-        # self.animation.addSound("off", soundPath)
+        self.audio = AudioComponent(self, enableAutoPlay=False)
+        self.audio.add("click", SFX_RESOURCES["scene_switch"])
+        self.audio.state = "click"
+
+    def __str__(self):
+        return "switch " + str(self.num)
 
     def update(self):
-        self.animation.update()
+        self.render.update()
 
-    def drawWithCamera(self, camera):
-        self.animation.drawWithCamera(camera)
+    def draw(self, camera=None):
+        self.render.draw(camera)
 
     def turnOff(self):
         """
         Changes the state of the button to off and sends out an event.
         """
         self.isOn = False
-        self.animationState = "off"
-        events.messageScene("Switch", "switch", (self.buttonNum, self.isOn))
+        self.render.state = "off"
+        self.audio.play("click")
+        self.messageScene("switch", (self.num, self.isOn))
 
 
-class Door(SceneEntity):
+class Door(GameObject):
     """
     A door entity that the player can enter.
     """
@@ -263,20 +270,27 @@ class Door(SceneEntity):
         :param doorNum: Integer, identifying the number of the button.
         :param screen: pygame.Surface, the screen to draw the wall onto.
         """
-        super().__init__(screen)
-        self.rect = pg.Rect(x, y, 0, 0)
+        self.screen = screen
         self.doorNum = doorNum
         self.switchesWaiting = None
         self.isClosed = True
 
-        button = SCENE_RESOURCES["doors"]
-        self.animationState = "closed"
-        self.animation = RenderComponent(self, enableRepeat=False)
-        self.animation.add("open", [button["open.png"]], float('inf'))
-        self.animation.add("closed", [button["closed.png"]], float('inf'))
+        door = SCENE_RESOURCES["doors"]
+        self.render = RenderComponent(self, enableRepeat=False)
+        self.render.add("open", door["open"])
+        self.render.add("closed", door["close"])
+        self.render.state = "closed"
+        self.rect = pg.Rect(x, y, 0, 0)
+
+        self.audio = AudioComponent(self, enableAutoPlay=False)
+        self.audio.add("open", SFX_RESOURCES["scene_door"])
+        self.audio.state = "open"
+
+    def __str__(self):
+        return "door"
 
     def handleEvent(self, event):
-        if event.type == self.MENU_EVENT:
+        if event.type == self.SCENE_EVENT:
             if event.category == "switch":
 
                 try:
@@ -285,35 +299,28 @@ class Door(SceneEntity):
                     if not self.switchesWaiting:
                         self.openDoor()
                 except ValueError:
-                    pass
+                    print("{} is safely ignoring switch {}"
+                          .format(self.__str__(), switchNum))
                 except AttributeError:
-                    pass
+                    print("{} is not a valid switch number!".format(switchNum))
 
     def update(self):
-        self.animation.update()
+        self.render.update()
 
-    def drawWithCamera(self, camera):
-        self.animation.drawWithCamera(camera)
-
-    def waitForSwitches(self, switches):
-        """
-        Links the door to the given switch numbers; the door opens only when
-        those switches have been activated.
-
-        :param switches: List, containing Integers for switch numbers.
-        """
-        self.switchesWaiting = switches
+    def draw(self, camera=None):
+        self.render.draw(camera)
 
     def openDoor(self):
         """
         Changes the state of the door to open and sends out an event.
         """
         self.isClosed = False
-        self.animationState = "open"
-        events.messageScene("Door", "door", (self.doorNum, self.isClosed))
+        self.render.state = "open"
+        self.audio.play("open")
+        self.messageScene("door", (self.doorNum, self.isClosed))
 
 
-class Spike(SceneEntity):
+class Spike(GameObject):
     """
     A spike entity that kills the player.
     """
@@ -325,10 +332,14 @@ class Spike(SceneEntity):
         :param image: pygame.Surface, the image of the wall.
         :param screen: pygame.Surface, the screen to draw the wall onto.
         """
-        super().__init__(screen)
-        self.image = replicate(blocks, orientation, image)
-        self.rect = pg.Rect(x, y, 0, 0)
-        self.rect.size = self.image.get_size()
+        self.screen = screen
 
-    def drawWithCamera(self, camera):
-        self.screen.blit(self.image, camera.apply(self))
+        image = replicate(blocks, orientation, image)
+
+        self.render = RenderComponent(self)
+        self.render.add("idle", image)
+        self.render.state = "idle"
+        self.rect = pg.Rect(x, y, 0, 0)
+
+    def draw(self, camera=None):
+        self.render.draw(camera)

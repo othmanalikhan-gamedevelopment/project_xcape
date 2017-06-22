@@ -16,6 +16,7 @@ from xcape.entities.scene import (
 )
 
 
+# TODO: Refactor
 class BaseScene(GameObject):
     """
     The base scene for any scene.
@@ -47,7 +48,7 @@ class BaseScene(GameObject):
     def update(self):
         raise NotImplementedError
 
-    def drawWithCamera(self, camera):
+    def draw(self, camera):
         """
         Draws the scene on the screen, shifted by the camera.
 
@@ -136,6 +137,7 @@ class BaseScene(GameObject):
         raise NotImplementedError
 
 
+# TODO: Refactor
 class SoloScene01(BaseScene):
     """
     The first single player scene of the game.
@@ -144,13 +146,11 @@ class SoloScene01(BaseScene):
     def __init__(self, screen):
         super().__init__(screen)
         self.levelNum = 1
-
-        self.image = SCENE_RESOURCES["screens"]["scene_01.png"]
+        self.image = SCENE_RESOURCES["screens"]["scene_01"][0]
         self.rect = pg.Rect(0, 0, 0, 0)
         self.rect.size = self.image.get_size()
 
         self.players = self.addPlayers()
-
         self.walls = self.addWalls()
         self.sPlatforms = self.addSPlatforms()
         self.switches = self.addSwitches()
@@ -158,32 +158,41 @@ class SoloScene01(BaseScene):
 
         self.elapsed = 0
         self.origin = pg.time.get_ticks()
+
         self.dialogue = Dialogue(self.screen)
         self.dialogue.add(dialogue.SCENE_SOLO_1, 10, 410, "caption")
         self.dialogue.index = 0
 
+    def __str__(self):
+        return "solo_scene_01"
+
     def handleEvent(self, event):
         [p.handleEvent(event) for p in self.players]
 
-        if event.type == self.MENU_EVENT:
+        if event.type == self.SCENE_EVENT:
             [d.handleEvent(event) for d in self.doors]
+            print(self.doors[0].switchesWaiting)
 
     def update(self):
         self.elapsed = pg.time.get_ticks() - self.origin
 
-        [s.update() for s in self.switches]
+        [w.update() for w in self.walls]
         [d.update() for d in self.doors]
+        [s.update() for s in self.switches]
+        [p.update() for p in self.sPlatforms]
         [p.update() for p in self.players]
 
-    def drawWithCamera(self, camera):
+        self.dialogue.update()
+
+    def draw(self, camera):
         self.screen.fill(settings.COLOURS["black_red"])
         self.screen.blit(self.image, camera.apply(self))
 
-        [w.drawWithCamera(camera) for w in self.walls]
-        [d.drawWithCamera(camera) for d in self.doors]
-        [s.drawWithCamera(camera) for s in self.switches]
-        [p.drawWithCamera(camera) for p in self.sPlatforms]
-        [p.drawWithCamera(camera) for p in self.players]
+        [w.draw(camera) for w in self.walls]
+        [d.draw(camera) for d in self.doors]
+        [s.draw(camera) for s in self.switches]
+        [p.draw(camera) for p in self.sPlatforms]
+        [p.draw(camera) for p in self.players]
 
         if 5000 > self.elapsed >= 0:
             self.dialogue.draw()
@@ -198,27 +207,27 @@ class SoloScene01(BaseScene):
         wall = SCENE_RESOURCES["walls"]
         boundaries = \
         [
-            Wall(0, 10, 8, "v", [wall["boundary_left.png"]], self.screen),
-            Wall(19, 478, 4, "h", [wall["boundary_bot.png"]], self.screen),
-            Wall(320, 478, 5, "h", [wall["boundary_bot.png"]], self.screen),
-            Wall(628, 138, 6, "v", [wall["boundary_right.png"]], self.screen),
-            Wall(164, 138, 8, "h", [wall["boundary_top.png"]], self.screen),
-            Wall(160, 138, 1, "v", [wall["corner_top_left.png"]], self.screen),
-            Wall(160, 10, 2, "v", [wall["boundary_right.png"]], self.screen),
-            Wall(628, 138, 1, "v", [wall["upper_corner_right.png"]], self.screen),
-            Wall(0, 478, 1, "h", [wall["inner_corner_left.png"]], self.screen),
-            Wall(628, 478, 1, "h", [wall["inner_corner_right.png"]], self.screen),
-            Wall(240, 478, 1, "h", [wall["inner_corner_right.png"]], self.screen),
-            Wall(240, 426, 1, "h", [wall["corner_bot_right.png"]], self.screen),
-            Wall(308, 426, 1, "h", [wall["corner_bot_left.png"]], self.screen),
-            Wall(320, 478, 1, "h", [wall["inner_corner_left.png"]], self.screen)
+            Wall(0, 10, 8, "v", wall["boundary_left"], self.screen),
+            Wall(19, 478, 4, "h", wall["boundary_bot"], self.screen),
+            Wall(320, 478, 5, "h", wall["boundary_bot"], self.screen),
+            Wall(628, 138, 6, "v", wall["boundary_right"], self.screen),
+            Wall(164, 138, 8, "h", wall["boundary_top"], self.screen),
+            Wall(160, 138, 1, "v", wall["corner_top_left"], self.screen),
+            Wall(160, 10, 2, "v", wall["boundary_right"], self.screen),
+            Wall(628, 138, 1, "v", wall["upper_corner_right"], self.screen),
+            Wall(0, 478, 1, "h", wall["inner_corner_left"], self.screen),
+            Wall(628, 478, 1, "h", wall["inner_corner_right"], self.screen),
+            Wall(240, 478, 1, "h", wall["inner_corner_right"], self.screen),
+            Wall(240, 426, 1, "h", wall["corner_bot_right"], self.screen),
+            Wall(308, 426, 1, "h", wall["corner_bot_left"], self.screen),
+            Wall(320, 478, 1, "h", wall["inner_corner_left"], self.screen)
         ]
 
         obstacles = \
         [
-            Wall(48, 418, 1, "h", [wall["block_left.png"]], self.screen),
-            Wall(108, 418, 1, "h", [wall["block_right.png"]], self.screen),
-            Wall(170, 450, 1, "h", [wall["block_small.png"]], self.screen),
+            Wall(48, 418, 1, "h", wall["block_left"], self.screen),
+            Wall(108, 418, 1, "h", wall["block_right"], self.screen),
+            Wall(170, 450, 1, "h", wall["block_small"], self.screen),
         ]
         return boundaries + obstacles
 
@@ -242,10 +251,11 @@ class SoloScene01(BaseScene):
 
     def addDoors(self):
         door1 = Door(547, 370, 1, self.screen)
-        door1.waitForSwitches([1, 2, 3])
+        door1.switchesWaiting = [1, 2, 3]
         return [door1]
 
 
+# TODO: Refactor
 class SoloScene02(BaseScene):
     """
     The second single player scene of the game.
@@ -290,18 +300,18 @@ class SoloScene02(BaseScene):
         [p.update() for p in self.mPlatforms]
         [p.update() for p in self.players]
 
-    def drawWithCamera(self, camera):
+    def draw(self, camera):
         self.screen.fill(settings.COLOURS["black_red"])
         self.screen.blit(self.image, camera.apply(self))
 
-        [d.drawWithCamera(camera) for d in self.decorations]
-        [w.drawWithCamera(camera) for w in self.walls]
-        [s.drawWithCamera(camera) for s in self.switches]
-        [d.drawWithCamera(camera) for d in self.doors]
-        [s.drawWithCamera(camera) for s in self.spikes]
-        [p.drawWithCamera(camera) for p in self.mPlatforms]
-        [p.drawWithCamera(camera) for p in self.dPlatforms]
-        [p.drawWithCamera(camera) for p in self.players]
+        [d.draw(camera) for d in self.decorations]
+        [w.draw(camera) for w in self.walls]
+        [s.draw(camera) for s in self.switches]
+        [d.draw(camera) for d in self.doors]
+        [s.draw(camera) for s in self.spikes]
+        [p.draw(camera) for p in self.mPlatforms]
+        [p.draw(camera) for p in self.dPlatforms]
+        [p.draw(camera) for p in self.players]
 
         if 5000 > self.elapsed >= 0:
             self.dialogue.draw()
@@ -398,6 +408,7 @@ class SoloScene02(BaseScene):
         return decorations
 
 
+# TODO: Refactor
 class SoloScene03(BaseScene):
     """
     The third single player scene of the game.
@@ -439,16 +450,16 @@ class SoloScene03(BaseScene):
         [p.update() for p in self.mPlatforms]
         [p.update() for p in self.players]
 
-    def drawWithCamera(self, camera):
+    def draw(self, camera):
         self.screen.fill(settings.COLOURS["black_red"])
         self.screen.blit(self.image, camera.apply(self))
 
-        [w.drawWithCamera(camera) for w in self.walls]
-        [s.drawWithCamera(camera) for s in self.switches]
-        [d.drawWithCamera(camera) for d in self.doors]
-        [s.drawWithCamera(camera) for s in self.spikes]
-        [p.drawWithCamera(camera) for p in self.mPlatforms]
-        [p.drawWithCamera(camera) for p in self.players]
+        [w.draw(camera) for w in self.walls]
+        [s.draw(camera) for s in self.switches]
+        [d.draw(camera) for d in self.doors]
+        [s.draw(camera) for s in self.spikes]
+        [p.draw(camera) for p in self.mPlatforms]
+        [p.draw(camera) for p in self.players]
 
         if 5000 > self.elapsed >= 0:
             self.dialogue.draw()
@@ -542,6 +553,7 @@ class SoloScene03(BaseScene):
         return spikes
 
 
+# TODO: Refactor
 class CoopScene01(BaseScene):
     """
     The first multiplayer scene of the game.
@@ -582,16 +594,16 @@ class CoopScene01(BaseScene):
         [d.update() for d in self.doors]
         [p.update() for p in self.players]
 
-    def drawWithCamera(self, camera):
+    def draw(self, camera):
         self.screen.fill(settings.COLOURS["black_red"])
         self.screen.blit(self.image, camera.apply(self))
 
-        [w.drawWithCamera(camera) for w in self.walls]
-        [d.drawWithCamera(camera) for d in self.decorations]
-        [d.drawWithCamera(camera) for d in self.doors]
-        [s.drawWithCamera(camera) for s in self.switches]
-        [p.drawWithCamera(camera) for p in self.dPlatforms]
-        [p.drawWithCamera(camera) for p in self.players]
+        [w.draw(camera) for w in self.walls]
+        [d.draw(camera) for d in self.decorations]
+        [d.draw(camera) for d in self.doors]
+        [s.draw(camera) for s in self.switches]
+        [p.draw(camera) for p in self.dPlatforms]
+        [p.draw(camera) for p in self.players]
 
         if 5000 > self.elapsed >= 0:
             self.dialogue.index = 0
@@ -680,6 +692,7 @@ class CoopScene01(BaseScene):
         return decorations
 
 
+# TODO: Refactor
 class CoopScene02(BaseScene):
     """
     The second multiplayer scene of the game.
@@ -724,18 +737,18 @@ class CoopScene02(BaseScene):
         [p.update() for p in self.mPlatforms]
         [p.update() for p in self.players]
 
-    def drawWithCamera(self, camera):
+    def draw(self, camera):
         self.screen.fill(settings.COLOURS["black_red"])
         self.screen.blit(self.image, camera.apply(self))
 
-        [d.drawWithCamera(camera) for d in self.decorations]
-        [w.drawWithCamera(camera) for w in self.walls]
-        [s.drawWithCamera(camera) for s in self.switches]
-        [d.drawWithCamera(camera) for d in self.doors]
-        [s.drawWithCamera(camera) for s in self.spikes]
-        [p.drawWithCamera(camera) for p in self.mPlatforms]
-        [p.drawWithCamera(camera) for p in self.dPlatforms]
-        [p.drawWithCamera(camera) for p in self.players]
+        [d.draw(camera) for d in self.decorations]
+        [w.draw(camera) for w in self.walls]
+        [s.draw(camera) for s in self.switches]
+        [d.draw(camera) for d in self.doors]
+        [s.draw(camera) for s in self.spikes]
+        [p.draw(camera) for p in self.mPlatforms]
+        [p.draw(camera) for p in self.dPlatforms]
+        [p.draw(camera) for p in self.players]
 
         if 5000 > self.elapsed >= 0:
             self.dialogue.draw()
@@ -848,6 +861,7 @@ class CoopScene02(BaseScene):
         return decorations
 
 
+# TODO: Refactor
 class CoopScene03(BaseScene):
     """
     The third multiplayer scene of the game.
@@ -895,19 +909,19 @@ class CoopScene03(BaseScene):
         [p.update() for p in self.players]
         [b.update() for b in self.bosses]
 
-    def drawWithCamera(self, camera):
+    def draw(self, camera):
         self.screen.fill(settings.COLOURS["black_red"])
         self.screen.blit(self.image, camera.apply(self))
 
-        [w.drawWithCamera(camera) for w in self.walls]
-        [s.drawWithCamera(camera) for s in self.switches]
-        [d.drawWithCamera(camera) for d in self.doors]
-        [s.drawWithCamera(camera) for s in self.spikes]
-        [p.drawWithCamera(camera) for p in self.sPlatforms]
-        [p.drawWithCamera(camera) for p in self.mPlatforms]
-        [p.drawWithCamera(camera) for p in self.dPlatforms]
-        [d.drawWithCamera(camera) for d in self.decorations]
-        [p.drawWithCamera(camera) for p in self.players]
+        [w.draw(camera) for w in self.walls]
+        [s.draw(camera) for s in self.switches]
+        [d.draw(camera) for d in self.doors]
+        [s.draw(camera) for s in self.spikes]
+        [p.draw(camera) for p in self.sPlatforms]
+        [p.draw(camera) for p in self.mPlatforms]
+        [p.draw(camera) for p in self.dPlatforms]
+        [d.draw(camera) for d in self.decorations]
+        [p.draw(camera) for p in self.players]
         [b.drawWithCamera(camera) for b in self.bosses]
 
         if 5000 > self.elapsed >= 0:

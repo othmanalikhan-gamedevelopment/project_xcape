@@ -14,7 +14,7 @@ class SceneEngine(GameObject):
     """
     Responsibilities:
         - Displaying and updating the current scene.
-        - Transitioning between menus.
+        - Transitioning between scenes.
     """
 
     def __init__(self, screen):
@@ -28,7 +28,7 @@ class SceneEngine(GameObject):
         if self.mode:
             self.mode.handleEvent(event)
 
-        if event.type == self.MENU_EVENT:
+        if event.type == self.SCENE_EVENT:
             if event.category == "start_game":
                 if event.data == "solo":
                     self.mode = SinglePlayer(self.screen)
@@ -52,6 +52,7 @@ class SceneEngine(GameObject):
             self.mode.draw()
 
 
+# TODO: Refactor
 class SinglePlayer(GameObject):
 
     def __init__(self, screen):
@@ -82,6 +83,9 @@ class SinglePlayer(GameObject):
                 3: scenes.SoloScene03,
             }
 
+    def __str__(self):
+        return "single_player"
+
     def handleEvent(self, event):
         self.collisionEngine.eventHandler(event)
         self.scene.handleEvent(event)
@@ -100,7 +104,7 @@ class SinglePlayer(GameObject):
                     try:
                         self._loadScene(self.numToScene[event.data])
                     except KeyError:
-                        events.messageMenu("single_player", "transition", "win_menu")
+                        self.messageMenu("transition", "win_menu")
 
             if event.category == "complete":
                 if event.sender == "death_menu":
@@ -114,7 +118,7 @@ class SinglePlayer(GameObject):
                     self._showGameOver()
                 else:
                     self.pause = True
-                    events.messageMenu("single_player", "transition", "death_menu")
+                    self.messageMenu("transition", "death_menu")
 
     def update(self):
         if not self.pause and self.scene:
@@ -122,9 +126,9 @@ class SinglePlayer(GameObject):
             self.collisionEngine.update()
             self.camera.update()
 
-    def draw(self):
+    def draw(self, camera=None):
         if self.scene:
-            self.scene.drawWithCamera(self.camera)
+            self.scene.draw(self.camera)
 
     def startGame(self):
         """
@@ -152,9 +156,9 @@ class SinglePlayer(GameObject):
         :param currentHealth: Integer, the number of full hearts to display.
         :param maxHealth: Integer, the number of empty hearts to display.
         """
-        events.messageMenu("single_player", "transition", "solo_ui_menu")
-        events.messageMenu("single_player", "max_health", maxHealth)
-        events.messageMenu("single_player", "health", currentHealth)
+        self.messageMenu("transition", "solo_ui_menu")
+        self.messageMenu("max_health", maxHealth)
+        self.messageMenu("health", currentHealth)
 
     def _restartScene(self):
         """
@@ -168,7 +172,7 @@ class SinglePlayer(GameObject):
         Pauses the game and triggers the game over screen.
         """
         self.pause = True
-        events.messageMenu("single_player", "transition", "game_over_menu")
+        self.messageMenu("transition", "game_over_menu")
 
     def _togglePauseMenu(self):
         """
@@ -176,12 +180,13 @@ class SinglePlayer(GameObject):
         """
         self.pause = not self.pause
         if self.pause:
-            events.messageMenu("single_player", "transition", "pause_menu")
+            self.messageMenu("transition", "pause_menu")
         else:
-            events.messageMenu("single_player", "transition", "blank_menu")
+            self.messageMenu("transition", "blank_menu")
             self._loadUI(self.maxLives, self.lives)
 
 
+# TODO: Refactor
 class MultiPlayer(GameObject):
 
     def __init__(self, screen):
@@ -237,7 +242,7 @@ class MultiPlayer(GameObject):
                     try:
                         self._loadScene(self.numToScene[event.data])
                     except KeyError:
-                        events.messageMenu("multi_player", "transition", "win_menu")
+                        self.messageMenu("transition", "win_menu")
 
             if event.category == "complete":
                 if event.sender == "death_menu":
@@ -253,7 +258,7 @@ class MultiPlayer(GameObject):
                     self._showGameOver()
                 else:
                     self.pause = True
-                    events.messageMenu("multi_player", "transition", "death_menu")
+                    self.messageMenu("transition", "death_menu")
 
     def update(self):
         if not self.pause and self.scene:
@@ -263,7 +268,7 @@ class MultiPlayer(GameObject):
 
     def draw(self):
         if self.scene:
-            self.scene.drawWithCamera(self.camera)
+            self.scene.draw(self.camera)
 
     def startGame(self):
         """
@@ -291,9 +296,9 @@ class MultiPlayer(GameObject):
         :param health: List, containing current healths for both players.
         :param maxHealth: List, containing max healths for both players.
         """
-        events.messageMenu("multi_player", "transition", "coop_ui_menu")
-        events.messageMenu("multi_player", "max_health", maxHealth)
-        events.messageMenu("multi_player", "health", health)
+        self.messageMenu("transition", "coop_ui_menu")
+        self.messageMenu("max_health", maxHealth)
+        self.messageMenu("health", health)
 
     def _restartScene(self):
         """
@@ -307,7 +312,7 @@ class MultiPlayer(GameObject):
         Pauses the game and triggers the game over screen.
         """
         self.pause = True
-        events.messageMenu("multi_player", "transition", "game_over_menu")
+        self.messageMenu("transition", "game_over_menu")
 
     def _togglePauseMenu(self):
         """
@@ -315,7 +320,7 @@ class MultiPlayer(GameObject):
         """
         self.pause = not self.pause
         if self.pause:
-            events.messageMenu("multi_player", "transition", "pause_menu")
+            self.messageMenu("transition", "pause_menu")
         else:
-            events.messageMenu("multi_player", "transition", "blank_menu")
+            self.messageMenu("transition", "blank_menu")
             self._loadUI(self.maxLives, self.lives)

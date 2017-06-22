@@ -52,7 +52,7 @@ class GameObject:
         """
         raise NotImplementedError
 
-    def draw(self):
+    def draw(self, camera=None):
         """
         Renders the game object to the screen every game tick.
         """
@@ -67,7 +67,7 @@ class GameObject:
         """
         self._messageEngine(GameObject.CATEGORIES_MENU,
                             GameObject.MENU_EVENT,
-                            self.__str__,
+                            self.__str__(),
                             category,
                             data)
 
@@ -81,7 +81,7 @@ class GameObject:
         """
         self._messageEngine(GameObject.CATEGORIES_SCENE,
                             GameObject.SCENE_EVENT,
-                            self.__str__,
+                            self.__str__(),
                             category,
                             data)
 
@@ -94,7 +94,7 @@ class GameObject:
         """
         self._messageEngine(GameObject.CATEGORIES_CUTSCENE,
                             GameObject.CUTSCENE_EVENT,
-                            self.__str__,
+                            self.__str__(),
                             category,
                             data)
 

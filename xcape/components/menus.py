@@ -13,7 +13,6 @@ from xcape.components.render import (
 )
 
 
-# TODO: Complete
 class BaseMenu(GameObject):
     """
     The base menu that should be inherited by all menus.
@@ -37,7 +36,6 @@ class BaseMenu(GameObject):
         raise NotImplementedError
 
 
-# TODO: Complete
 class SplashMenu(BaseMenu):
     """
     The splash screen of the game.
@@ -57,7 +55,7 @@ class SplashMenu(BaseMenu):
         self.audio.add("door_knock", SFX_RESOURCES["splash_door_knock"])
         self.audio.add("door_open", SFX_RESOURCES["splash_door_open"])
         self.audio.add("door_close", SFX_RESOURCES["splash_door_close"])
-        self.audio.add("meow", SFX_RESOURCES["meow_1"])
+        self.audio.add("meow", SFX_RESOURCES["splash_meow"])
         self.audio.link("door_knock", "door_open", delay=1000)
         self.audio.link("door_open", "meow")
         self.audio.link("meow", "door_close")
@@ -85,7 +83,6 @@ class SplashMenu(BaseMenu):
         self.effect.draw()
 
 
-#TODO: Complete
 class MainMenu(BaseMenu):
     """
     The main menu of the game.
@@ -188,7 +185,6 @@ class MainMenu(BaseMenu):
         self.arrow.draw()
 
 
-#TODO: COMPLETE
 class OptionsMenu(BaseMenu):
     """
     The options menu of the game.
@@ -297,6 +293,7 @@ class OptionsMenu(BaseMenu):
         self.effect.draw()
 
 
+# TODO: Refactor
 class DeathMenu(BaseMenu):
     """
     The death screen of the game.
@@ -329,6 +326,7 @@ class DeathMenu(BaseMenu):
         self.effect.draw()
 
 
+# TODO: Refactor
 class GameOverMenu(BaseMenu):
     """
     The game over menu of the game.
@@ -364,6 +362,7 @@ class GameOverMenu(BaseMenu):
         self.enterText.draw()
 
 
+# TODO: Refactor
 class WinMenu(BaseMenu):
     """
     The win menu of the game.
@@ -399,6 +398,7 @@ class WinMenu(BaseMenu):
         self.enterText.draw()
 
 
+# TODO: Refactor
 class PauseMenu(BaseMenu):
     """
     The pause menu of the game.
@@ -438,7 +438,6 @@ class PauseMenu(BaseMenu):
         self.pauseText.draw()
 
 
-#TODO: Complete
 class FadeEffect(BaseMenu):
     """
     Responsible for applying a transitioning fade of as follows:
@@ -509,6 +508,7 @@ class FadeEffect(BaseMenu):
         self.render.image.set_alpha(self.transparentValue)
 
 
+# TODO: Refactor
 class SoloUIMenu(BaseMenu):
     """
     The single player UI in a scene.
@@ -522,6 +522,9 @@ class SoloUIMenu(BaseMenu):
         self.y = 50
         self.dx = 30
         self.lives = []
+
+    def __str__(self):
+        return "solo_ui_menu"
 
     def handleEvent(self, event):
         if event.type == self.MENU_EVENT:
@@ -538,11 +541,11 @@ class SoloUIMenu(BaseMenu):
 
     def update(self):
         for live in self.lives:
-            live.animation.update()
+            live.render.update()
 
     def draw(self):
         for live in self.lives:
-            live.animation.draw()
+            live.render.draw()
 
     def setMaxLives(self, numLives):
         """
@@ -552,17 +555,14 @@ class SoloUIMenu(BaseMenu):
         """
         assets = MENU_RESOURCES["assets"]
         for i in range(numLives):
-            label = ImageLabel(self.x + i*self.dx, self.y, None, self.screen)
-            label.state = "life"
-            label.render.add("no_life",
-                             [assets["life_empty.png"]],
-                             float('inf'))
-            label.render.add("life",
-                             [assets["life_gray.png"]],
-                             float('inf'))
+            label = ImageLabel(None, self.x + i*self.dx, self.y, self.screen)
+            label.render.add("no_life", assets["life_empty"])
+            label.render.add("life", assets["life_gray"])
+            label.render.state = "life"
             self.lives.append(label)
 
 
+# TODO: Refactor
 class CoopUIMenu(BaseMenu):
     """
     The mutliplayer UI in a scene.
@@ -725,7 +725,6 @@ class _SettingsLabel(GameObject):
             self.index = len(self.options)-1
 
 
-#TODO: Complete
 class _Arrow(GameObject):
     """
     An arrow that highlights the option that the user is hovering over.

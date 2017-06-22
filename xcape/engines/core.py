@@ -2,14 +2,14 @@
 The core engine of the game.
 """
 
-# PyGame needs to be initialised immediately.
-# loader.py module depends on a pygame function that needs to be initialised
-# and this module runs immediately upon importing to allow one time loading
-# of all game assets.
 import pygame as pg
 
 import xcape.common.settings as settings
 
+# PyGame needs to be initialised immediately.
+# loader.py module depends on a pygame function that needs to be initialised
+# and this module runs immediately upon importing to allow one time loading
+# of all game assets.
 pg.init()
 pg.mixer.pre_init(44100, 16, 2, 4096)
 pg.display.set_caption(settings.TITLE)
@@ -40,9 +40,9 @@ class CoreEngine(GameObject):
         self.menuEngine = MenuEngine(self.screen)
         self.cutsceneEngine = CutSceneEngine(self.screen)
 
-        # self.messageScene("start_game", "solo")
-        # self.messageScene("transition", "scene_01")
-        self.messageMenu("transition", "splash_menu")
+        self.messageScene("start_game", "solo")
+        self.messageScene("transition", "scene_01")
+        # self.messageMenu("transition", "splash_menu")
         # self.messageCutScene("transition", "office_cutscene")
 
     def __str__(self):

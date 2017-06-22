@@ -8,6 +8,7 @@ from pygame.math import Vector2
 from xcape.common.object import GameObject
 
 
+# TODO: Refactor
 class PhysicsComponent(GameObject):
     """
     Represents the physics component that can apply physics to a game object.

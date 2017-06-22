@@ -9,7 +9,6 @@ from xcape.common.loader import CUTSCENE_RESOURCES
 from xcape.common.object import GameObject
 
 
-# TODO: Complete
 class RenderComponent(GameObject):
     """
     Attaches to a game object to allow rendering.
@@ -43,10 +42,8 @@ class RenderComponent(GameObject):
         if not self.state:
             raise ValueError("The state of the render component for '{}' has "
                              "not been set!".format(self.gameObject))
-
-        self._updateOrientation()
-        self._updateAnimation()
-        self.gameObject.rect.size = self.image.get_size()
+        else:
+            self._updateAnimation()
 
     def draw(self, camera=None):
         if camera:
@@ -129,6 +126,8 @@ class RenderComponent(GameObject):
             self._resetAnimation()
 
         self.image = self.animation[self.frameNum]
+        self._updateOrientation()
+        self.gameObject.rect.size = self.image.get_size()
 
     def _updateOrientation(self):
         """
@@ -209,7 +208,6 @@ class RenderComponent(GameObject):
                                  .format(value))
 
 
-# TODO: Complete
 class ImageLabel(GameObject):
     """
     Represents an image that is intended to be drawn on screen.
@@ -235,11 +233,10 @@ class ImageLabel(GameObject):
     def update(self):
         self.render.update()
 
-    def draw(self):
-        self.render.draw()
+    def draw(self, camera=None):
+        self.render.draw(camera)
 
 
-# TODO: Complete
 class TextLabel(GameObject):
     """
     Represents text that is intended to be drawn on screen.
@@ -276,7 +273,6 @@ class TextLabel(GameObject):
         self.render.draw()
 
 
-# TODO: Complete
 class WrappedTextLabel:
     """
     Represents text that is wrapped.
@@ -393,7 +389,6 @@ class WrappedTextLabel:
         return lines, widths, heights
 
 
-# TODO: Complete
 class Dialogue(GameObject):
     """
     Represents a collection of dialogue bubbles that are intended to be drawn
@@ -448,7 +443,6 @@ class Dialogue(GameObject):
                              .format(value))
 
 
-# TODO: Complete
 class _Bubble(GameObject):
     """
     Represents a dialogue bubble that can be drawn on screen.
@@ -514,7 +508,6 @@ class _Bubble(GameObject):
         return bubble
 
 
-# TODO: Complete
 def addBackground(surface, colour="white"):
     """
     Adds a background with the given colour to the supplied surface.
@@ -530,7 +523,6 @@ def addBackground(surface, colour="white"):
     return background
 
 
-# TODO: Complete
 def buildParts(blocks, orientation, images):
     """
     Builds the image that consists of three separate parts, and allows
@@ -565,7 +557,6 @@ def buildParts(blocks, orientation, images):
     return img
 
 
-# TODO: Complete
 def replicate(amount, orientation, image):
     """
     Extends the image by duplicating it either vertically or horizontally.

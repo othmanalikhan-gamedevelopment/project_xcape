@@ -7,6 +7,7 @@ from pygame.math import Vector2
 from xcape.common.object import GameObject
 
 
+# TODO: Refactor (update physics)
 class CollisionEngine(GameObject):
     """
     A specialised (non-scalable) collision engine that handles collisions

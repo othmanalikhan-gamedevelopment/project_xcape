@@ -8,6 +8,7 @@ from xcape.common.object import GameObject
 from xcape.components.physics import PhysicsComponent
 
 
+# TODO: Refactor
 class SimpleCamera(GameObject):
     """
     A camera that follows around an entity in a scene.

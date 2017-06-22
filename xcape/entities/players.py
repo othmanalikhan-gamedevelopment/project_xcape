@@ -5,8 +5,9 @@ Contains all playable characters.
 import pygame as pg
 
 import xcape.common.settings as settings
-from xcape.common.loader import CHARACTER_RESOURCES
+from xcape.common.loader import CHARACTER_RESOURCES, SFX_RESOURCES
 from xcape.common.object import GameObject
+from xcape.components.audio import AudioComponent
 from xcape.components.physics import PhysicsComponent
 from xcape.components.render import RenderComponent
 
@@ -24,9 +25,6 @@ class PlayerBase(GameObject, pg.sprite.Sprite):
         self.screen = screen
         self.rect = pg.Rect(0, 0, 0, 0)
         self.num = 0
-
-        self.animationState = "idle"
-        self.orientation = "right"
         self.lives = 5
 
         self.isOnGround = False
@@ -34,12 +32,16 @@ class PlayerBase(GameObject, pg.sprite.Sprite):
         self.moveSpeed = 9
 
         self.physics = PhysicsComponent(self)
-        self.animation = RenderComponent(self, enableOrientation=True)
+        self.render = RenderComponent(self, enableOrientation=True)
+
+        self.audio = AudioComponent(self, enableAutoPlay=False)
+        self.audio.add("enter", SFX_RESOURCES["scene_switch"])
+        self.audio.state = "enter"
 
         self.keybinds = None
 
     def update(self):
-        self.animation.update()
+        self.render.update()
         self.physics.update()
 
         # Hacky solution to fix hit box sizes without tampering with the
@@ -67,13 +69,8 @@ class PlayerBase(GameObject, pg.sprite.Sprite):
             if event.key == self.keybinds["move_right"]:
                 self.stop()
 
-    def drawWithCamera(self, camera):
-        """
-        Draws the character on the screen, shifted by the camera.
-
-        :param camera: Camera instance, shifts the position of the drawn animation.
-        """
-        self.animation.drawWithCamera(camera)
+    def draw(self, camera=None):
+        self.render.draw(camera)
 
     def jump(self):
         """
@@ -83,28 +80,29 @@ class PlayerBase(GameObject, pg.sprite.Sprite):
             self.physics.velocity.y = self.jumpSpeed
             self.physics.addVelocityY("jump", self.jumpSpeed)
             self.isOnGround = False
+            # self.audio.play("enter")
 
     def moveLeft(self):
         """
         Moves the character left.
         """
-        self.animationState = "running"
-        self.orientation = "left"
+        self.render.state = "running"
+        self.render.orientation = "left"
         self.physics.addDisplacementX("move", -self.moveSpeed)
 
     def moveRight(self):
         """
         Moves the character right.
         """
-        self.animationState = "running"
-        self.orientation = "right"
+        self.render.state = "running"
+        self.render.orientation = "right"
         self.physics.addDisplacementX("move", self.moveSpeed)
 
     def stop(self):
         """
         Stops the character.
         """
-        self.animationState = "idle"
+        self.render.state = "idle"
         self.physics.velocity.x = 0
 
 
@@ -122,11 +120,15 @@ class PlayerOne(PlayerBase):
         self.num = 1
 
         cat = CHARACTER_RESOURCES["cat_orange"]
-        self.animation.add("idle", cat["idle"], float('inf'))
-        self.animation.add("running", cat["running"], 400)
-        self.animation.scaleAll(self.rect.size)
+        self.render.add("idle", cat["idle"], float('inf'))
+        self.render.add("running", cat["running"], 400)
+        self.render.scaleAll(self.rect.size)
+        self.render.state = "idle"
 
         self.keybinds = settings.KEYBINDS_P1
+
+    def __str__(self):
+        return "player_one"
 
 
 class PlayerTwo(PlayerBase):
@@ -143,8 +145,12 @@ class PlayerTwo(PlayerBase):
         self.num = 2
 
         cat = CHARACTER_RESOURCES["cat_blue"]
-        self.animation.add("idle", cat["idle"], float('inf'))
-        self.animation.add("running", cat["running"], 400)
-        self.animation.scaleAll(self.rect.size)
+        self.render.add("idle", cat["idle"], float('inf'))
+        self.render.add("running", cat["running"], 400)
+        self.render.scaleAll(self.rect.size)
+        self.render.state = "idle"
 
         self.keybinds = settings.KEYBINDS_P2
+
+    def __str__(self):
+        return "player_two"
