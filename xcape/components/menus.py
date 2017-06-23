@@ -139,7 +139,6 @@ class MainMenu(BaseMenu):
 
         self.audio = AudioComponent(self, enableAutoPlay=False)
         self.audio.add("enter", SFX_RESOURCES["menu_enter"])
-        self.audio.state = "enter"
 
     def __str__(self):
         return "main_menu"
@@ -153,7 +152,7 @@ class MainMenu(BaseMenu):
                 self.arrow.moveDown()
 
             if event.key == pg.K_RETURN:
-                self.audio.play("enter")
+                self.audio.state = "enter"
                 if self.arrow.index == 0:
                     self.messageMenu("transition", "blank_menu")
                     self.messageCutScene("transition", "office_cutscene")
@@ -167,6 +166,8 @@ class MainMenu(BaseMenu):
 
     def update(self):
         self.render.update()
+        self.audio.update()
+
         self.option1.update()
         self.option2.update()
         self.option3.update()
@@ -225,7 +226,6 @@ class OptionsMenu(BaseMenu):
 
         self.audio = AudioComponent(self, enableAutoPlay=False)
         self.audio.add("exit", SFX_RESOURCES["menu_exit"])
-        self.audio.state = "exit"
 
     def __str__(self):
         return "options_menu"
@@ -236,7 +236,7 @@ class OptionsMenu(BaseMenu):
             if event.key == pg.K_ESCAPE:
                 self.effect.timeStartDarken = self.effect.time
                 self.effect.timeEndDarken = self.effect.time + self.dt
-                self.audio.play("exit")
+                self.audio.state = "exit"
 
             if event.key == pg.K_UP:
                 self.arrow.moveUp()
@@ -272,12 +272,14 @@ class OptionsMenu(BaseMenu):
 
     def update(self):
         self.render.update()
+        self.audio.update()
+        self.effect.update()
+
         self.backgroundSetting.update()
         self.fullscreenSetting.update()
         self.escapeImage.update()
         self.escapeText.update()
         self.arrow.update()
-        self.effect.update()
 
         if self.effect.isComplete:
             self.messageMenu("transition", "main_menu")
@@ -386,9 +388,10 @@ class WinMenu(BaseMenu):
         self.render.add("idle", image)
         self.render.state = "idle"
 
-        self.audio = AudioComponent(self, enableAutoPlay=False)
+        self.audio = AudioComponent(self,
+                                    enableAutoPlay=False,
+                                    enableRepeat=True)
         self.audio.add("win", SFX_RESOURCES["scene_win"])
-        self.audio.state = "win"
 
     def __str__(self):
         return "win_menu"
@@ -402,7 +405,7 @@ class WinMenu(BaseMenu):
     def update(self):
         self.render.update()
         self.enterText.update()
-        self.audio.play("win")
+        self.audio.state = "win"
 
     def draw(self, camera=None):
         self.render.draw(camera)
@@ -668,7 +671,6 @@ class CoopUIMenu(BaseMenu):
             self.livesP2.append(label)
 
 
-#TODO: Complete
 class _SettingsLabel(GameObject):
     """
     Represents an option that the user can change.
@@ -710,7 +712,8 @@ class _SettingsLabel(GameObject):
         self.optionChosen = self.options[self.index]
         self.optionChosen.update()
 
-    def draw(self):
+    def draw(self, camera=None):
+        self.audio.update()
         self.name.draw()
         self.optionChosen.draw()
 
@@ -718,7 +721,7 @@ class _SettingsLabel(GameObject):
         """
         Increments the selected option to the next option.
         """
-        self.audio.play("switch")
+        self.audio.state = "switch"
         self.index += 1
 
         if self.index > len(self.options)-1:
@@ -728,7 +731,7 @@ class _SettingsLabel(GameObject):
         """
         Decrements the selected option to the previous option.
         """
-        self.audio.play("switch")
+        self.audio.state = "switch"
         self.index -= 1
 
         if self.index < 0:
@@ -769,15 +772,16 @@ class _Arrow(GameObject):
 
     def update(self):
         self.render.update()
+        self.audio.update()
 
-    def draw(self):
+    def draw(self, camera=None):
         self.render.draw()
 
     def moveUp(self):
         """
         Moves the arrow to the previous option number.
         """
-        self.audio.play("move")
+        self.audio.state = "move"
         self.index -= 1
         self.rect.y -= self.dy
 
@@ -789,7 +793,7 @@ class _Arrow(GameObject):
         """
         Moves the arrow to the next option number.
         """
-        self.audio.play("move")
+        self.audio.state = "move"
         self.index += 1
         self.rect.y += self.dy
 

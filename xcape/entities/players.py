@@ -42,6 +42,7 @@ class PlayerBase(GameObject, pg.sprite.Sprite):
 
     def update(self):
         self.render.update()
+        self.audio.update()
         self.physics.update()
 
         # Hacky solution to fix hit box sizes without tampering with the
@@ -80,7 +81,7 @@ class PlayerBase(GameObject, pg.sprite.Sprite):
             self.physics.velocity.y = self.jumpSpeed
             self.physics.addVelocityY("jumping", self.jumpSpeed)
             self.isOnGround = False
-            self.audio.play("jumping")
+            self.audio.state = "jumping"
 
     def moveLeft(self):
         """

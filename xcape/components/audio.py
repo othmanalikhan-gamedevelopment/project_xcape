@@ -47,7 +47,12 @@ class AudioComponent(GameObject):
 
         if self.isPlaying:
             if self.elapsed > 1000*self.sound.get_length() + self.delay:
-                self._changeState()
+                try:
+                    self.state, self.delay = self.stateToLink[self.state]
+                    self.timesPlayed = 0
+                except KeyError:
+                    if not self.enableRepeat:
+                        self.shouldPlay = False
 
     def add(self, state, sound):
         """
@@ -69,15 +74,6 @@ class AudioComponent(GameObject):
         """
         self.stateToLink[state1] = (state2, delay)
 
-    def play(self, state):
-        """
-        Plays the given sound effect immediately.
-
-        :param state: String, the name of the state.
-        """
-        sound = self.stateToSound[state]
-        sound.play()
-
     def _playSound(self):
         """
         Plays the current sound once only.
@@ -87,25 +83,6 @@ class AudioComponent(GameObject):
         self.isPlaying = True
         self.shouldPlay = False
         self._resetTimer()
-
-    def _changeState(self):
-        """
-        Changes the current state to the next linked state if it exists,
-        otherwise repeats the current sound if the repeating option is enabled.
-        """
-        try:
-            self.state, self.delay = self.stateToLink[self.state]
-            self.shouldPlay = True
-            self.timesPlayed = 0
-        except KeyError:
-            if self.enableRepeat:
-                self.shouldPlay = True
-            else:
-                self.shouldPlay = False
-            self.delay = 0
-        finally:
-            self.isPlaying = False
-            self._resetTimer()
 
     def _resetTimer(self):
         """
@@ -121,9 +98,12 @@ class AudioComponent(GameObject):
     @state.setter
     def state(self, value):
         try:
+            self.shouldPlay = True
+            self.isPlaying = False
+            self._resetTimer()
+
             self._state = value
             self.sound = self.stateToSound[value]
             _, self.delay = self.stateToLink[value]
         except KeyError:
-            print("No audio delay linked to audio state '{}' for object '{}'"
-                  .format(value, self.gameObject))
+            self.delay = 0

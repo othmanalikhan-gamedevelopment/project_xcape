@@ -253,7 +253,7 @@ class Switch(GameObject):
         """
         self.isOn = False
         self.render.state = "off"
-        self.audio.play("click")
+        self.audio.state = "click"
         self.messageScene("switch", (self.num, self.isOn))
 
 
@@ -315,7 +315,7 @@ class Door(GameObject):
         """
         self.isClosed = False
         self.render.state = "open"
-        self.audio.play("open")
+        self.audio.state = "open"
         self.messageScene("door", (self.doorNum, self.isClosed))
 
 

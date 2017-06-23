@@ -29,7 +29,7 @@ class BaseCutscene(GameObject):
     def update(self):
         pass
 
-    def draw(self):
+    def draw(self, camera=None):
         pass
 
 
@@ -102,7 +102,7 @@ class OfficeCutscene(BaseCutscene):
         self.dialogue.update()
         self.render.update()
 
-    def draw(self):
+    def draw(self, camera=None):
         self.render.draw()
         self.dialogue.draw()
 
@@ -142,7 +142,6 @@ class TelephoneCutscene(BaseCutscene):
         self.dialogue = Dialogue(self.screen)
         self.dialogue.add(dialogue.TELEPHONE_1, 350, 150, "left")
         self.dialogue.add(dialogue.TELEPHONE_2, 350, 150, "left")
-
 
         speed = 1
         ts = [2000, 2800, 3300, 6300, 10300, 11300, 12100, 14000]
@@ -199,7 +198,7 @@ class TelephoneCutscene(BaseCutscene):
         self.dialogue.update()
         self.render.update()
 
-    def draw(self):
+    def draw(self, camera=None):
         self.render.draw()
         self.dialogue.draw()
 
@@ -274,7 +273,7 @@ class JailCutscene(BaseCutscene):
         self.dialogue.update()
         self.render.update()
 
-    def draw(self):
+    def draw(self, camera=None):
         self.render.draw()
         self.dialogue.draw()
 
