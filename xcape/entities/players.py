@@ -35,8 +35,8 @@ class PlayerBase(GameObject, pg.sprite.Sprite):
         self.render = RenderComponent(self, enableOrientation=True)
 
         self.audio = AudioComponent(self, enableAutoPlay=False)
-        self.audio.add("enter", SFX_RESOURCES["scene_switch"])
-        self.audio.state = "enter"
+        self.audio.add("jumping", SFX_RESOURCES["character_jumping"])
+        self.audio.state = "jumping"
 
         self.keybinds = None
 
@@ -78,9 +78,9 @@ class PlayerBase(GameObject, pg.sprite.Sprite):
         """
         if self.isOnGround:
             self.physics.velocity.y = self.jumpSpeed
-            self.physics.addVelocityY("jump", self.jumpSpeed)
+            self.physics.addVelocityY("jumping", self.jumpSpeed)
             self.isOnGround = False
-            # self.audio.play("enter")
+            self.audio.play("jumping")
 
     def moveLeft(self):
         """

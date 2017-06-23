@@ -11,7 +11,7 @@ import xcape.common.settings as settings
 # and this module runs immediately upon importing to allow one time loading
 # of all game assets.
 pg.init()
-pg.mixer.pre_init(44100, 16, 2, 4096)
+pg.mixer.pre_init(44100, 16, 2, 64)
 pg.display.set_caption(settings.TITLE)
 pg.display.set_mode((settings.WIDTH, settings.HEIGHT))
 

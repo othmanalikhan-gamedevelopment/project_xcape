@@ -55,7 +55,6 @@ class Wall(GameObject):
 
         if len(images) == 3:
             image = buildParts(blocks, orientation, images)
-            print("G")
         elif len(images) == 1:
             image = replicate(blocks, orientation, images[0])
         else:

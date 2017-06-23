@@ -5,7 +5,7 @@ Responsible for containing all the cutscenes in game.
 import pygame as pg
 
 import xcape.components.dialogue as dialogue
-from xcape.common.loader import CUTSCENE_RESOURCES, SFX_RESOURCES
+from xcape.common.loader import CUTSCENE_RESOURCES
 from xcape.common.object import GameObject
 from xcape.components.audio import AudioComponent
 from xcape.components.render import RenderComponent, Dialogue
@@ -53,7 +53,7 @@ class OfficeCutscene(BaseCutscene):
         self.render.add("office_cat", office["cat"], 1500)
 
         self.audio = AudioComponent(self, enableAutoPlay=False)
-        self.audio.add("meow_1", SFX_RESOURCES["meow_1"])
+        # self.audio.add("meow", SFX_RESOURCES["meow_1"])
 
         self.dialogue = Dialogue(self.screen)
         self.dialogue.add(dialogue.OFFICE_1, 240, 50, "left")

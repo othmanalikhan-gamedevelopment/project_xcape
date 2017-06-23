@@ -20,6 +20,9 @@ class CollisionEngine(GameObject):
         """
         self.scene = scene
 
+    def __str__(self):
+        return "collision_engine"
+
     def eventHandler(self, event):
         if event.type == pg.KEYDOWN:
             if event.key == pg.K_RETURN:
@@ -139,9 +142,7 @@ class CollisionEngine(GameObject):
             hits = pg.sprite.spritecollide(player, self.scene.doors, False)
             doorsClosed = [d for d in self.scene.doors if d.isClosed]
             if hits and not doorsClosed:
-                self.messageScene("collision_engine",
-                                    "transition",
-                                    self.scene.levelNum + 1)
+                self.messageScene("transition", self.scene.levelNum + 1)
 
     def resolveSpikeCollisions(self):
         """
@@ -151,7 +152,7 @@ class CollisionEngine(GameObject):
 
             hits = pg.sprite.spritecollide(player, self.scene.spikes, False)
             if hits:
-                self.messageScene("collision_engine", "death", player.num)
+                self.messageScene("death", player.num)
 
     def resolveBossCollisions(self):
         """
@@ -161,7 +162,7 @@ class CollisionEngine(GameObject):
 
             hits = pg.sprite.spritecollide(player, self.scene.bosses, False)
             if hits:
-                events.messageScene("collision_engine", "death", player.num)
+                self.messageScene("death", player.num)
 
     def resolveBoundaryCollision(self):
         """
@@ -171,7 +172,7 @@ class CollisionEngine(GameObject):
 
         for player in self.scene.players:
             if not pg.Rect.contains(boundary, player):
-                events.messageScene("collision_engine", "death", player.num)
+                self.messageScene("death", player.num)
 
     def _resolveBasicCollision(self, moving, group):
         """

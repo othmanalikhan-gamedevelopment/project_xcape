@@ -96,7 +96,7 @@ class SinglePlayer(GameObject):
             if event.key == pg.K_RETURN:
                 self.camera.duration = 0
 
-        if event.type == self.MENU_EVENT:
+        if event.type == self.SCENE_EVENT:
             if event.category == "transition":
                 try:
                     self._loadScene(self.nameToScene[event.data])
@@ -234,7 +234,7 @@ class MultiPlayer(GameObject):
                 else:
                     self.camera.follow(p1)
 
-        if event.type == self.MENU_EVENT:
+        if event.type == self.SCENE_EVENT:
             if event.category == "transition":
                 try:
                     self._loadScene(self.nameToScene[event.data])

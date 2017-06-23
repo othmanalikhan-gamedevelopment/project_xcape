@@ -24,7 +24,6 @@ class BaseMenu(GameObject):
         """
         self.screen = screen
         self.rect = pg.Rect(0, 0, 0, 0)
-        self.animationState = "idle"
 
     def handleEvent(self, event):
         raise NotImplementedError
@@ -32,7 +31,7 @@ class BaseMenu(GameObject):
     def update(self):
         raise NotImplementedError
 
-    def draw(self):
+    def draw(self, camera=None):
         raise NotImplementedError
 
 
@@ -78,8 +77,8 @@ class SplashMenu(BaseMenu):
         else:
             self.messageMenu("transition", "main_menu")
 
-    def draw(self):
-        self.render.draw()
+    def draw(self, camera=None):
+        self.render.draw(camera)
         self.effect.draw()
 
 
@@ -175,8 +174,8 @@ class MainMenu(BaseMenu):
         self.title.update()
         self.arrow.update()
 
-    def draw(self):
-        self.render.draw()
+    def draw(self, camera=None):
+        self.render.draw(camera)
         self.title.draw()
         self.option1.draw()
         self.option2.draw()
@@ -283,8 +282,8 @@ class OptionsMenu(BaseMenu):
         if self.effect.isComplete:
             self.messageMenu("transition", "main_menu")
 
-    def draw(self):
-        self.render.draw()
+    def draw(self, camera=None):
+        self.render.draw(camera)
         self.backgroundSetting.draw()
         self.fullscreenSetting.draw()
         self.escapeImage.draw()
@@ -362,7 +361,6 @@ class GameOverMenu(BaseMenu):
         self.enterText.draw()
 
 
-# TODO: Refactor
 class WinMenu(BaseMenu):
     """
     The win menu of the game.
@@ -370,11 +368,7 @@ class WinMenu(BaseMenu):
 
     def __init__(self, screen):
         super().__init__(screen)
-
-        self.image = MENU_RESOURCES["screens"]["fade.png"]
-        self.rect = pg.Rect(0, 0, 0, 0)
-        self.rect.size = self.image.get_size()
-
+        self.screen = screen
         self.fontSize = 18
         self.fontColour = "white"
         self.x = 150
@@ -387,14 +381,31 @@ class WinMenu(BaseMenu):
                                    self.y,
                                    self.screen)
 
+        image = MENU_RESOURCES["screens"]["fade"][0]
+        self.render = RenderComponent(self)
+        self.render.add("idle", image)
+        self.render.state = "idle"
+
+        self.audio = AudioComponent(self, enableAutoPlay=False)
+        self.audio.add("win", SFX_RESOURCES["scene_win"])
+        self.audio.state = "win"
+
+    def __str__(self):
+        return "win_menu"
+
     def handleEvent(self, event):
         if event.type == pg.KEYDOWN:
             if event.key == pg.K_RETURN:
-                events.messageMenu("game_over_menu", "transition", "main_menu")
-                events.messageScene("game_over_menu", "no_mode")
+                self.messageMenu("transition", "main_menu")
+                self.messageScene("no_mode")
 
-    def draw(self):
-        self.screen.blit(self.image, self.rect)
+    def update(self):
+        self.render.update()
+        self.enterText.update()
+        self.audio.play("win")
+
+    def draw(self, camera=None):
+        self.render.draw(camera)
         self.enterText.draw()
 
 
@@ -446,8 +457,7 @@ class FadeEffect(BaseMenu):
     """
 
     def __init__(self, screen):
-        self.screen = screen
-        self.rect = pg.Rect(0, 0, 0, 0)
+        super().__init__(screen)
         self.transparentValue = 255
         self.isComplete = False
 
@@ -484,8 +494,8 @@ class FadeEffect(BaseMenu):
             if self.time > self.timeEndDarken:
                 self.isComplete = True
 
-    def draw(self):
-        self.render.draw()
+    def draw(self, camera=None):
+        self.render.draw(camera)
 
     def lightenScreen(self):
         """

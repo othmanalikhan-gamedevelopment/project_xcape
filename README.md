@@ -40,3 +40,15 @@ Switch
 # TODO:
 # Refactor any remaining self.animation
 https://www.naturalreaders.com
+
+
+
+​- Translating boss dialogue
+- Translating coop scene dialogue
+- Improving the quality of the cutscenes​
+​- Added a proper background for CoopScene03
+
+
+- Adding sound effects
+- Adding Boss level for solo​
+
