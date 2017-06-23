@@ -47,7 +47,7 @@ class SceneEngine(GameObject):
         if self.mode:
             self.mode.update()
 
-    def draw(self):
+    def draw(self, camera=None):
         if self.mode:
             self.mode.draw()
 
@@ -67,7 +67,7 @@ class SinglePlayer(GameObject):
         self.pause = False
 
         self.maxLives = 5
-        self.lives = 5
+        self.lives = 1
         self._loadUI(self.maxLives, self.lives)
 
         self.nameToScene = \
@@ -266,7 +266,7 @@ class MultiPlayer(GameObject):
             self.collisionEngine.update()
             self.camera.update()
 
-    def draw(self):
+    def draw(self, camera=None):
         if self.scene:
             self.scene.draw(self.camera)
 

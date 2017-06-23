@@ -103,7 +103,7 @@ class OfficeCutscene(BaseCutscene):
         self.render.update()
 
     def draw(self, camera=None):
-        self.render.draw()
+        self.render.draw(camera)
         self.dialogue.draw()
 
     def _messageNextScene(self):
@@ -199,7 +199,7 @@ class TelephoneCutscene(BaseCutscene):
         self.render.update()
 
     def draw(self, camera=None):
-        self.render.draw()
+        self.render.draw(camera)
         self.dialogue.draw()
 
 
@@ -274,7 +274,7 @@ class JailCutscene(BaseCutscene):
         self.render.update()
 
     def draw(self, camera=None):
-        self.render.draw()
+        self.render.draw(camera)
         self.dialogue.draw()
 
     def _messageStart(self):

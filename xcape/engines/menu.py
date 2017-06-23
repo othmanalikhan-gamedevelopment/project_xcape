@@ -29,7 +29,7 @@ class MenuEngine(GameObject):
                 "splash_menu": menus.SplashMenu,
                 "main_menu": menus.MainMenu,
                 "options_menu": menus.OptionsMenu,
-                "game_over_menu": menus.GameOverMenu,
+                "game_over_menu": menus.LoseMenu,
                 "pause_menu": menus.PauseMenu,
                 "solo_ui_menu": menus.SoloUIMenu,
                 "coop_ui_menu": menus.CoopUIMenu,
@@ -56,6 +56,6 @@ class MenuEngine(GameObject):
         if self.menu:
             self.menu.update()
 
-    def draw(self):
+    def draw(self, camera=None):
         if self.menu:
             self.menu.draw()

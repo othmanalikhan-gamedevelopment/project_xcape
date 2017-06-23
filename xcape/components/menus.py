@@ -322,13 +322,13 @@ class DeathMenu(BaseMenu):
             self.screen.blit(self.image, self.rect)
             self.effect.update()
 
-    def draw(self):
+    def draw(self, camera=None):
         self.screen.blit(self.image, self.rect)
         self.effect.draw()
 
 
 # TODO: Refactor
-class GameOverMenu(BaseMenu):
+class LoseMenu(BaseMenu):
     """
     The game over menu of the game.
     """
@@ -336,7 +336,7 @@ class GameOverMenu(BaseMenu):
     def __init__(self, screen):
         super().__init__(screen)
 
-        self.image = MENU_RESOURCES["screens"]["game_over.png"]
+        self.image = MENU_RESOURCES["screens"]["lose"][0]
         self.rect = pg.Rect(0, 0, 0, 0)
         self.rect.size = self.image.get_size()
 
@@ -358,7 +358,7 @@ class GameOverMenu(BaseMenu):
                 events.messageMenu("game_over_menu", "transition", "splash_menu")
                 events.messageScene("game_over_menu", "no_mode")
 
-    def draw(self):
+    def draw(self, camera=None):
         self.screen.blit(self.image, self.rect)
         self.enterText.draw()
 
@@ -392,6 +392,7 @@ class WinMenu(BaseMenu):
                                     enableAutoPlay=False,
                                     enableRepeat=True)
         self.audio.add("win", SFX_RESOURCES["scene_win"])
+        self.audio.state = "win"
 
     def __str__(self):
         return "win_menu"
@@ -404,15 +405,14 @@ class WinMenu(BaseMenu):
 
     def update(self):
         self.render.update()
+        self.audio.update()
         self.enterText.update()
-        self.audio.state = "win"
 
     def draw(self, camera=None):
         self.render.draw(camera)
         self.enterText.draw()
 
 
-# TODO: Refactor
 class PauseMenu(BaseMenu):
     """
     The pause menu of the game.
@@ -420,14 +420,8 @@ class PauseMenu(BaseMenu):
 
     def __init__(self, screen):
         super().__init__(screen)
-        self.rect = pg.Rect(0, 0, 0, 0)
-
-        self.image = MENU_RESOURCES["screens"]["fade.png"]
-        self.rect = pg.Rect(0, 0, 0, 0)
-        self.rect.size = self.image.get_size()
-
-        self.fontSize = 40
-        self.fontColour = "white"
+        self.fontSize = 50
+        self.fontColour = "orange"
         self.x = 270
         self.y = 225
 
@@ -439,16 +433,30 @@ class PauseMenu(BaseMenu):
                                    self.screen,
                                    isItalic=True)
 
+        image = MENU_RESOURCES["screens"]["fade"][0]
+        self.render = RenderComponent(self)
+        self.render.add("background", image)
+        self.render.state = "background"
+
+        self.audio = AudioComponent(self, enableAutoPlay=False)
+        self.audio.add("pause", SFX_RESOURCES["menu_pause"])
+        self.audio.state = "pause"
+
+    def __str__(self):
+        return "pause_menu"
+
     def handleEvent(self, event):
         if event.type == pg.KEYDOWN:
-            if event.key == pg.K_RETURN:
-                events.messageMenu("pause_menu", "transition", "blank_menu")
+            if event.key == pg.K_ESCAPE:
+                self.audio.state = "pause"
 
     def update(self):
-        self.screen.blit(self.image, self.rect)
+        self.render.update()
+        self.audio.update()
+        self.pauseText.update()
 
-    def draw(self):
-        self.screen.blit(self.image, self.rect)
+    def draw(self, camera=None):
+        self.render.draw(camera)
         self.pauseText.draw()
 
 
@@ -521,7 +529,6 @@ class FadeEffect(BaseMenu):
         self.render.image.set_alpha(self.transparentValue)
 
 
-# TODO: Refactor
 class SoloUIMenu(BaseMenu):
     """
     The single player UI in a scene.
@@ -535,6 +542,13 @@ class SoloUIMenu(BaseMenu):
         self.y = 50
         self.dx = 30
         self.lives = []
+
+        self.audio = AudioComponent(self,
+                                    enableAutoPlay=False,
+                                    enableRepeat=True)
+        self.audio.add("healthy", SFX_RESOURCES["menu_heartbeat_healthy"])
+        self.audio.add("fast", SFX_RESOURCES["menu_heartbeat_fast"])
+        self.audio.add("danger", SFX_RESOURCES["menu_heartbeat_danger"])
 
     def __str__(self):
         return "solo_ui_menu"
@@ -552,11 +566,19 @@ class SoloUIMenu(BaseMenu):
                 for heart in range(currentHP):
                     self.lives[heart].state = "life"
 
+                if currentHP > 3:
+                    self.audio.state = "healthy"
+                if currentHP > 1:
+                    self.audio.state = "fast"
+                if currentHP == 1:
+                    self.audio.state = "danger"
+
     def update(self):
+        self.audio.update()
         for live in self.lives:
             live.render.update()
 
-    def draw(self):
+    def draw(self, camera=None):
         for live in self.lives:
             live.render.draw()
 
@@ -630,7 +652,7 @@ class CoopUIMenu(BaseMenu):
         [l.animation.update() for l in self.livesP1]
         [l.animation.update() for l in self.livesP2]
 
-    def draw(self):
+    def draw(self, camera=None):
         [l.animation.draw() for l in self.livesP1]
         [l.animation.draw() for l in self.livesP2]
 
@@ -775,7 +797,7 @@ class _Arrow(GameObject):
         self.audio.update()
 
     def draw(self, camera=None):
-        self.render.draw()
+        self.render.draw(camera)
 
     def moveUp(self):
         """

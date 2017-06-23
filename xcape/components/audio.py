@@ -51,8 +51,8 @@ class AudioComponent(GameObject):
                     self.state, self.delay = self.stateToLink[self.state]
                     self.timesPlayed = 0
                 except KeyError:
-                    if not self.enableRepeat:
-                        self.shouldPlay = False
+                    if self.enableRepeat:
+                        self.state = self.state     # Resets state via setter
 
     def add(self, state, sound):
         """

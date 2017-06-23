@@ -269,8 +269,8 @@ class TextLabel(GameObject):
     def update(self):
         self.render.update()
 
-    def draw(self):
-        self.render.draw()
+    def draw(self, camera=None):
+        self.render.draw(camera)
 
 
 class WrappedTextLabel:

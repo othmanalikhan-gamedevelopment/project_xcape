@@ -33,10 +33,8 @@ class PlayerBase(GameObject, pg.sprite.Sprite):
 
         self.physics = PhysicsComponent(self)
         self.render = RenderComponent(self, enableOrientation=True)
-
         self.audio = AudioComponent(self, enableAutoPlay=False)
         self.audio.add("jumping", SFX_RESOURCES["character_jumping"])
-        self.audio.state = "jumping"
 
         self.keybinds = None
 

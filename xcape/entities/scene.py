@@ -141,7 +141,7 @@ class DPlatform(GameObject):
         self.render.update()
 
     def draw(self, camera=None):
-        self.render.draw()
+        self.render.draw(camera)
 
 
 class MPlatform(GameObject):
@@ -236,13 +236,13 @@ class Switch(GameObject):
 
         self.audio = AudioComponent(self, enableAutoPlay=False)
         self.audio.add("click", SFX_RESOURCES["scene_switch"])
-        self.audio.state = "click"
 
     def __str__(self):
         return "switch " + str(self.num)
 
     def update(self):
         self.render.update()
+        self.audio.update()
 
     def draw(self, camera=None):
         self.render.draw(camera)
@@ -283,7 +283,6 @@ class Door(GameObject):
 
         self.audio = AudioComponent(self, enableAutoPlay=False)
         self.audio.add("open", SFX_RESOURCES["scene_door"])
-        self.audio.state = "open"
 
     def __str__(self):
         return "door"
@@ -305,6 +304,7 @@ class Door(GameObject):
 
     def update(self):
         self.render.update()
+        self.audio.update()
 
     def draw(self, camera=None):
         self.render.draw(camera)

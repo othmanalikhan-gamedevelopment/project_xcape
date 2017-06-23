@@ -49,6 +49,6 @@ class CutSceneEngine(GameObject):
         if self.cutscene:
             self.cutscene.update()
 
-    def draw(self):
+    def draw(self, camera=None):
         if self.cutscene:
             self.cutscene.draw()
