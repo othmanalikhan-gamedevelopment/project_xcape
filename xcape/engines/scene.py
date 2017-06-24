@@ -4,7 +4,8 @@ The scene engine of the game.
 import pygame as pg
 
 import xcape.common.settings as settings
-import xcape.components.scenes as scenes
+import xcape.components.coop as coop
+import xcape.components.solo as solo
 from xcape.common.object import GameObject
 from xcape.components.camera import SimpleCamera
 from xcape.engines.collision import CollisionEngine
@@ -71,17 +72,17 @@ class SinglePlayer(GameObject):
 
         self.nameToScene = \
             {
-                "scene_01": scenes.SoloScene01,
-                "scene_02": scenes.SoloScene02,
-                "scene_03": scenes.SoloScene03,
-                "scene_04": scenes.SoloScene04,
+                "scene_01": solo.SoloScene01,
+                "scene_02": solo.SoloScene02,
+                "scene_03": solo.SoloScene03,
+                "scene_04": solo.SoloScene04,
             }
         self.numToScene = \
             {
-                1: scenes.SoloScene01,
-                2: scenes.SoloScene02,
-                3: scenes.SoloScene03,
-                4: scenes.SoloScene04,
+                1: solo.SoloScene01,
+                2: solo.SoloScene02,
+                3: solo.SoloScene03,
+                4: solo.SoloScene04,
             }
 
     def __str__(self):
@@ -216,15 +217,15 @@ class MultiPlayer(GameObject):
 
         self.nameToScene = \
             {
-                "scene_01": scenes.CoopScene01,
-                "scene_02": scenes.CoopScene02,
-                "scene_03": scenes.CoopScene03,
+                "scene_01": coop.CoopScene01,
+                "scene_02": coop.CoopScene02,
+                "scene_03": coop.CoopScene03,
             }
         self.numToScene = \
             {
-                1: scenes.CoopScene01,
-                2: scenes.CoopScene02,
-                3: scenes.CoopScene03,
+                1: coop.CoopScene01,
+                2: coop.CoopScene02,
+                3: coop.CoopScene03,
             }
 
     def handleEvent(self, event):

@@ -265,16 +265,16 @@ class Door(GameObject):
     A door entity that the player can enter.
     """
 
-    def __init__(self, x, y, doorNum, screen):
+    def __init__(self, x, y, num, screen):
         """
         :param x: Integer, the x-position of the wall.
         :param y: Integer, the y-position of the wall.
-        :param doorNum: Integer, identifying the number of the button.
+        :param num: Integer, identifying the number of the button.
         :param screen: pygame.Surface, the screen to draw the wall onto.
         """
         self.screen = screen
-        self.doorNum = doorNum
-        self.switchesWaiting = None
+        self.num = num
+        self.switchesWaiting = []
         self.isClosed = True
 
         door = SCENE_RESOURCES["doors"]
@@ -288,7 +288,7 @@ class Door(GameObject):
         self.audio.add("open", SFX_RESOURCES["scene_door"])
 
     def __str__(self):
-        return "door"
+        return "door_{}".format(self.num)
 
     def handleEvent(self, event):
         if event.type == self.SCENE_EVENT:
@@ -300,10 +300,10 @@ class Door(GameObject):
                     if not self.switchesWaiting:
                         self.openDoor()
                 except ValueError:
-                    print("{} is safely ignoring switch {}"
+                    print("'{}' is safely ignoring switch number {}"
                           .format(self.__str__(), switchNum))
                 except AttributeError:
-                    print("{} is not a valid switch number!".format(switchNum))
+                    print("'{}' is not a valid switch number!".format(switchNum))
 
     def update(self):
         self.render.update()
@@ -319,7 +319,7 @@ class Door(GameObject):
         self.isClosed = False
         self.render.state = "open"
         self.audio.state = "open"
-        self.messageScene("door", (self.doorNum, self.isClosed))
+        self.messageScene("door", (self.num, self.isClosed))
 
 
 class Spike(GameObject):

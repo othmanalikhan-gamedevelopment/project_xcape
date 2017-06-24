@@ -9,6 +9,8 @@ from xcape.components.physics import PhysicsComponent
 
 
 # TODO: Refactor
+# TODO: Speed up camera over long distances
+# TODO: Improve lock on delay for super long levels
 class SimpleCamera(GameObject):
     """
     A camera that follows around an entity in a scene.
