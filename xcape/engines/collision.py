@@ -49,6 +49,7 @@ class CollisionEngine(GameObject):
         self.resolveBossCollisions()
         self.resolveBoundaryCollision()
 
+    # TODO: Refactor physics code
     def resolvePlayerCollisions(self, explosionSpeed):
         """
         Resolves any collisions between players.

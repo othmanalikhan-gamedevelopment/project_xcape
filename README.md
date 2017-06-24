@@ -38,9 +38,7 @@ Switch
 
 
 # TODO:
-# Refactor any remaining self.animation
-https://www.naturalreaders.com
-
+- https://www.naturalreaders.com
 
 
 ​- Translating boss dialogue

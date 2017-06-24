@@ -298,6 +298,7 @@ class MultiPlayer(GameObject):
         self.collisionEngine = CollisionEngine(self.scene)
 
         self.camera = SimpleCamera(settings.WIDTH, settings.HEIGHT)
+        self.camera.physics.maxSpeed = 30
         self.camera.follow(self.scene.players[0])
         self.camera.followBriefly(self.scene.doors[-1])
 
