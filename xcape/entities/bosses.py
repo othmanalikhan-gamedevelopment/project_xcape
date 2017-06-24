@@ -345,8 +345,8 @@ class PigBoss(GameObject, pg.sprite.Sprite):
 
     def _initialiseAudio(self):
         self.audio = AudioComponent(self,
-                                    enableAutoPlay=False,
-                                    enableRepeat=False)
+                                    isAutoPlay=False,
+                                    isRepeat=False)
         self.audio.add("machine", SFX_RESOURCES["pig_machine"])
         self.audio.add("attack", SFX_RESOURCES["pig_attack"])
 

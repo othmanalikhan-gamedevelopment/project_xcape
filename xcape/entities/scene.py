@@ -237,7 +237,7 @@ class Switch(GameObject):
         self.render.state = "on"
         self.rect = pg.Rect(x, y, 0, 0)
 
-        self.audio = AudioComponent(self, enableAutoPlay=False)
+        self.audio = AudioComponent(self, isAutoPlay=False)
         self.audio.add("click", SFX_RESOURCES["scene_switch"])
 
     def __str__(self):
@@ -284,7 +284,7 @@ class Door(GameObject):
         self.render.state = "closed"
         self.rect = pg.Rect(x, y, 0, 0)
 
-        self.audio = AudioComponent(self, enableAutoPlay=False)
+        self.audio = AudioComponent(self, isAutoPlay=False)
         self.audio.add("open", SFX_RESOURCES["scene_door"])
 
     def __str__(self):

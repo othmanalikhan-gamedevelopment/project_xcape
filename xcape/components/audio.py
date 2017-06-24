@@ -12,15 +12,15 @@ class AudioComponent(GameObject):
     Attaches to a game object to allow playing of audio.
     """
 
-    def __init__(self, gameObject, enableAutoPlay=True, enableRepeat=False):
+    def __init__(self, gameObject, isAutoPlay=True, isRepeat=False):
         """
         :param gameObject: GameObject instance, the instance to attach to.
-        :param enableAutoPlay: Boolean, whether to play audio immediately.
-        :param enableRepeat: Boolean, whether to keep repeating audio.
+        :param isAutoPlay: Boolean, whether to play audio immediately.
+        :param isRepeat: Boolean, whether to keep repeating audio.
         """
         self.gameObject = gameObject
-        self.enableRepeat = enableRepeat
-        self.enableAutoPlay = enableAutoPlay
+        self.isRepeat = isRepeat
+        self.isAutoPlay = isAutoPlay
 
         self.stateToSound = {}
         self.stateToLink = {}
@@ -34,7 +34,7 @@ class AudioComponent(GameObject):
         self.elapsed = 0
         self.delay = 0
 
-        if self.enableAutoPlay:
+        if self.isAutoPlay:
             self.shouldPlay = True
 
         self._state = None
@@ -51,7 +51,7 @@ class AudioComponent(GameObject):
                     self.state, self.delay = self.stateToLink[self.state]
                     self.timesPlayed = 0
                 except KeyError:
-                    if self.enableRepeat:
+                    if self.isRepeat:
                         self.state = self.state     # Resets state via setter
 
     def add(self, state, sound):

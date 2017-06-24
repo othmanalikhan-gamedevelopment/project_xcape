@@ -27,6 +27,7 @@ class MenuEngine(GameObject):
             {
                 "blank_menu": None,
                 "splash_menu": menus.SplashMenu,
+                "intro_menu": menus.IntroMenu,
                 "main_menu": menus.MainMenu,
                 "options_menu": menus.OptionsMenu,
                 "lose_menu": menus.LoseMenu,

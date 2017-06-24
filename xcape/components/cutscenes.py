@@ -52,7 +52,7 @@ class OfficeCutscene(BaseCutscene):
         self.render.add("office_dog", office["dog"], 1500)
         self.render.add("office_cat", office["cat"], 1500)
 
-        self.audio = AudioComponent(self, enableAutoPlay=False)
+        self.audio = AudioComponent(self, isAutoPlay=False)
         # self.audio.add("meow", SFX_RESOURCES["meow_1"])
 
         self.dialogue = Dialogue(self.screen)

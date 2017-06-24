@@ -5,7 +5,7 @@ Responsible for containing all the menus in game.
 import pygame as pg
 
 import xcape.common.settings as settings
-from xcape.common.loader import MENU_RESOURCES, SFX_RESOURCES
+from xcape.common.loader import MENU_RESOURCES, ICON_RESOURCES, SFX_RESOURCES
 from xcape.common.object import GameObject
 from xcape.components.audio import AudioComponent
 from xcape.components.render import (
@@ -66,7 +66,7 @@ class SplashMenu(BaseMenu):
     def handleEvent(self, event):
         if event.type == pg.KEYDOWN:
             if event.key == pg.K_RETURN:
-                self.messageMenu("transition", "main_menu")
+                self._sendMessage()
 
     def update(self):
         self.audio.update()
@@ -75,11 +75,76 @@ class SplashMenu(BaseMenu):
         if not self.effect.isComplete:
             self.effect.update()
         else:
-            self.messageMenu("transition", "main_menu")
+            self._sendMessage()
 
     def draw(self, camera=None):
         self.render.draw(camera)
         self.effect.draw()
+
+    def _sendMessage(self):
+        """
+        Sends a message to start the next menu.
+        """
+        self.messageMenu("transition", "intro_menu")
+        pg.mixer.stop()
+
+
+class IntroMenu(BaseMenu):
+    """
+    The intro screen of the game after the splash screen.
+    """
+
+    def __init__(self, screen):
+        super().__init__(screen)
+        self.effect = FadeEffect(screen)
+        self.effect.timeEndDarken += 1.0
+
+        ICONS = ICON_RESOURCES["assets"]
+        self.render = RenderComponent(self)
+        self.render.add("red", ICONS["red"][0])
+        self.render.add("black", ICONS["black"][0])
+        self.render.state = "black"
+
+        w, h = ICONS["red"][0].get_size()
+        offsetX = (settings.WIDTH - w)/2
+        offsetY = (settings.HEIGHT - h)/2
+        self.rect.center = (offsetX, offsetY)
+
+        self.audio = AudioComponent(self, isRepeat=True, isAutoPlay=True)
+        self.audio.add("intro_1", SFX_RESOURCES["menu_intro_1"])
+        self.audio.add("intro_2", SFX_RESOURCES["menu_intro_2"])
+        self.audio.state = "intro_1"
+
+    def __str__(self):
+        return "intro_menu"
+
+    def handleEvent(self, event):
+        if event.type == pg.KEYDOWN:
+            if event.key == pg.K_RETURN:
+                self._sendMessage()
+
+    def update(self):
+        self.audio.update()
+        self.render.update()
+
+        if not self.effect.isComplete:
+            self.effect.update()
+            if self.effect.time > self.effect.timeStartDarken + 2.0:
+                self.render.state = "red"
+                self.audio.state = "intro_2"
+        else:
+            self._sendMessage()
+
+    def draw(self, camera=None):
+        self.render.draw(camera)
+        self.effect.draw()
+
+    def _sendMessage(self):
+        """
+        Sends a message to start the next menu.
+        """
+        self.messageMenu("transition", "main_menu")
+        pg.mixer.stop()
 
 
 class MainMenu(BaseMenu):
@@ -137,7 +202,7 @@ class MainMenu(BaseMenu):
         self.render.add("background", background)
         self.render.state = "background"
 
-        self.audio = AudioComponent(self, enableAutoPlay=False)
+        self.audio = AudioComponent(self, isAutoPlay=False)
         self.audio.add("enter", SFX_RESOURCES["menu_enter"])
 
     def __str__(self):
@@ -224,7 +289,7 @@ class OptionsMenu(BaseMenu):
         self.render.add("background", background)
         self.render.state = "background"
 
-        self.audio = AudioComponent(self, enableAutoPlay=False)
+        self.audio = AudioComponent(self, isAutoPlay=False)
         self.audio.add("exit", SFX_RESOURCES["menu_exit"])
 
     def __str__(self):
@@ -316,8 +381,8 @@ class DeathMenu(BaseMenu):
         self.render.state = "idle"
 
         self.audio = AudioComponent(self,
-                                    enableAutoPlay=True,
-                                    enableRepeat=False)
+                                    isAutoPlay=True,
+                                    isRepeat=False)
         self.audio.add("death", SFX_RESOURCES["menu_death"])
         self.audio.state = "death"
 
@@ -364,7 +429,7 @@ class LoseMenu(BaseMenu):
         self.render.add("idle", image)
         self.render.state = "idle"
 
-        self.audio = AudioComponent(self, enableAutoPlay=False)
+        self.audio = AudioComponent(self, isAutoPlay=False)
         self.audio.add("meow", SFX_RESOURCES["menu_lose"])
         self.audio.state = "meow"
 
@@ -413,8 +478,8 @@ class WinMenu(BaseMenu):
         self.render.state = "idle"
 
         self.audio = AudioComponent(self,
-                                    enableAutoPlay=False,
-                                    enableRepeat=True)
+                                    isAutoPlay=False,
+                                    isRepeat=True)
         self.audio.add("win", SFX_RESOURCES["scene_win"])
         self.audio.state = "win"
 
@@ -462,7 +527,7 @@ class PauseMenu(BaseMenu):
         self.render.add("background", image)
         self.render.state = "background"
 
-        self.audio = AudioComponent(self, enableAutoPlay=False)
+        self.audio = AudioComponent(self, isAutoPlay=False)
         self.audio.add("pause", SFX_RESOURCES["menu_pause"])
         self.audio.state = "pause"
 
@@ -570,7 +635,7 @@ class SoloUIMenu(BaseMenu):
         self._maxHP = None
         self._lives = []
 
-        self._audio = AudioComponent(self, enableAutoPlay=False, enableRepeat=True)
+        self._audio = AudioComponent(self, isAutoPlay=False, isRepeat=True)
         self._audio.add("healthy", SFX_RESOURCES["menu_heartbeat_healthy"])
         self._audio.add("injured", SFX_RESOURCES["menu_heartbeat_injured"])
         self._audio.add("danger", SFX_RESOURCES["menu_heartbeat_danger"])
@@ -669,7 +734,7 @@ class CoopUIMenu(BaseMenu):
         self._p2MaxHP = None
         self._p2Lives = []
 
-        self._audio = AudioComponent(self, enableAutoPlay=False, enableRepeat=True)
+        self._audio = AudioComponent(self, isAutoPlay=False, isRepeat=True)
         self._audio.add("healthy", SFX_RESOURCES["menu_heartbeat_healthy"])
         self._audio.add("injured", SFX_RESOURCES["menu_heartbeat_injured"])
         self._audio.add("danger", SFX_RESOURCES["menu_heartbeat_danger"])
@@ -796,7 +861,7 @@ class _SettingsLabel(GameObject):
             for choice in settingChoices
         ]
 
-        self.audio = AudioComponent(self, enableAutoPlay=False)
+        self.audio = AudioComponent(self, isAutoPlay=False)
         self.audio.add("switch", SFX_RESOURCES["menu_option_switch"])
         self.audio.state = "switch"
 
@@ -859,7 +924,7 @@ class _Arrow(GameObject):
         self.render.add("spin", MENU_RESOURCES["assets"]["coin"], 350)
         self.render.state = "spin"
 
-        self.audio = AudioComponent(self, enableAutoPlay=False)
+        self.audio = AudioComponent(self, isAutoPlay=False)
         self.audio.add("move", SFX_RESOURCES["menu_arrow"])
         self.audio.state = "move"
 

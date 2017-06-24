@@ -20,7 +20,7 @@ class CollisionEngine(GameObject):
         :param scene: Scene Class, representing a level.
         """
         self.scene = scene
-        self.audio = AudioComponent(self, enableAutoPlay=False)
+        self.audio = AudioComponent(self, isAutoPlay=False)
         self.audio.add("explosion", SFX_RESOURCES["cat_coop_jump"])
 
     def __str__(self):
