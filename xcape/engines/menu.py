@@ -29,7 +29,7 @@ class MenuEngine(GameObject):
                 "splash_menu": menus.SplashMenu,
                 "main_menu": menus.MainMenu,
                 "options_menu": menus.OptionsMenu,
-                "game_over_menu": menus.LoseMenu,
+                "lose_menu": menus.LoseMenu,
                 "pause_menu": menus.PauseMenu,
                 "solo_ui_menu": menus.SoloUIMenu,
                 "coop_ui_menu": menus.CoopUIMenu,

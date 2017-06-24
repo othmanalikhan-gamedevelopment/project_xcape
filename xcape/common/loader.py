@@ -100,13 +100,15 @@ def _loadImage(path, alpha=True):
 
 
 _SFX_PATH = os.path.join("sfx")
+_ICONS_PATH = os.path.join("images", "icons")
 _MENUS_PATH = os.path.join("images", "menus")
 _SCENES_PATH = os.path.join("images", "scenes")
 _CUTSCENES_PATH = os.path.join("images", "cutscenes")
 _CHARACTERS_PATH = os.path.join("images", "characters")
 
+SFX_RESOURCES = loadSound(_SFX_PATH)
+ICON_RESOURCES = loadAnimations(_ICONS_PATH)
 MENU_RESOURCES = loadAnimations(_MENUS_PATH)
 SCENE_RESOURCES = loadAnimations(_SCENES_PATH)
 CUTSCENE_RESOURCES = loadAnimations(_CUTSCENES_PATH)
 CHARACTER_RESOURCES = loadAnimations(_CHARACTERS_PATH)
-SFX_RESOURCES = loadSound(_SFX_PATH)

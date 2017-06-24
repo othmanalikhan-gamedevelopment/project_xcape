@@ -14,7 +14,8 @@ pg.init()
 pg.mixer.pre_init(44100, 16, 2, 64)
 pg.display.set_caption(settings.TITLE)
 pg.display.set_mode((settings.WIDTH, settings.HEIGHT))
-
+from xcape.common.loader import ICON_RESOURCES
+pg.display.set_icon(ICON_RESOURCES["assets"]["red"][0])
 
 from xcape.common.object import GameObject
 from xcape.engines.cutscene import CutSceneEngine
@@ -41,7 +42,7 @@ class CoreEngine(GameObject):
         self.cutsceneEngine = CutSceneEngine(self.screen)
 
         self.messageScene("start_game", "solo")
-        self.messageScene("transition", "scene_01")
+        self.messageScene("transition", "scene_04")
         # self.messageMenu("transition", "splash_menu")
         # self.messageCutScene("transition", "office_cutscene")
 

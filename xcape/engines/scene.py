@@ -67,7 +67,7 @@ class SinglePlayer(GameObject):
         self.pause = False
 
         self.maxLives = 5
-        self.lives = 1
+        self.lives = 5
         self._loadUI(self.maxLives, self.lives)
 
         self.nameToScene = \
@@ -75,12 +75,14 @@ class SinglePlayer(GameObject):
                 "scene_01": scenes.SoloScene01,
                 "scene_02": scenes.SoloScene02,
                 "scene_03": scenes.SoloScene03,
+                "scene_04": scenes.SoloScene04,
             }
         self.numToScene = \
             {
                 1: scenes.SoloScene01,
                 2: scenes.SoloScene02,
                 3: scenes.SoloScene03,
+                4: scenes.SoloScene04,
             }
 
     def __str__(self):
@@ -115,8 +117,9 @@ class SinglePlayer(GameObject):
             if event.category == "death":
                 self.lives -= 1
                 if self.lives == 0:
-                    self._showGameOver()
+                    self._showLoseMenu()
                 else:
+                    pg.mixer.stop()
                     self.pause = True
                     self.messageMenu("transition", "death_menu")
 
@@ -167,12 +170,12 @@ class SinglePlayer(GameObject):
         levelNum = self.scene.levelNum
         self._loadScene(self.numToScene[levelNum])
 
-    def _showGameOver(self):
+    def _showLoseMenu(self):
         """
         Pauses the game and triggers the game over screen.
         """
         self.pause = True
-        self.messageMenu("transition", "game_over_menu")
+        self.messageMenu("transition", "lose_menu")
 
     def _togglePauseMenu(self):
         """
@@ -312,7 +315,7 @@ class MultiPlayer(GameObject):
         Pauses the game and triggers the game over screen.
         """
         self.pause = True
-        self.messageMenu("transition", "game_over_menu")
+        self.messageMenu("transition", "lose_menu")
 
     def _togglePauseMenu(self):
         """

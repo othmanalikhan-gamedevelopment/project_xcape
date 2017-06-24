@@ -124,9 +124,9 @@ class DPlatform(GameObject):
         """
         self.screen = screen
 
-        left = SCENE_RESOURCES["platforms"]["platform_1"]
-        mid = SCENE_RESOURCES["platforms"]["platform_2"]
-        right = SCENE_RESOURCES["platforms"]["platform_3"]
+        left = SCENE_RESOURCES["platforms"]["platform_1"][0]
+        mid = SCENE_RESOURCES["platforms"]["platform_2"][0]
+        right = SCENE_RESOURCES["platforms"]["platform_3"][0]
         image = buildParts(blocks, "h", [left, mid, right])
 
         self.render = RenderComponent(self)

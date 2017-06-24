@@ -8,7 +8,7 @@ import xcape.common.settings as settings
 import xcape.components.dialogue as dialogue
 from xcape.common.loader import SCENE_RESOURCES
 from xcape.common.object import GameObject
-from xcape.components.render import Dialogue
+from xcape.components.render import RenderComponent, Dialogue
 from xcape.entities.bosses import PigBoss
 from xcape.entities.players import PlayerOne, PlayerTwo
 from xcape.entities.scene import (
@@ -16,7 +16,6 @@ from xcape.entities.scene import (
 )
 
 
-# TODO: Refactor
 class BaseScene(GameObject):
     """
     The base scene for any scene.
@@ -48,12 +47,7 @@ class BaseScene(GameObject):
     def update(self):
         raise NotImplementedError
 
-    def draw(self, camera):
-        """
-        Draws the scene on the screen, shifted by the camera.
-
-        :param camera: Camera instance, shifts the position of the drawn animation.
-        """
+    def draw(self, camera=None):
         raise NotImplementedError
 
     def addPlayers(self):
@@ -137,18 +131,11 @@ class BaseScene(GameObject):
         raise NotImplementedError
 
 
-# TODO: Refactor
 class SoloScene01(BaseScene):
-    """
-    The first single player scene of the game.
-    """
 
     def __init__(self, screen):
         super().__init__(screen)
         self.levelNum = 1
-        self.image = SCENE_RESOURCES["levels"]["scene_01"][0]
-        self.rect = pg.Rect(0, 0, 0, 0)
-        self.rect.size = self.image.get_size()
 
         self.players = self.addPlayers()
         self.walls = self.addWalls()
@@ -158,6 +145,11 @@ class SoloScene01(BaseScene):
 
         self.elapsed = 0
         self.origin = pg.time.get_ticks()
+
+        image = SCENE_RESOURCES["levels"]["scene_01"][0]
+        self.render = RenderComponent(self)
+        self.render.add("background", image)
+        self.render.state = "background"
 
         self.dialogue = Dialogue(self.screen)
         self.dialogue.add(dialogue.SCENE_SOLO_1, 10, 410, "caption")
@@ -174,6 +166,8 @@ class SoloScene01(BaseScene):
 
     def update(self):
         self.elapsed = pg.time.get_ticks() - self.origin
+        self.render.update()
+        self.dialogue.update()
 
         [w.update() for w in self.walls]
         [d.update() for d in self.doors]
@@ -181,11 +175,9 @@ class SoloScene01(BaseScene):
         [p.update() for p in self.sPlatforms]
         [p.update() for p in self.players]
 
-        self.dialogue.update()
-
-    def draw(self, camera):
+    def draw(self, camera=None):
         self.screen.fill(settings.COLOURS["black_red"])
-        self.screen.blit(self.image, camera.apply(self))
+        self.render.draw(camera)
 
         [w.draw(camera) for w in self.walls]
         [d.draw(camera) for d in self.doors]
@@ -203,37 +195,36 @@ class SoloScene01(BaseScene):
         return player
 
     def addWalls(self):
-        wall = SCENE_RESOURCES["walls"]
+        assets = SCENE_RESOURCES["walls"]
         boundaries = \
         [
-            Wall(0, 10, 8, "v", wall["boundary_left"], self.screen),
-            Wall(19, 478, 4, "h", wall["boundary_bot"], self.screen),
-            Wall(320, 478, 5, "h", wall["boundary_bot"], self.screen),
-            Wall(628, 138, 6, "v", wall["boundary_right"], self.screen),
-            Wall(164, 138, 8, "h", wall["boundary_top"], self.screen),
-            Wall(160, 138, 1, "v", wall["corner_top_left"], self.screen),
-            Wall(160, 10, 2, "v", wall["boundary_right"], self.screen),
-            Wall(628, 138, 1, "v", wall["upper_corner_right"], self.screen),
-            Wall(0, 478, 1, "h", wall["inner_corner_left"], self.screen),
-            Wall(628, 478, 1, "h", wall["inner_corner_right"], self.screen),
-            Wall(240, 478, 1, "h", wall["inner_corner_right"], self.screen),
-            Wall(240, 426, 1, "h", wall["corner_bot_right"], self.screen),
-            Wall(308, 426, 1, "h", wall["corner_bot_left"], self.screen),
-            Wall(320, 478, 1, "h", wall["inner_corner_left"], self.screen)
+            Wall(0, 10, 8, "v", assets["boundary_left"], self.screen),
+            Wall(19, 478, 4, "h", assets["boundary_bot"], self.screen),
+            Wall(320, 478, 5, "h", assets["boundary_bot"], self.screen),
+            Wall(628, 138, 6, "v", assets["boundary_right"], self.screen),
+            Wall(164, 138, 8, "h", assets["boundary_top"], self.screen),
+            Wall(160, 138, 1, "v", assets["corner_top_left"], self.screen),
+            Wall(160, 10, 2, "v", assets["boundary_right"], self.screen),
+            Wall(628, 138, 1, "v", assets["upper_corner_right"], self.screen),
+            Wall(0, 478, 1, "h", assets["inner_corner_left"], self.screen),
+            Wall(628, 478, 1, "h", assets["inner_corner_right"], self.screen),
+            Wall(240, 478, 1, "h", assets["inner_corner_right"], self.screen),
+            Wall(240, 426, 1, "h", assets["corner_bot_right"], self.screen),
+            Wall(308, 426, 1, "h", assets["corner_bot_left"], self.screen),
+            Wall(320, 478, 1, "h", assets["inner_corner_left"], self.screen)
         ]
 
         obstacles = \
         [
-            Wall(48, 418, 1, "h", wall["block_left"], self.screen),
-            Wall(108, 418, 1, "h", wall["block_right"], self.screen),
-            Wall(170, 450, 1, "h", wall["block_small"], self.screen),
+            Wall(48, 418, 1, "h", assets["block_left"], self.screen),
+            Wall(108, 418, 1, "h", assets["block_right"], self.screen),
+            Wall(170, 450, 1, "h", assets["block_small"], self.screen),
         ]
         return boundaries + obstacles
 
     def addSPlatforms(self):
         platforms = \
         [
-            # SPlatform(260, 370, 2, self.screen),
             SPlatform(475, 330, 1, self.screen),
             SPlatform(240, 255, 2, self.screen)
         ]
@@ -254,17 +245,14 @@ class SoloScene01(BaseScene):
         return [door1]
 
 
-# TODO: Refactor
+# TODO: WORKING ! ! !
 class SoloScene02(BaseScene):
-    """
-    The second single player scene of the game.
-    """
 
     def __init__(self, screen):
         super().__init__(screen)
         self.levelNum = 2
 
-        self.image = SCENE_RESOURCES["levels"]["scene_02.png"]
+        self.image = SCENE_RESOURCES["levels"]["scene_02"]
         self.rect = pg.Rect(0, 0, 0, 0)
         self.rect.size = self.image.get_size()
 
@@ -299,7 +287,7 @@ class SoloScene02(BaseScene):
         [p.update() for p in self.mPlatforms]
         [p.update() for p in self.players]
 
-    def draw(self, camera):
+    def draw(self, camera=None):
         self.screen.fill(settings.COLOURS["black_red"])
         self.screen.blit(self.image, camera.apply(self))
 
@@ -323,29 +311,29 @@ class SoloScene02(BaseScene):
 
     def addWalls(self):
         wall = SCENE_RESOURCES["walls"]
-        platWall = [wall["plat_top.png"],
-                    wall["plat_mid.png"],
-                    wall["plat_bot.png"]]
+        platWall = [wall["plat_top"],
+                    wall["plat_mid"],
+                    wall["plat_bot"]]
 
         boundaries = \
         [
-            Wall(0, 50, 8, "v", [wall["boundary_left.png"]], self.screen),
-            Wall(0, 548, 15, "h", [wall["boundary_bot.png"]], self.screen),
-            Wall(0, 548, 1, "h", [wall["inner_corner_left.png"]], self.screen),
-            Wall(952, 50, 8, "v", [wall["boundary_right.png"]], self.screen),
-            Wall(952, 548, 1, "h", [wall["inner_corner_right.png"]], self.screen)
+            Wall(0, 50, 8, "v", [wall["boundary_left"]], self.screen),
+            Wall(0, 548, 15, "h", [wall["boundary_bot"]], self.screen),
+            Wall(0, 548, 1, "h", [wall["inner_corner_left"]], self.screen),
+            Wall(952, 50, 8, "v", [wall["boundary_right"]], self.screen),
+            Wall(952, 548, 1, "h", [wall["inner_corner_right"]], self.screen)
         ]
 
         obstacles = \
         [
-            Wall(210, 300, 1, "h", [wall["block_left.png"]], self.screen),
-            Wall(265, 300, 1, "h", [wall["block_right.png"]], self.screen),
+            Wall(210, 300, 1, "h", [wall["block_left"]], self.screen),
+            Wall(265, 300, 1, "h", [wall["block_right"]], self.screen),
 
-            Wall(435, 490, 1, "h", [wall["block_left.png"]], self.screen),
-            Wall(490, 490, 1, "h", [wall["block_right.png"]], self.screen),
+            Wall(435, 490, 1, "h", [wall["block_left"]], self.screen),
+            Wall(490, 490, 1, "h", [wall["block_right"]], self.screen),
 
-            Wall(655, 300, 1, "h", [wall["block_left.png"]], self.screen),
-            Wall(710, 300, 1, "h", [wall["block_right.png"]], self.screen),
+            Wall(655, 300, 1, "h", [wall["block_left"]], self.screen),
+            Wall(710, 300, 1, "h", [wall["block_right"]], self.screen),
 
             Wall(770, 105, 2, "v", platWall, self.screen),
         ]
@@ -361,8 +349,8 @@ class SoloScene02(BaseScene):
         return platforms
 
     def addMPlatforms(self):
-        vImage = SCENE_RESOURCES["platforms"]["moving_vertical.png"]
-        hImage = SCENE_RESOURCES["platforms"]["moving_horizontal.png"]
+        vImage = SCENE_RESOURCES["platforms"]["moving_vertical"]
+        hImage = SCENE_RESOURCES["platforms"]["moving_horizontal"]
 
         platforms = \
         [
@@ -393,8 +381,8 @@ class SoloScene02(BaseScene):
         spike = SCENE_RESOURCES["spikes"]
         spikes = \
         [
-            Spike(325, 525, 5, "h", spike["up.png"], self.screen),
-            Spike(550, 525, 5, "h", spike["up.png"], self.screen),
+            Spike(325, 525, 5, "h", spike["up"], self.screen),
+            Spike(550, 525, 5, "h", spike["up"], self.screen),
         ]
         return spikes
 
@@ -402,22 +390,19 @@ class SoloScene02(BaseScene):
         deco = SCENE_RESOURCES["decorations"]
         decorations = \
         [
-            Decoration(778, 81, deco["skull.png"], self.screen)
+            Decoration(778, 81, deco["skull"], self.screen)
         ]
         return decorations
 
 
 # TODO: Refactor
 class SoloScene03(BaseScene):
-    """
-    The third single player scene of the game.
-    """
 
     def __init__(self, screen):
         super().__init__(screen)
         self.levelNum = 3
 
-        self.image = SCENE_RESOURCES["levels"]["scene_03.png"]
+        self.image = SCENE_RESOURCES["levels"]["scene_03"]
         self.rect = pg.Rect(0, 0, 0, 0)
         self.rect.size = self.image.get_size()
 
@@ -449,7 +434,7 @@ class SoloScene03(BaseScene):
         [p.update() for p in self.mPlatforms]
         [p.update() for p in self.players]
 
-    def draw(self, camera):
+    def draw(self, camera=None):
         self.screen.fill(settings.COLOURS["black_red"])
         self.screen.blit(self.image, camera.apply(self))
 
@@ -473,25 +458,25 @@ class SoloScene03(BaseScene):
         wall = SCENE_RESOURCES["walls"]
         pillar = SCENE_RESOURCES["pillars"]
 
-        pillarWall = [pillar["steel_top.png"],
-                      pillar["steel_mid.png"],
-                      pillar["steel_bot.png"]]
-        platWall = [wall["plat_top.png"],
-                    wall["plat_mid.png"],
-                    wall["plat_bot.png"]]
-        blockWall = [wall["block_left.png"],
-                     wall["block_mid.png"],
-                     wall["block_right.png"]]
+        pillarWall = [pillar["steel_top"],
+                      pillar["steel_mid"],
+                      pillar["steel_bot"]]
+        platWall = [wall["plat_top"],
+                    wall["plat_mid"],
+                    wall["plat_bot"]]
+        blockWall = [wall["block_left"],
+                     wall["block_mid"],
+                     wall["block_right"]]
 
         boundaries = \
             [
-                Wall(739, 0, 5, "h", [wall["boundary_top.png"]], self.screen),
-                Wall(99, 0, 5, "h", [wall["boundary_top.png"]], self.screen),
-                Wall(0, 64, 7, "v", [wall["boundary_left.png"]], self.screen),
-                Wall(1102, 60, 7, "v", [wall["boundary_right.png"]], self.screen),
+                Wall(739, 0, 5, "h", [wall["boundary_top"]], self.screen),
+                Wall(99, 0, 5, "h", [wall["boundary_top"]], self.screen),
+                Wall(0, 64, 7, "v", [wall["boundary_left"]], self.screen),
+                Wall(1102, 60, 7, "v", [wall["boundary_right"]], self.screen),
 
-                Wall(587, 367, 2, "v", [wall["boundary_left.png"]], self.screen),
-                Wall(507, 367, 2, "v", [wall["boundary_right.png"]], self.screen),
+                Wall(587, 367, 2, "v", [wall["boundary_left"]], self.screen),
+                Wall(507, 367, 2, "v", [wall["boundary_right"]], self.screen),
             ]
 
         obstacles = \
@@ -502,9 +487,9 @@ class SoloScene03(BaseScene):
                 Wall(167, 182, 2, "h", blockWall, self.screen),
                 Wall(735, 182, 2, "h", blockWall, self.screen),
 
-                Wall(543, 198, 1, "h", [wall["block_small.png"]], self.screen),
-                Wall(575, 363, 1, "v", [wall["corner_bot_left.png"]], self.screen),
-                Wall(507, 363, 1, "h", [wall["corner_bot_right.png"]], self.screen),
+                Wall(543, 198, 1, "h", [wall["block_small"]], self.screen),
+                Wall(575, 363, 1, "v", [wall["corner_bot_left"]], self.screen),
+                Wall(507, 363, 1, "h", [wall["corner_bot_right"]], self.screen),
 
                 Wall(375, 423, 1, "v", platWall, self.screen),
                 Wall(703, 423, 1, "v", platWall, self.screen),
@@ -513,8 +498,8 @@ class SoloScene03(BaseScene):
         return boundaries + obstacles
 
     def addMPlatforms(self):
-        vImage = SCENE_RESOURCES["platforms"]["moving_vertical.png"]
-        hImage = SCENE_RESOURCES["platforms"]["moving_horizontal.png"]
+        vImage = SCENE_RESOURCES["platforms"]["moving_vertical"]
+        hImage = SCENE_RESOURCES["platforms"]["moving_horizontal"]
 
         platforms = \
             [
@@ -543,71 +528,72 @@ class SoloScene03(BaseScene):
         spike = SCENE_RESOURCES["spikes"]
         spikes = \
             [
-                Spike(415, 190, 2, "v", spike["left.png"], self.screen),
-                Spike(711, 190, 2, "v", spike["right.png"], self.screen),
+                Spike(415, 190, 2, "v", spike["left"], self.screen),
+                Spike(711, 190, 2, "v", spike["right"], self.screen),
 
-                Spike(45, 590, 16, "h", spike["up.png"], self.screen),
-                Spike(765, 590, 16, "h", spike["up.png"], self.screen),
+                Spike(45, 590, 16, "h", spike["up"], self.screen),
+                Spike(765, 590, 16, "h", spike["up"], self.screen),
             ]
         return spikes
 
 
-# TODO: Refactor
 class SoloScene04(BaseScene):
-    """
-    The third single player scene of the game.
-    """
 
     def __init__(self, screen):
         super().__init__(screen)
         self.levelNum = 4
 
-        self.image = sceneResources["levels"]["scene_04.png"]
-        self.rect = pg.Rect(0, 0, 0, 0)
-        self.rect.size = self.image.get_size()
-
         self.players = self.addPlayers()
-
         self.walls = self.addWalls()
         self.mPlatforms = self.addMPlatforms()
         self.switches = self.addSwitches()
         self.doors = self.addDoors()
         self.spikes = self.addSpikes()
         self.dPlatforms = self.addDPlatforms()
-
-        #self.decorations = self.addDecorations()
+        # self.decorations = self.addDecorations()
 
         self.elapsed = 0
         self.origin = pg.time.get_ticks()
+
+        image = SCENE_RESOURCES["levels"]["scene_04"]
+        self.render = RenderComponent(self)
+        self.render.add("background", image)
+        self.render.state = "background"
+
         self.dialogue = Dialogue(self.screen)
-        self.dialogue.add(dialogue.SCENE_SOLO_4, 10, 410, "caption")
+        self.dialogue.add(dialogue.SCENE_SOLO_1, 10, 410, "caption")
         self.dialogue.index = 0
 
     def handleEvent(self, event):
         [p.handleEvent(event) for p in self.players]
 
-        if event.type == events.SCENE_EVENT:
+        if event.type == self.SCENE_EVENT:
             [d.handleEvent(event) for d in self.doors]
 
     def update(self):
         self.elapsed = pg.time.get_ticks() - self.origin
+        self.render.update()
+        self.dialogue.update()
 
+        [w.update() for w in self.walls]
         [s.update() for s in self.switches]
         [d.update() for d in self.doors]
+        [s.update() for s in self.spikes]
+        [p.update() for p in self.dPlatforms]
         [p.update() for p in self.mPlatforms]
         [p.update() for p in self.players]
 
-    def drawWithCamera(self, camera):
+    def draw(self, camera=None):
         self.screen.fill(settings.COLOURS["black_red"])
-        self.screen.blit(self.image, camera.apply(self))
+        self.render.draw(camera)
 
-        [w.drawWithCamera(camera) for w in self.walls]
-        [s.drawWithCamera(camera) for s in self.switches]
-        [d.drawWithCamera(camera) for d in self.doors]
-        [s.drawWithCamera(camera) for s in self.spikes]
-        [p.drawWithCamera(camera) for p in self.dPlatforms]
-        [p.drawWithCamera(camera) for p in self.mPlatforms]
-        [p.drawWithCamera(camera) for p in self.players]
+        [w.draw(camera) for w in self.walls]
+        [s.draw(camera) for s in self.switches]
+        [d.draw(camera) for d in self.doors]
+        [s.draw(camera) for s in self.spikes]
+        [p.draw(camera) for p in self.dPlatforms]
+        [p.draw(camera) for p in self.mPlatforms]
+        [p.draw(camera) for p in self.players]
 
         if 5000 > self.elapsed >= 0:
             self.dialogue.draw()
@@ -619,71 +605,68 @@ class SoloScene04(BaseScene):
         return player
 
     def addWalls(self):
-        wall = sceneResources["walls"]
-        pillar = sceneResources["pillars"]
+        wall = SCENE_RESOURCES["walls"]
+        pillar = SCENE_RESOURCES["pillars"]
 
-        pillarWall = [pillar["steel_top.png"],
-                      pillar["steel_mid.png"],
-                      pillar["steel_bot.png"]]
-        platWall = [wall["plat_top.png"],
-                    wall["plat_mid.png"],
-                    wall["plat_bot.png"]]
-        blockWall = [wall["block_left.png"],
-                     wall["block_mid.png"],
-                     wall["block_right.png"]]
+        pillarWall = [pillar["steel_top"][0],
+                      pillar["steel_mid"][0],
+                      pillar["steel_bot"][0]]
+        blockWall = [wall["block_left"][0],
+                     wall["block_mid"][0],
+                     wall["block_right"][0]]
 
         boundaries = \
             [
-                Wall(12, 288, 3, "v", [wall["boundary_left.png"]], self.screen),
-                Wall(4, 52, 1, "v", [wall["boundary_left.png"]], self.screen),
-                Wall(4, 0, 1, "h", [wall["upper_corner_left.png"]], self.screen),
-                Wall(0, 116, 1, "h", [wall["corner_top_right.png"]], self.screen),
-                Wall(52, 0, 6, "h", [wall["boundary_top.png"]], self.screen),
-                Wall(432, 0, 1, "h", [wall["corner_top_right.png"]], self.screen),
-                Wall(0, 236, 1, "v", [wall["corner_bot_left.png"]], self.screen),
+                Wall(12, 288, 3, "v", wall["boundary_left"], self.screen),
+                Wall(4, 52, 1, "v", wall["boundary_left"], self.screen),
+                Wall(4, 0, 1, "h", wall["upper_corner_left"], self.screen),
+                Wall(0, 116, 1, "h", wall["corner_top_right"], self.screen),
+                Wall(52, 0, 6, "h", wall["boundary_top"], self.screen),
+                Wall(432, 0, 1, "h", wall["corner_top_right"], self.screen),
+                Wall(0, 236, 1, "v", wall["corner_bot_left"], self.screen),
             ]
 
         obstacles = \
             [
                 Wall(139, 288, 2, "h", blockWall, self.screen),
-                #Wall(199, 288, 2, "h", [wall["block_mid.png"]], self.screen),
-                #Wall(327, 288, 1, "h", [wall["block_right.png"]], self.screen),
+                #Wall(199, 288, 2, "h", wall["block_mid"], self.screen),
+                #Wall(327, 288, 1, "h", wall["block_right"], self.screen),
 
                 Wall(3, 167, 2, "v", pillarWall, self.screen),
 
-                Wall(494, 256, 1, "h", [wall["block_small.png"]], self.screen),
-                Wall(632, 169, 1, "h", [wall["block_small.png"]], self.screen),
-                Wall(805, 126, 1, "h", [wall["block_small.png"]], self.screen),
-                Wall(805, 304, 1, "h", [wall["block_small.png"]], self.screen),
-                Wall(1021, 230, 1, "h", [wall["block_small.png"]], self.screen),
-                Wall(974, 384, 1, "h", [wall["block_small.png"]], self.screen),
+                Wall(494, 256, 1, "h", wall["block_small"], self.screen),
+                Wall(632, 169, 1, "h", wall["block_small"], self.screen),
+                Wall(805, 126, 1, "h", wall["block_small"], self.screen),
+                Wall(805, 304, 1, "h", wall["block_small"], self.screen),
+                Wall(1021, 230, 1, "h", wall["block_small"], self.screen),
+                Wall(974, 384, 1, "h", wall["block_small"], self.screen),
 
-                Wall(1692, 116, 2, "h", [wall["boundary_bot.png"]], self.screen),
-                Wall(1632, 168, 2, "v", [wall["boundary_right.png"]], self.screen),
-                Wall(1780, 168, 2, "v", [wall["boundary_left.png"]], self.screen),
-                Wall(1692, 296, 2, "h", [wall["boundary_top.png"]], self.screen),
+                Wall(1692, 116, 2, "h", wall["boundary_bot"], self.screen),
+                Wall(1632, 168, 2, "v", wall["boundary_right"], self.screen),
+                Wall(1780, 168, 2, "v", wall["boundary_left"], self.screen),
+                Wall(1692, 296, 2, "h", wall["boundary_top"], self.screen),
 
-                Wall(1632, 116, 1, "h", [wall["corner_bot_right.png"]], self.screen),
-                Wall(1632, 296, 1, "h", [wall["corner_top_left.png"]], self.screen),
-                Wall(1768, 116, 1, "h", [wall["corner_bot_left.png"]], self.screen),
-                Wall(1776, 296, 1, "h", [wall["corner_top_right.png"]], self.screen),
+                Wall(1632, 116, 1, "h", wall["corner_bot_right"], self.screen),
+                Wall(1632, 296, 1, "h", wall["corner_top_left"], self.screen),
+                Wall(1768, 116, 1, "h", wall["corner_bot_left"], self.screen),
+                Wall(1776, 296, 1, "h", wall["corner_top_right"], self.screen),
 
-                Wall(1936, 224, 1, "h", [wall["block_small.png"]], self.screen),
-                Wall(2144, 373, 1, "h", [wall["block_small.png"]], self.screen),
+                Wall(1936, 224, 1, "h", wall["block_small"], self.screen),
+                Wall(2144, 373, 1, "h", wall["block_small"], self.screen),
             ]
 
         return boundaries + obstacles
 
     def addMPlatforms(self):
-        vImage = sceneResources["platforms"]["moving_vertical.png"]
-        hImage = sceneResources["platforms"]["moving_horizontal.png"]
+        vImage = SCENE_RESOURCES["platforms"]["moving_vertical"]
+        hImage = SCENE_RESOURCES["platforms"]["moving_horizontal"]
 
         platforms = \
             [
                 MPlatform((1187, 304), (1407, 325), 3, 0, self.screen, hImage),
 
                 MPlatform((2309, 337), (2437, 325), 3, 0, self.screen, hImage),
-                MPlatform((2686, 304), (2558, 325), -3, 0, self.screen, hImage),
+                MPlatform((2558, 304), (2686, 325), 3, 0, self.screen, hImage),
             ]
         return platforms
 
@@ -705,23 +688,22 @@ class SoloScene04(BaseScene):
 
     def addDoors(self):
         door1 = Door(3502, 196, 1, self.screen)
-        door1.waitForSwitches([1, 2])
+        door1.switchesWaiting = [1, 2]
         return [door1]
 
     def addSpikes(self):
-        spike = sceneResources["spikes"]
+        assets = SCENE_RESOURCES["spikes"]
         spikes = \
             [
-
             ]
         return spikes
 
     def addDecorations(self):
-        deco = sceneResources["decorations"]
+        assets = SCENE_RESOURCES["decorations"]
         decorations = \
         [
-            Spike(420, 117, "h", deco["torch_1.png"], self.screen),
-            Spike(2176, 140, "h", deco["torch_2.png"], self.screen),
+            Spike(420, 117, "h", assets["torch_1"], self.screen),
+            Spike(2176, 140, "h", assets["torch_2"], self.screen),
 
         ]
         return decorations
@@ -729,15 +711,12 @@ class SoloScene04(BaseScene):
 
 # TODO: Refactor
 class CoopScene01(BaseScene):
-    """
-    The first multiplayer scene of the game.
-    """
 
     def __init__(self, screen):
         super().__init__(screen)
         self.levelNum = 1
 
-        self.image = SCENE_RESOURCES["levels"]["scene_01.png"]
+        self.image = SCENE_RESOURCES["levels"]["scene_01"]
         self.rect = pg.Rect(0, 0, 0, 0)
         self.rect.size = self.image.get_size()
 
@@ -768,7 +747,7 @@ class CoopScene01(BaseScene):
         [d.update() for d in self.doors]
         [p.update() for p in self.players]
 
-    def draw(self, camera):
+    def draw(self, camera=None):
         self.screen.fill(settings.COLOURS["black_red"])
         self.screen.blit(self.image, camera.apply(self))
 
@@ -801,25 +780,25 @@ class CoopScene01(BaseScene):
 
         boundaries = \
         [
-            Wall(0, 10, 8, "v", [wall["boundary_left.png"]], self.screen),
-            Wall(19, 478, 3, "h", [wall["boundary_bot.png"]], self.screen),
-            Wall(0, 478, 1, "h", [wall["inner_corner_left.png"]], self.screen),
-            Wall(170, 260, 4, "v", [wall["boundary_right.png"]], self.screen),
-            Wall(170, 478, 1, "h", [wall["inner_corner_right.png"]], self.screen),
+            Wall(0, 10, 8, "v", [wall["boundary_left"]], self.screen),
+            Wall(19, 478, 3, "h", [wall["boundary_bot"]], self.screen),
+            Wall(0, 478, 1, "h", [wall["inner_corner_left"]], self.screen),
+            Wall(170, 260, 4, "v", [wall["boundary_right"]], self.screen),
+            Wall(170, 478, 1, "h", [wall["inner_corner_right"]], self.screen),
 
-            Wall(520, 478, 2, "h", [wall["boundary_bot.png"]], self.screen),
-            Wall(628, 138, 6, "v", [wall["boundary_right.png"]], self.screen),
-            Wall(164, 138, 8, "h", [wall["boundary_top.png"]], self.screen),
-            Wall(160, 138, 1, "v", [wall["corner_top_left.png"]], self.screen),
-            Wall(160, 10, 2, "v", [wall["boundary_right.png"]], self.screen),
-            Wall(628, 138, 1, "v", [wall["upper_corner_right.png"]], self.screen),
-            Wall(628, 478, 1, "h", [wall["inner_corner_right.png"]], self.screen),
+            Wall(520, 478, 2, "h", [wall["boundary_bot"]], self.screen),
+            Wall(628, 138, 6, "v", [wall["boundary_right"]], self.screen),
+            Wall(164, 138, 8, "h", [wall["boundary_top"]], self.screen),
+            Wall(160, 138, 1, "v", [wall["corner_top_left"]], self.screen),
+            Wall(160, 10, 2, "v", [wall["boundary_right"]], self.screen),
+            Wall(628, 138, 1, "v", [wall["upper_corner_right"]], self.screen),
+            Wall(628, 478, 1, "h", [wall["inner_corner_right"]], self.screen),
         ]
 
         obstacles = \
         [
-            Wall(48, 418, 1, "h", [wall["block_left.png"]], self.screen),
-            Wall(108, 418, 1, "h", [wall["block_right.png"]], self.screen),
+            Wall(48, 418, 1, "h", [wall["block_left"]], self.screen),
+            Wall(108, 418, 1, "h", [wall["block_right"]], self.screen),
         ]
         return boundaries + obstacles
 
@@ -859,24 +838,21 @@ class CoopScene01(BaseScene):
         deco = SCENE_RESOURCES["decorations"]
         decorations = \
         [
-            Decoration(70, 393, deco["skull.png"], self.screen),
-            Decoration(90, 393, deco["skull.png"], self.screen),
-            Decoration(175, 236, deco["skull.png"], self.screen),
+            Decoration(70, 393, deco["skull"], self.screen),
+            Decoration(90, 393, deco["skull"], self.screen),
+            Decoration(175, 236, deco["skull"], self.screen),
         ]
         return decorations
 
 
 # TODO: Refactor
 class CoopScene02(BaseScene):
-    """
-    The second multiplayer scene of the game.
-    """
 
     def __init__(self, screen):
         super().__init__(screen)
         self.levelNum = 2
 
-        self.image = SCENE_RESOURCES["levels"]["scene_02.png"]
+        self.image = SCENE_RESOURCES["levels"]["scene_02"]
         self.rect = pg.Rect(0, 0, 0, 0)
         self.rect.size = self.image.get_size()
 
@@ -911,7 +887,7 @@ class CoopScene02(BaseScene):
         [p.update() for p in self.mPlatforms]
         [p.update() for p in self.players]
 
-    def draw(self, camera):
+    def draw(self, camera=None):
         self.screen.fill(settings.COLOURS["black_red"])
         self.screen.blit(self.image, camera.apply(self))
 
@@ -939,30 +915,30 @@ class CoopScene02(BaseScene):
 
     def addWalls(self):
         wall = SCENE_RESOURCES["walls"]
-        platWall = [wall["plat_top.png"],
-                    wall["plat_mid.png"],
-                    wall["plat_bot.png"]]
+        platWall = [wall["plat_top"],
+                    wall["plat_mid"],
+                    wall["plat_bot"]]
 
         boundaries = \
             [
-                Wall(50, 0, 8, "h", [wall["boundary_top.png"]], self.screen),
-                Wall(0, 50, 8, "v", [wall["boundary_left.png"]], self.screen),
-                Wall(0, 548, 15, "h", [wall["boundary_bot.png"]], self.screen),
-                Wall(0, 548, 1, "h", [wall["inner_corner_left.png"]], self.screen),
-                Wall(952, 50, 8, "v", [wall["boundary_right.png"]], self.screen),
-                Wall(952, 548, 1, "h", [wall["inner_corner_right.png"]], self.screen)
+                Wall(50, 0, 8, "h", [wall["boundary_top"]], self.screen),
+                Wall(0, 50, 8, "v", [wall["boundary_left"]], self.screen),
+                Wall(0, 548, 15, "h", [wall["boundary_bot"]], self.screen),
+                Wall(0, 548, 1, "h", [wall["inner_corner_left"]], self.screen),
+                Wall(952, 50, 8, "v", [wall["boundary_right"]], self.screen),
+                Wall(952, 548, 1, "h", [wall["inner_corner_right"]], self.screen)
             ]
 
         obstacles = \
             [
-                Wall(210, 300, 1, "h", [wall["block_left.png"]], self.screen),
-                Wall(265, 300, 1, "h", [wall["block_right.png"]], self.screen),
+                Wall(210, 300, 1, "h", [wall["block_left"]], self.screen),
+                Wall(265, 300, 1, "h", [wall["block_right"]], self.screen),
 
-                Wall(435, 490, 1, "h", [wall["block_left.png"]], self.screen),
-                Wall(490, 490, 1, "h", [wall["block_right.png"]], self.screen),
+                Wall(435, 490, 1, "h", [wall["block_left"]], self.screen),
+                Wall(490, 490, 1, "h", [wall["block_right"]], self.screen),
 
-                Wall(655, 300, 1, "h", [wall["block_left.png"]], self.screen),
-                Wall(710, 300, 1, "h", [wall["block_right.png"]], self.screen),
+                Wall(655, 300, 1, "h", [wall["block_left"]], self.screen),
+                Wall(710, 300, 1, "h", [wall["block_right"]], self.screen),
 
                 Wall(770, 105, 2, "v", platWall, self.screen),
             ]
@@ -978,8 +954,8 @@ class CoopScene02(BaseScene):
         return platforms
 
     def addMPlatforms(self):
-        vImage = SCENE_RESOURCES["platforms"]["moving_vertical.png"]
-        hImage = SCENE_RESOURCES["platforms"]["moving_horizontal.png"]
+        vImage = SCENE_RESOURCES["platforms"]["moving_vertical"]
+        hImage = SCENE_RESOURCES["platforms"]["moving_horizontal"]
 
         platforms = \
             [
@@ -1018,11 +994,11 @@ class CoopScene02(BaseScene):
         spikes = \
             [
                 # Floor
-                Spike(325, 525, 5, "h", assets["up.png"], self.screen),
-                Spike(550, 525, 5, "h", assets["up.png"], self.screen),
+                Spike(325, 525, 5, "h", assets["up"], self.screen),
+                Spike(550, 525, 5, "h", assets["up"], self.screen),
 
                 # Roof
-                Spike(300, 50, 20, "h", assets["down.png"], self.screen),
+                Spike(300, 50, 20, "h", assets["down"], self.screen),
             ]
         return spikes
 
@@ -1030,22 +1006,19 @@ class CoopScene02(BaseScene):
         deco = SCENE_RESOURCES["decorations"]
         decorations = \
             [
-                Decoration(778, 81, deco["skull.png"], self.screen)
+                Decoration(778, 81, deco["skull"], self.screen)
             ]
         return decorations
 
 
 # TODO: Refactor
 class CoopScene03(BaseScene):
-    """
-    The third multiplayer scene of the game.
-    """
 
     def __init__(self, screen):
         super().__init__(screen)
         self.levelNum = 3
 
-        self.image = SCENE_RESOURCES["levels"]["scene_01.png"]
+        self.image = SCENE_RESOURCES["levels"]["scene_01"]
         self.rect = pg.Rect(0, 0, 0, 0)
         self.rect.size = self.image.get_size()
 
@@ -1083,7 +1056,7 @@ class CoopScene03(BaseScene):
         [p.update() for p in self.players]
         [b.update() for b in self.bosses]
 
-    def draw(self, camera):
+    def draw(self, camera=None):
         self.screen.fill(settings.COLOURS["black_red"])
         self.screen.blit(self.image, camera.apply(self))
 
@@ -1120,24 +1093,24 @@ class CoopScene03(BaseScene):
 
     def addWalls(self):
         wall = SCENE_RESOURCES["walls"]
-        blockWall = [wall["block_left.png"],
-                     wall["block_mid.png"],
-                     wall["block_right.png"]]
+        blockWall = [wall["block_left"],
+                     wall["block_mid"],
+                     wall["block_right"]]
 
         boundaries = \
             [
-                Wall(600, 0, 9, "v", [wall["boundary_right.png"]], self.screen),
+                Wall(600, 0, 9, "v", [wall["boundary_right"]], self.screen),
 
-                Wall(0, 750, 20, "h", [wall["boundary_bot.png"]], self.screen),
-                Wall(0, 0, 12, "v", [wall["boundary_left.png"]], self.screen),
-                Wall(0, 0, 20, "h", [wall["boundary_top.png"]], self.screen),
-                Wall(1250, 0, 12, "v", [wall["boundary_right.png"]], self.screen),
+                Wall(0, 750, 20, "h", [wall["boundary_bot"]], self.screen),
+                Wall(0, 0, 12, "v", [wall["boundary_left"]], self.screen),
+                Wall(0, 0, 20, "h", [wall["boundary_top"]], self.screen),
+                Wall(1250, 0, 12, "v", [wall["boundary_right"]], self.screen),
 
 
-                Wall(0, 0, 1, "v", [wall["upper_corner_left.png"]], self.screen),
-                Wall(0, 750, 1, "v", [wall["inner_corner_left.png"]], self.screen),
-                Wall(1250, 0, 1, "v", [wall["upper_corner_right.png"]], self.screen),
-                Wall(1250, 750, 1, "v", [wall["inner_corner_right.png"]], self.screen),
+                Wall(0, 0, 1, "v", [wall["upper_corner_left"]], self.screen),
+                Wall(0, 750, 1, "v", [wall["inner_corner_left"]], self.screen),
+                Wall(1250, 0, 1, "v", [wall["upper_corner_right"]], self.screen),
+                Wall(1250, 750, 1, "v", [wall["inner_corner_right"]], self.screen),
             ]
 
         obstacles = \
@@ -1156,8 +1129,8 @@ class CoopScene03(BaseScene):
         return platforms
 
     def addMPlatforms(self):
-        vImage = SCENE_RESOURCES["platforms"]["moving_vertical.png"]
-        hImage = SCENE_RESOURCES["platforms"]["moving_horizontal.png"]
+        vImage = SCENE_RESOURCES["platforms"]["moving_vertical"]
+        hImage = SCENE_RESOURCES["platforms"]["moving_horizontal"]
 
         platforms = \
             [
@@ -1224,12 +1197,12 @@ class CoopScene03(BaseScene):
         assets = SCENE_RESOURCES["spikes"]
         spikes = \
             [
-                Spike(50, 50, 26, "h", assets["down.png"], self.screen),
+                Spike(50, 50, 26, "h", assets["down"], self.screen),
 
-                Spike(165, 305, 15, "h", assets["up.png"], self.screen),
-                Spike(165, 380, 15, "h", assets["down.png"], self.screen),
+                Spike(165, 305, 15, "h", assets["up"], self.screen),
+                Spike(165, 380, 15, "h", assets["down"], self.screen),
 
-                Spike(230, 575, 8, "h", assets["up.png"], self.screen),
+                Spike(230, 575, 8, "h", assets["up"], self.screen),
             ]
         return spikes
 
@@ -1237,25 +1210,25 @@ class CoopScene03(BaseScene):
         deco = SCENE_RESOURCES["decorations"]
         decorations = \
             [
-                Decoration(500, 730, deco["skull.png"], self.screen),
-                Decoration(530, 730, deco["skull.png"], self.screen),
-                Decoration(560, 730, deco["skull.png"], self.screen),
-                Decoration(590, 730, deco["skull.png"], self.screen),
-                Decoration(620, 730, deco["skull.png"], self.screen),
+                Decoration(500, 730, deco["skull"], self.screen),
+                Decoration(530, 730, deco["skull"], self.screen),
+                Decoration(560, 730, deco["skull"], self.screen),
+                Decoration(590, 730, deco["skull"], self.screen),
+                Decoration(620, 730, deco["skull"], self.screen),
 
-                Decoration(750, 730, deco["skull.png"], self.screen),
-                Decoration(780, 730, deco["skull.png"], self.screen),
-                Decoration(810, 730, deco["skull.png"], self.screen),
-                Decoration(840, 730, deco["skull.png"], self.screen),
-                Decoration(870, 730, deco["skull.png"], self.screen),
-                Decoration(900, 730, deco["skull.png"], self.screen),
+                Decoration(750, 730, deco["skull"], self.screen),
+                Decoration(780, 730, deco["skull"], self.screen),
+                Decoration(810, 730, deco["skull"], self.screen),
+                Decoration(840, 730, deco["skull"], self.screen),
+                Decoration(870, 730, deco["skull"], self.screen),
+                Decoration(900, 730, deco["skull"], self.screen),
 
-                Decoration(1000, 730, deco["skull.png"], self.screen),
-                Decoration(1030, 730, deco["skull.png"], self.screen),
-                Decoration(1060, 730, deco["skull.png"], self.screen),
-                Decoration(1090, 730, deco["skull.png"], self.screen),
+                Decoration(1000, 730, deco["skull"], self.screen),
+                Decoration(1030, 730, deco["skull"], self.screen),
+                Decoration(1060, 730, deco["skull"], self.screen),
+                Decoration(1090, 730, deco["skull"], self.screen),
 
-                Decoration(1200, 730, deco["skull.png"], self.screen),
+                Decoration(1200, 730, deco["skull"], self.screen),
             ]
         return decorations
 

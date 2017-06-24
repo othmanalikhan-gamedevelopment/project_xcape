@@ -302,28 +302,42 @@ class DeathMenu(BaseMenu):
 
     def __init__(self, screen):
         super().__init__(screen)
-        background = pg.Surface((settings.WIDTH, settings.HEIGHT))
-        background.fill(settings.COLOURS["dark_red"])
-        background = background.convert()
-        self.image = background
-        self.rect = pg.Rect(0, 0, 0, 0)
-        self.rect.size = self.image.get_size()
 
         self.effect = FadeEffect(screen)
         self.effect.timeStartLighten = 0.0
-        self.effect.timeEndLighten = 0.5
-        self.effect.timeStartDarken = 0.5
-        self.effect.timeEndDarken = 1.0
+        self.effect.timeEndLighten = 1.0
+        self.effect.timeStartDarken = 1.0
+        self.effect.timeEndDarken = 1.5
+
+        image = pg.Surface((settings.WIDTH, settings.HEIGHT))
+        image.fill(settings.COLOURS["dark_red"])
+        image = image.convert()
+        self.render = RenderComponent(self)
+        self.render.add("idle", image)
+        self.render.state = "idle"
+
+        self.audio = AudioComponent(self,
+                                    enableAutoPlay=True,
+                                    enableRepeat=False)
+        self.audio.add("death", SFX_RESOURCES["menu_death"])
+        self.audio.state = "death"
+
+    def __str__(self):
+        return "death_menu"
+
+    def handleEvent(self, event):
+        print("'{}' safely ignored event {}".format(self.__str__(), event))
 
     def update(self):
+        self.render.update()
+        self.audio.update()
+        self.effect.update()
+
         if self.effect.isComplete:
-            events.messageScene("death_menu", "complete")
-        else:
-            self.screen.blit(self.image, self.rect)
-            self.effect.update()
+            self.messageScene("complete")
 
     def draw(self, camera=None):
-        self.screen.blit(self.image, self.rect)
+        self.render.draw()
         self.effect.draw()
 
 
@@ -355,8 +369,11 @@ class LoseMenu(BaseMenu):
     def handleEvent(self, event):
         if event.type == pg.KEYDOWN:
             if event.key == pg.K_RETURN:
-                events.messageMenu("game_over_menu", "transition", "splash_menu")
-                events.messageScene("game_over_menu", "no_mode")
+                self.messageMenu("transition", "splash_menu")
+                self.messageScene("no_mode")
+
+    def update(self):
+        self.render.update()
 
     def draw(self, camera=None):
         self.screen.blit(self.image, self.rect)
@@ -541,14 +558,15 @@ class SoloUIMenu(BaseMenu):
         self.x = 50
         self.y = 50
         self.dx = 30
-        self.lives = []
 
-        self.audio = AudioComponent(self,
-                                    enableAutoPlay=False,
-                                    enableRepeat=True)
-        self.audio.add("healthy", SFX_RESOURCES["menu_heartbeat_healthy"])
-        self.audio.add("fast", SFX_RESOURCES["menu_heartbeat_fast"])
-        self.audio.add("danger", SFX_RESOURCES["menu_heartbeat_danger"])
+        self._maxLife = None
+        self._currentLife = None
+        self._lives = []
+
+        self._audio = AudioComponent(self, enableAutoPlay=False, enableRepeat=True)
+        self._audio.add("healthy", SFX_RESOURCES["menu_heartbeat_healthy"])
+        self._audio.add("injured", SFX_RESOURCES["menu_heartbeat_injured"])
+        self._audio.add("danger", SFX_RESOURCES["menu_heartbeat_danger"])
 
     def __str__(self):
         return "solo_ui_menu"
@@ -556,45 +574,57 @@ class SoloUIMenu(BaseMenu):
     def handleEvent(self, event):
         if event.type == self.MENU_EVENT:
             if event.category == "max_health":
-                maxHP = event.data
-                self.setMaxLives(maxHP)
-
+                self.maxLife = event.data
             if event.category == "health":
-                currentHP = event.data
-                for heart in self.lives:
-                    heart.state = "no_life"
-                for heart in range(currentHP):
-                    self.lives[heart].state = "life"
-
-                if currentHP > 3:
-                    self.audio.state = "healthy"
-                if currentHP > 1:
-                    self.audio.state = "fast"
-                if currentHP == 1:
-                    self.audio.state = "danger"
+                self.currentLife = event.data
+                self.audio = event.data
 
     def update(self):
         self.audio.update()
-        for live in self.lives:
+        for live in self._lives:
             live.render.update()
 
     def draw(self, camera=None):
-        for live in self.lives:
+        for live in self._lives:
             live.render.draw()
 
-    def setMaxLives(self, numLives):
-        """
-        Sets the maximum number of hearts on the health bar.
+    @property
+    def maxLife(self):
+        return self._maxLife
 
-        :param numLives: Integer, the number of lives.
-        """
+    @maxLife.setter
+    def maxLife(self, value):
         assets = MENU_RESOURCES["assets"]
-        for i in range(numLives):
+        for i in range(value):
             label = ImageLabel(None, self.x + i*self.dx, self.y, self.screen)
             label.render.add("no_life", assets["life_empty"])
             label.render.add("life", assets["life_gray"])
             label.render.state = "life"
-            self.lives.append(label)
+            self._lives.append(label)
+
+    @property
+    def currentLife(self):
+        return self._currentLife
+
+    @currentLife.setter
+    def currentLife(self, value):
+        for heart in self._lives:
+            heart.render.state = "no_life"
+        for heart in range(value):
+            self._lives[heart].render.state = "life"
+
+    @property
+    def audio(self):
+        return self._audio
+
+    @audio.setter
+    def audio(self, value):
+        if value > 3:
+            self._audio.state = "healthy"
+        elif value > 1:
+            self._audio.state = "injured"
+        elif value == 1:
+            self._audio.state = "danger"
 
 
 # TODO: Refactor

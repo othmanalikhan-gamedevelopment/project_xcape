@@ -164,11 +164,13 @@ class CollisionEngine(GameObject):
             if hits:
                 self.messageScene("death", player.num)
 
+    #TODO: Complete
     def resolveBoundaryCollision(self):
         """
         Checks if the players have 'fallen' out of the level.
         """
-        boundary = pg.Rect(-1000, -1000, 3000, 3000)
+        w, h = self.scene.rect.size
+        boundary = pg.Rect(-1000, -1000, w+2000, h+2000)
 
         for player in self.scene.players:
             if not pg.Rect.contains(boundary, player):

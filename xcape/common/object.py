@@ -109,8 +109,8 @@ class GameObject:
         :param data: N-Tuple, containing the data for the relevant category.
         """
         if category not in CATEGORIES:
-            raise KeyError("Invalid category! The categories allowed are {}!"
-                           .format(CATEGORIES))
+            raise KeyError("'{}' is an invalid category! The categories allowed "
+                           "are {}!".format(category, CATEGORIES))
 
         contents = \
             {
