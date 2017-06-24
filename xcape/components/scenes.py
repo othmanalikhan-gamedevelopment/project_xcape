@@ -403,19 +403,13 @@ class SoloScene02(BaseScene):
         return decorations
 
 
-# TODO: Refactor
 class SoloScene03(BaseScene):
 
     def __init__(self, screen):
         super().__init__(screen)
         self.levelNum = 3
 
-        self.image = SCENE_RESOURCES["levels"]["scene_03"]
-        self.rect = pg.Rect(0, 0, 0, 0)
-        self.rect.size = self.image.get_size()
-
         self.players = self.addPlayers()
-
         self.walls = self.addWalls()
         self.mPlatforms = self.addMPlatforms()
         self.switches = self.addSwitches()
@@ -424,6 +418,12 @@ class SoloScene03(BaseScene):
 
         self.elapsed = 0
         self.origin = pg.time.get_ticks()
+
+        image = SCENE_RESOURCES["levels"]["scene_03"][0]
+        self.render = RenderComponent(self)
+        self.render.add("idle", image)
+        self.render.state = "idle"
+
         self.dialogue = Dialogue(self.screen)
         self.dialogue.add(dialogue.SCENE_SOLO_3, 10, 410, "caption")
         self.dialogue.index = 0
@@ -431,20 +431,24 @@ class SoloScene03(BaseScene):
     def handleEvent(self, event):
         [p.handleEvent(event) for p in self.players]
 
-        if event.type == self.MENU_EVENT:
+        if event.type == self.SCENE_EVENT:
             [d.handleEvent(event) for d in self.doors]
 
     def update(self):
         self.elapsed = pg.time.get_ticks() - self.origin
+        self.render.update()
+        self.dialogue.update()
 
+        [w.update() for w in self.walls]
         [s.update() for s in self.switches]
         [d.update() for d in self.doors]
+        [s.update() for s in self.spikes]
         [p.update() for p in self.mPlatforms]
         [p.update() for p in self.players]
 
     def draw(self, camera=None):
         self.screen.fill(settings.COLOURS["black_red"])
-        self.screen.blit(self.image, camera.apply(self))
+        self.render.draw(camera)
 
         [w.draw(camera) for w in self.walls]
         [s.draw(camera) for s in self.switches]
@@ -466,25 +470,25 @@ class SoloScene03(BaseScene):
         wall = SCENE_RESOURCES["walls"]
         pillar = SCENE_RESOURCES["pillars"]
 
-        pillarWall = [pillar["steel_top"],
-                      pillar["steel_mid"],
-                      pillar["steel_bot"]]
-        platWall = [wall["plat_top"],
-                    wall["plat_mid"],
-                    wall["plat_bot"]]
-        blockWall = [wall["block_left"],
-                     wall["block_mid"],
-                     wall["block_right"]]
+        pillarWall = [pillar["steel_top"][0],
+                      pillar["steel_mid"][0],
+                      pillar["steel_bot"][0]]
+        platWall = [wall["plat_top"][0],
+                    wall["plat_mid"][0],
+                    wall["plat_bot"][0]]
+        blockWall = [wall["block_left"][0],
+                     wall["block_mid"][0],
+                     wall["block_right"][0]]
 
         boundaries = \
             [
-                Wall(739, 0, 5, "h", [wall["boundary_top"]], self.screen),
-                Wall(99, 0, 5, "h", [wall["boundary_top"]], self.screen),
-                Wall(0, 64, 7, "v", [wall["boundary_left"]], self.screen),
-                Wall(1102, 60, 7, "v", [wall["boundary_right"]], self.screen),
+                Wall(739, 0, 5, "h", wall["boundary_top"], self.screen),
+                Wall(99, 0, 5, "h", wall["boundary_top"], self.screen),
+                Wall(0, 64, 7, "v", wall["boundary_left"], self.screen),
+                Wall(1102, 60, 7, "v", wall["boundary_right"], self.screen),
 
-                Wall(587, 367, 2, "v", [wall["boundary_left"]], self.screen),
-                Wall(507, 367, 2, "v", [wall["boundary_right"]], self.screen),
+                Wall(587, 367, 2, "v", wall["boundary_left"], self.screen),
+                Wall(507, 367, 2, "v", wall["boundary_right"], self.screen),
             ]
 
         obstacles = \
@@ -495,9 +499,9 @@ class SoloScene03(BaseScene):
                 Wall(167, 182, 2, "h", blockWall, self.screen),
                 Wall(735, 182, 2, "h", blockWall, self.screen),
 
-                Wall(543, 198, 1, "h", [wall["block_small"]], self.screen),
-                Wall(575, 363, 1, "v", [wall["corner_bot_left"]], self.screen),
-                Wall(507, 363, 1, "h", [wall["corner_bot_right"]], self.screen),
+                Wall(543, 198, 1, "h", wall["block_small"], self.screen),
+                Wall(575, 363, 1, "v", wall["corner_bot_left"], self.screen),
+                Wall(507, 363, 1, "h", wall["corner_bot_right"], self.screen),
 
                 Wall(375, 423, 1, "v", platWall, self.screen),
                 Wall(703, 423, 1, "v", platWall, self.screen),
@@ -506,8 +510,8 @@ class SoloScene03(BaseScene):
         return boundaries + obstacles
 
     def addMPlatforms(self):
-        vImage = SCENE_RESOURCES["platforms"]["moving_vertical"]
-        hImage = SCENE_RESOURCES["platforms"]["moving_horizontal"]
+        vImage = SCENE_RESOURCES["platforms"]["moving_vertical"][0]
+        hImage = SCENE_RESOURCES["platforms"]["moving_horizontal"][0]
 
         platforms = \
             [
@@ -529,18 +533,18 @@ class SoloScene03(BaseScene):
 
     def addDoors(self):
         door1 = Door(795, 74, 1, self.screen)
-        door1.waitForSwitches([1, 2])
+        door1.switchesWaiting = [1, 2]
         return [door1]
 
     def addSpikes(self):
         spike = SCENE_RESOURCES["spikes"]
         spikes = \
             [
-                Spike(415, 190, 2, "v", spike["left"], self.screen),
-                Spike(711, 190, 2, "v", spike["right"], self.screen),
+                Spike(415, 190, 2, "v", spike["left"][0], self.screen),
+                Spike(711, 190, 2, "v", spike["right"][0], self.screen),
 
-                Spike(45, 590, 16, "h", spike["up"], self.screen),
-                Spike(765, 590, 16, "h", spike["up"], self.screen),
+                Spike(45, 590, 16, "h", spike["up"][0], self.screen),
+                Spike(765, 590, 16, "h", spike["up"][0], self.screen),
             ]
         return spikes
 
