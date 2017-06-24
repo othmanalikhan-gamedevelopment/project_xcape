@@ -294,7 +294,6 @@ class OptionsMenu(BaseMenu):
         self.effect.draw()
 
 
-# TODO: Refactor
 class DeathMenu(BaseMenu):
     """
     The death screen of the game.

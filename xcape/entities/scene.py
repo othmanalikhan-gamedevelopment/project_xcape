@@ -23,7 +23,7 @@ class Decoration(GameObject):
         :param image: pygame.Surface, the image of the wall.
         :param screen: pygame.Surface, the screen to draw the wall onto.
         """
-        super().__init__(screen)
+        self.screen = screen
         self.render = RenderComponent(self)
         self.render.add("idle", image)
         self.render.state = "idle"
@@ -32,8 +32,11 @@ class Decoration(GameObject):
     def __str__(self):
         return "decoration"
 
+    def update(self):
+        self.render.update()
+
     def draw(self, camera=None):
-        self.screen.blit(self.image, camera.apply(self))
+        self.render.draw(camera)
 
 
 class Wall(GameObject):
@@ -334,11 +337,13 @@ class Spike(GameObject):
         self.screen = screen
 
         image = replicate(blocks, orientation, image)
-
         self.render = RenderComponent(self)
         self.render.add("idle", image)
         self.render.state = "idle"
         self.rect = pg.Rect(x, y, 0, 0)
+
+    def update(self):
+        self.render.update()
 
     def draw(self, camera=None):
         self.render.draw(camera)
