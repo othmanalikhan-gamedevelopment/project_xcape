@@ -34,7 +34,7 @@ class PlayerBase(GameObject, pg.sprite.Sprite):
         self.physics = PhysicsComponent(self)
         self.render = RenderComponent(self, enableOrientation=True)
         self.audio = AudioComponent(self, enableAutoPlay=False)
-        self.audio.add("jump", SFX_RESOURCES["character_jump"])
+        self.audio.add("jump", SFX_RESOURCES["cat_jump"])
 
         self.keybinds = None
 

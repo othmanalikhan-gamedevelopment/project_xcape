@@ -30,23 +30,19 @@ Authors
 - Othman Alikhan, oz.alikhan@gmail.com
 
 
-https://www.soundjay.com
-Door open
-Door close
-Door knock
-Switch
+Credits
+-------
+- Sound effects (everything): https://www.soundjay.com
+- Sound effects (cat meows): http://soundbible.com
 
 
-# TODO:
-- https://www.naturalreaders.com
-
-
+TODO
+----
 ​- Translating boss dialogue
 - Translating coop scene dialogue
-- Improving the quality of the cutscenes​
+
+- Improving quality of cutscenes​
+- Adding sounds for cutscenes
+
 ​- Added a proper background for CoopScene03
-
-
-- Adding sound effects
-- Adding Boss level for solo​
 

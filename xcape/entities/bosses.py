@@ -8,13 +8,13 @@ import pygame as pg
 from pygame.math import Vector2
 
 import xcape.components.dialogue as dialogue
-from xcape.common.loader import CHARACTER_RESOURCES
+from xcape.common.loader import CHARACTER_RESOURCES, SFX_RESOURCES
 from xcape.common.object import GameObject
+from xcape.components.audio import AudioComponent
 from xcape.components.physics import PhysicsComponent
 from xcape.components.render import RenderComponent, Dialogue
 
 
-#TODO: Add audio
 class PigBoss(GameObject, pg.sprite.Sprite):
     """
     The controllable character to be played.
@@ -28,56 +28,73 @@ class PigBoss(GameObject, pg.sprite.Sprite):
         self.screen = screen
         self.rect = pg.Rect(0, 0, 100, 66)
 
+        self._initialiseRenderer()
+        self._initialiseAudio()
         self._initialisePhysics()
-        self._initialiseAnimations()
         self._initialiseDialogues()
         self._initialiseAI()
 
+    def __str__(self):
+        return "pig_boss"
+
     def handleEvent(self, event):
-        pass
+        print("{} is safely ignored event {}".format(self.__str__(), event))
 
     def update(self):
-        self.updateAIState()
+        self.updateRenderState()
+        self.updateAudioState()
         self.updateDialogueState()
-        self.updateAnimationState()
+        self.updateAIState()
         self.physics.update()
 
     def draw(self, camera=None):
         self.render.draw(camera)
         self.dialogue.draw(camera)
 
-    def updateAIState(self):
+    def updateAudioState(self):
         """
-        Updates the state of AI.
+        Adjusts the volume based on proximity to targets.
         """
-        if self.AIState == "no_aggro":
-            isAggro = self.isInRange(self.following.rect.center, self.aggroRadius)
-            if isAggro:
-                self.AIState = "thinking"
+        maxDistance = 500
+        minVolume = 0.1
+        scaleVolume = 0.5
 
-        if self.AIState == "thinking":
-            isFar = not self.isInRange(self.following.rect.center, self.chaseRadius)
-            isAttacking = self.attackLoci
+        p1, p2 = self.targets
+        x, y = self.rect.center
+        x1, y1 = p1.rect.center
+        x2, y2 = p2.rect.center
 
-            if isFar and not isAttacking:
-                self.AIState = "chase"
-            else:
-                self.initiateAttack()
+        d1 = Vector2(x - x1, y - y1)
+        d2 = Vector2(x - x2, y - y2)
+        distance = min(d1.length(), d2.length(), maxDistance)
 
-        if self.AIState == "chase":
-            self.chase(self.chaseRadius, self.chaseSpeed)
+        vol = max((minVolume, (1-(distance/maxDistance))*scaleVolume))
+        self.audio.sound.set_volume(vol)
+        self.audio.update()
 
-        if self.AIState == "retreat":
-            self.retreat(self.retreatRadius, self.retreatSpeed)
+    def updateRenderState(self):
+        """
+        Updates the rendering state based on physics.
+        """
+        if self.physics.velocity.x > 0:
+            self.render.state = "running"
+            self.render.orientation = "right"
 
-        if self.AIState == "attack":
-            self.attack(self.attackPoint,
-                        self.attackSpeed,
-                        self.physics.travelled - self.travelOffset)
+        if self.physics.velocity.x < 0:
+            self.render.state = "running"
+            self.render.orientation = "left"
+
+        if self.physics.velocity.y > 0:
+            self.render.state = "running"
+
+        if self.physics.velocity.x > 0:
+            self.render.state = "running"
+
+        self.render.update()
 
     def updateDialogueState(self):
         """
-        Updates the state of dialogue.
+        Updates the state of dialogue based on random procs.
         """
         elapsed = pg.time.get_ticks()
 
@@ -100,25 +117,34 @@ class PigBoss(GameObject, pg.sprite.Sprite):
             if self.render.orientation == "left":
                 currentBubble.rect.center = (x-80, y-55)
 
-    def updateAnimationState(self):
+    def updateAIState(self):
         """
-        Updates the state of the animation.
+        Updates the state of AI.
         """
-        if self.physics.velocity.x > 0:
-            self.animationState = "running"
-            self.orientation = "right"
+        if self.AIState == "no_aggro":
+            isAggro = self.isInRange(self.following.rect.center, self.aggroRadius)
+            if isAggro:
+                self.AIState = "thinking"
 
-        if self.physics.velocity.x < 0:
-            self.animationState = "running"
-            self.orientation = "left"
+        if self.AIState == "thinking":
+            isNear = self.isInRange(self.following.rect.center, self.chaseRadius)
+            isAttacking = self.attackLoci
 
-        if self.physics.velocity.y > 0:
-            self.animationState = "running"
+            if not isNear and not isAttacking:
+                self.AIState = "chase"
+            else:
+                self.initiateAttack()
 
-        if self.physics.velocity.x > 0:
-            self.animationState = "running"
+        if self.AIState == "chase":
+            self.chase(self.chaseRadius, self.chaseSpeed)
 
-        self.render.update()
+        if self.AIState == "retreat":
+            self.retreat(self.retreatRadius, self.retreatSpeed)
+
+        if self.AIState == "attack":
+            self.attack(self.attackPoint,
+                        self.attackSpeed,
+                        self.physics.travelled - self.travelOffset)
 
     def target(self, gameObjects):
         """
@@ -206,7 +232,7 @@ class PigBoss(GameObject, pg.sprite.Sprite):
 
         d = Vector2(x - xp, y  - yp)
 
-        if distance > d.length():
+        if distance >= d.length():
             return True
         else:
             return False
@@ -245,6 +271,7 @@ class PigBoss(GameObject, pg.sprite.Sprite):
                 self.attackSpeed = 15
 
         self.attackPoint = self.attackLoci.pop()
+        self.audio.state = "attack"
 
     def generatePatterns(self,
                          isSquare=True,
@@ -307,21 +334,32 @@ class PigBoss(GameObject, pg.sprite.Sprite):
             patterns.update(stomp)
         return patterns
 
+    def _initialiseRenderer(self):
+        pig = CHARACTER_RESOURCES["pig"]
+        self.render = RenderComponent(self, enableOrientation=True)
+        self.render.add("idle", pig["running"][0])
+        self.render.add("running", pig["running"], 400)
+        self.render.scaleAll(self.rect.size)
+        self.render.state = "running"
+        self.render.orientation = "left"
+
+    def _initialiseAudio(self):
+        self.audio = AudioComponent(self,
+                                    enableAutoPlay=False,
+                                    enableRepeat=False)
+        self.audio.add("machine", SFX_RESOURCES["pig_machine"])
+        self.audio.add("attack", SFX_RESOURCES["pig_attack"])
+
+        # Plays machine sonud endlessly
+        self.audio.state = "machine"
+        self.audio.sound.play(loops=-1)
+
     def _initialisePhysics(self):
         self.physics = PhysicsComponent(self)
         self.physics.isGravity = False
         self.physics.maxSpeed = 100
         self.jumpSpeed = -15
         self.moveSpeed = 1
-
-    def _initialiseAnimations(self):
-        pig = CHARACTER_RESOURCES["pig"]
-        self.render = RenderComponent(self, enableOrientation=True)
-        self.render.add("idle", [pig["running"][0]], float('inf'))
-        self.render.add("running", pig["running"], 400)
-        self.render.scaleAll(self.rect.size)
-        self.render.state = "running"
-        self.render.orientation = "left"
 
     def _initialiseDialogues(self):
         self.dialogue = Dialogue(self.screen)

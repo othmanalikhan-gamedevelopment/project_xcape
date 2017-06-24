@@ -21,7 +21,7 @@ class CollisionEngine(GameObject):
         """
         self.scene = scene
         self.audio = AudioComponent(self, enableAutoPlay=False)
-        self.audio.add("explosion", SFX_RESOURCES["character_coop_jump"])
+        self.audio.add("explosion", SFX_RESOURCES["cat_coop_jump"])
 
     def __str__(self):
         return "collision_engine"
@@ -50,7 +50,7 @@ class CollisionEngine(GameObject):
         self.resolveMPlatformCollisions()
 
         self.resolveSpikeCollisions()
-        self.resolveBossCollisions()
+        # self.resolveBossCollisions()
         self.resolveBoundaryCollision()
 
         self.audio.update()
