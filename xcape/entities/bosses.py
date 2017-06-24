@@ -14,6 +14,7 @@ from xcape.components.physics import PhysicsComponent
 from xcape.components.render import RenderComponent, Dialogue
 
 
+#TODO: Add audio
 class PigBoss(GameObject, pg.sprite.Sprite):
     """
     The controllable character to be played.
@@ -27,67 +28,23 @@ class PigBoss(GameObject, pg.sprite.Sprite):
         self.screen = screen
         self.rect = pg.Rect(0, 0, 100, 66)
 
-        self.animationState = "running"
-        self.orientation = "left"
-
         self._initialisePhysics()
         self._initialiseAnimations()
         self._initialiseDialogues()
         self._initialiseAI()
 
-    def _initialisePhysics(self):
-        self.physics = PhysicsComponent(self)
-        self.physics.isGravity = False
-        self.physics.maxSpeed = 100
-        self.jumpSpeed = -15
-        self.moveSpeed = 1
-
-    def _initialiseAnimations(self):
-        pig = CHARACTER_RESOURCES["pig"]
-        self.animation = RenderComponent(self, enableOrientation=True)
-        self.animation.add("idle", [pig["running"][0]], float('inf'))
-        self.animation.add("running", pig["running"], 400)
-        self.animation.scaleAll(self.rect.size)
-
-    def _initialiseDialogues(self):
-        self.dialogue = Dialogue(self.screen)
-        self.dialogue.add(dialogue.BOSS_0, 0, 0)
-        self.dialogue.add(dialogue.BOSS_1, 0, 0)
-        self.dialogue.add(dialogue.BOSS_2, 0, 0)
-        self.dialogue.add(dialogue.BOSS_3, 0, 0)
-        self.dialogue.add(dialogue.BOSS_4, 0, 0)
-        self.dialogue.index = None
-        self.dialogueOrigin = pg.time.get_ticks()
-        self.dialogueDuration = 5000
-
-    def _initialiseAI(self):
-        self.AIState = "no_aggro"
-        self.following = None
-        self.targets = []
-
-        self.attackPatterns = None
-        self.attackLoci = None
-        self.attackPoint = None
-        self.attackSpeed = 0
-        self.attackTravelled = 0
-
-        self.isSquarePattern = True
-        self.isTrianglePattern = True
-        self.isSpiralPattern = True
-        self.isSweepPattern = True
-        self.isStompPattern = True
-
-        self.chaseSpeed = 7
-        self.chaseRadius = 150
-        self.retreatSpeed = 10
-        self.retreatRadius = 200
-        self.aggroRadius = 300
+    def handleEvent(self, event):
+        pass
 
     def update(self):
         self.updateAIState()
         self.updateDialogueState()
         self.updateAnimationState()
         self.physics.update()
+
+    def draw(self, camera=None):
+        self.render.draw(camera)
+        self.dialogue.draw(camera)
 
     def updateAIState(self):
         """
@@ -138,9 +95,9 @@ class PigBoss(GameObject, pg.sprite.Sprite):
         if self.dialogue.index:
             x, y = self.rect.center
             currentBubble = self.dialogue.allBubbles[self.dialogue.index]
-            if self.orientation == "right":
+            if self.render.orientation == "right":
                 currentBubble.rect.center = (x+10, y-55)
-            if self.orientation == "left":
+            if self.render.orientation == "left":
                 currentBubble.rect.center = (x-80, y-55)
 
     def updateAnimationState(self):
@@ -161,19 +118,7 @@ class PigBoss(GameObject, pg.sprite.Sprite):
         if self.physics.velocity.x > 0:
             self.animationState = "running"
 
-        self.animation.update()
-
-    def handleEvent(self, event):
-        pass
-
-    def drawWithCamera(self, camera):
-        """
-        Draws the character on the screen, shifted by the camera.
-
-        :param camera: Camera instance, shifts the position of the drawn animation.
-        """
-        self.animation.drawWithCamera(camera)
-        self.dialogue.drawWithCamera(camera)
+        self.render.update()
 
     def target(self, gameObjects):
         """
@@ -362,4 +307,53 @@ class PigBoss(GameObject, pg.sprite.Sprite):
             patterns.update(stomp)
         return patterns
 
+    def _initialisePhysics(self):
+        self.physics = PhysicsComponent(self)
+        self.physics.isGravity = False
+        self.physics.maxSpeed = 100
+        self.jumpSpeed = -15
+        self.moveSpeed = 1
+
+    def _initialiseAnimations(self):
+        pig = CHARACTER_RESOURCES["pig"]
+        self.render = RenderComponent(self, enableOrientation=True)
+        self.render.add("idle", [pig["running"][0]], float('inf'))
+        self.render.add("running", pig["running"], 400)
+        self.render.scaleAll(self.rect.size)
+        self.render.state = "running"
+        self.render.orientation = "left"
+
+    def _initialiseDialogues(self):
+        self.dialogue = Dialogue(self.screen)
+        self.dialogue.add(dialogue.BOSS_0, 0, 0)
+        self.dialogue.add(dialogue.BOSS_1, 0, 0)
+        self.dialogue.add(dialogue.BOSS_2, 0, 0)
+        self.dialogue.add(dialogue.BOSS_3, 0, 0)
+        self.dialogue.add(dialogue.BOSS_4, 0, 0)
+        self.dialogue.index = None
+        self.dialogueOrigin = pg.time.get_ticks()
+        self.dialogueDuration = 5000
+
+    def _initialiseAI(self):
+        self.AIState = "no_aggro"
+        self.following = None
+        self.targets = []
+
+        self.attackPatterns = None
+        self.attackLoci = None
+        self.attackPoint = None
+        self.attackSpeed = 0
+        self.attackTravelled = 0
+
+        self.isSquarePattern = True
+        self.isTrianglePattern = True
+        self.isSpiralPattern = True
+        self.isSweepPattern = True
+        self.isStompPattern = True
+
+        self.chaseSpeed = 7
+        self.chaseRadius = 150
+        self.retreatSpeed = 10
+        self.retreatRadius = 200
+        self.aggroRadius = 300
 

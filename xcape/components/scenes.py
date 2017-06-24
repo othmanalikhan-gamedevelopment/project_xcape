@@ -1046,21 +1046,15 @@ class CoopScene02(BaseScene):
         return decorations
 
 
-# TODO: Refactor
 class CoopScene03(BaseScene):
 
     def __init__(self, screen):
         super().__init__(screen)
         self.levelNum = 3
 
-        self.image = SCENE_RESOURCES["levels"]["scene_01"]
-        self.rect = pg.Rect(0, 0, 0, 0)
-        self.rect.size = self.image.get_size()
-
         self.players = self.addPlayers()
         self.bosses = self.addBosses()
         self.bosses[0].target(self.players)
-
         self.walls = self.addWalls()
         self.sPlatforms = self.addSPlatforms()
         self.dPlatforms = self.addDPlatforms()
@@ -1072,9 +1066,15 @@ class CoopScene03(BaseScene):
 
         self.elapsed = 0
         self.origin = pg.time.get_ticks()
+
         self.dialogue = Dialogue(self.screen)
         self.dialogue.add(dialogue.SCENE_SOLO_3, 10, 410, "caption")
         self.dialogue.index = 0
+
+        image = SCENE_RESOURCES["levels"]["scene_01"]
+        self.render = RenderComponent(self)
+        self.render.add("idle", image)
+        self.render.state = "idle"
 
     def __str__(self):
         return "coop_scene_03"
@@ -1082,21 +1082,28 @@ class CoopScene03(BaseScene):
     def handleEvent(self, event):
         [p.handleEvent(event) for p in self.players]
 
-        if event.type == self.MENU_EVENT:
+        if event.type == self.SCENE_EVENT:
             [d.handleEvent(event) for d in self.doors]
 
     def update(self):
         self.elapsed = pg.time.get_ticks() - self.origin
+        self.render.update()
+        self.dialogue.update()
 
+        [w.update() for w in self.walls]
         [s.update() for s in self.switches]
         [d.update() for d in self.doors]
+        [s.update() for s in self.spikes]
+        [p.update() for p in self.sPlatforms]
         [p.update() for p in self.mPlatforms]
+        [p.update() for p in self.dPlatforms]
+        [d.update() for d in self.decorations]
         [p.update() for p in self.players]
         [b.update() for b in self.bosses]
 
     def draw(self, camera=None):
         self.screen.fill(settings.COLOURS["black_red"])
-        self.screen.blit(self.image, camera.apply(self))
+        self.render.draw(camera)
 
         [w.draw(camera) for w in self.walls]
         [s.draw(camera) for s in self.switches]
@@ -1107,7 +1114,7 @@ class CoopScene03(BaseScene):
         [p.draw(camera) for p in self.dPlatforms]
         [d.draw(camera) for d in self.decorations]
         [p.draw(camera) for p in self.players]
-        [b.drawWithCamera(camera) for b in self.bosses]
+        [b.draw(camera) for b in self.bosses]
 
         if 5000 > self.elapsed >= 0:
             self.dialogue.draw()
@@ -1131,24 +1138,24 @@ class CoopScene03(BaseScene):
 
     def addWalls(self):
         wall = SCENE_RESOURCES["walls"]
-        blockWall = [wall["block_left"],
-                     wall["block_mid"],
-                     wall["block_right"]]
+        blockWall = [wall["block_left"][0],
+                     wall["block_mid"][0],
+                     wall["block_right"][0]]
 
         boundaries = \
             [
-                Wall(600, 0, 9, "v", [wall["boundary_right"]], self.screen),
+                Wall(600, 0, 9, "v", wall["boundary_right"], self.screen),
 
-                Wall(0, 750, 20, "h", [wall["boundary_bot"]], self.screen),
-                Wall(0, 0, 12, "v", [wall["boundary_left"]], self.screen),
-                Wall(0, 0, 20, "h", [wall["boundary_top"]], self.screen),
-                Wall(1250, 0, 12, "v", [wall["boundary_right"]], self.screen),
+                Wall(0, 750, 20, "h", wall["boundary_bot"], self.screen),
+                Wall(0, 0, 12, "v", wall["boundary_left"], self.screen),
+                Wall(0, 0, 20, "h", wall["boundary_top"], self.screen),
+                Wall(1250, 0, 12, "v", wall["boundary_right"], self.screen),
 
 
-                Wall(0, 0, 1, "v", [wall["upper_corner_left"]], self.screen),
-                Wall(0, 750, 1, "v", [wall["inner_corner_left"]], self.screen),
-                Wall(1250, 0, 1, "v", [wall["upper_corner_right"]], self.screen),
-                Wall(1250, 750, 1, "v", [wall["inner_corner_right"]], self.screen),
+                Wall(0, 0, 1, "v", wall["upper_corner_left"], self.screen),
+                Wall(0, 750, 1, "v", wall["inner_corner_left"], self.screen),
+                Wall(1250, 0, 1, "v", wall["upper_corner_right"], self.screen),
+                Wall(1250, 750, 1, "v", wall["inner_corner_right"], self.screen),
             ]
 
         obstacles = \
@@ -1227,48 +1234,45 @@ class CoopScene03(BaseScene):
             Door(280, 133, 1, self.screen),
             Door(1115, 55, 2, self.screen),
         ]
-        doors[0].state = "open"
-        doors[1].waitForSwitches(list(range(1, 10)))
+        doors[0].render.state = "open"
+        doors[1].switchesWaiting = list(range(1, 10))
         return doors
 
     def addSpikes(self):
         assets = SCENE_RESOURCES["spikes"]
         spikes = \
             [
-                Spike(50, 50, 26, "h", assets["down"], self.screen),
+                Spike(50, 50, 26, "h", assets["down"][0], self.screen),
 
-                Spike(165, 305, 15, "h", assets["up"], self.screen),
-                Spike(165, 380, 15, "h", assets["down"], self.screen),
+                Spike(165, 305, 15, "h", assets["up"][0], self.screen),
+                Spike(165, 380, 15, "h", assets["down"][0], self.screen),
 
-                Spike(230, 575, 8, "h", assets["up"], self.screen),
+                Spike(230, 575, 8, "h", assets["up"][0], self.screen),
             ]
         return spikes
 
     def addDecorations(self):
-        deco = SCENE_RESOURCES["decorations"]
+        skull = SCENE_RESOURCES["decorations"]["skull"][0]
         decorations = \
             [
-                Decoration(500, 730, deco["skull"], self.screen),
-                Decoration(530, 730, deco["skull"], self.screen),
-                Decoration(560, 730, deco["skull"], self.screen),
-                Decoration(590, 730, deco["skull"], self.screen),
-                Decoration(620, 730, deco["skull"], self.screen),
+                Decoration(500, 730, skull, self.screen),
+                Decoration(530, 730, skull, self.screen),
+                Decoration(560, 730, skull, self.screen),
+                Decoration(590, 730, skull, self.screen),
+                Decoration(620, 730, skull, self.screen),
 
-                Decoration(750, 730, deco["skull"], self.screen),
-                Decoration(780, 730, deco["skull"], self.screen),
-                Decoration(810, 730, deco["skull"], self.screen),
-                Decoration(840, 730, deco["skull"], self.screen),
-                Decoration(870, 730, deco["skull"], self.screen),
-                Decoration(900, 730, deco["skull"], self.screen),
+                Decoration(750, 730, skull, self.screen),
+                Decoration(780, 730, skull, self.screen),
+                Decoration(810, 730, skull, self.screen),
+                Decoration(840, 730, skull, self.screen),
+                Decoration(870, 730, skull, self.screen),
+                Decoration(900, 730, skull, self.screen),
 
-                Decoration(1000, 730, deco["skull"], self.screen),
-                Decoration(1030, 730, deco["skull"], self.screen),
-                Decoration(1060, 730, deco["skull"], self.screen),
-                Decoration(1090, 730, deco["skull"], self.screen),
+                Decoration(1000, 730, skull, self.screen),
+                Decoration(1030, 730, skull, self.screen),
+                Decoration(1060, 730, skull, self.screen),
+                Decoration(1090, 730, skull, self.screen),
 
-                Decoration(1200, 730, deco["skull"], self.screen),
+                Decoration(1200, 730, skull, self.screen),
             ]
         return decorations
-
-
-
