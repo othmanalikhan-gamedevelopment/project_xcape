@@ -8,9 +8,6 @@ from xcape.common.object import GameObject
 from xcape.components.physics import PhysicsComponent
 
 
-# TODO: Refactor
-# TODO: Speed up camera over long distances
-# TODO: Improve lock on delay for super long levels
 class SimpleCamera(GameObject):
     """
     A camera that follows around an entity in a scene.
@@ -46,10 +43,15 @@ class SimpleCamera(GameObject):
         start = self.delay
         end = self.duration + self.delay
 
-        if self.brief and end > self.elapsed > start:
+        if self.brief and (end > self.elapsed > start):
             dx, dy = self.computeShift(self.brief)
         else:
             dx, dy = self.computeShift(self.following)
+
+        if abs(dx) > 1000:
+            self.physics.maxSpeed = 100
+        elif abs(dx) > 500:
+            self.physics.maxSpeed = 30
 
         self.physics.fixVelocityX(dx)
         self.physics.fixVelocityY(dy)

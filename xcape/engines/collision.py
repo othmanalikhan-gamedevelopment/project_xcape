@@ -4,10 +4,11 @@ The collision engine of the game.
 import pygame as pg
 from pygame.math import Vector2
 
+from xcape.common.loader import SFX_RESOURCES
 from xcape.common.object import GameObject
+from xcape.components.audio import AudioComponent
 
 
-# TODO: Refactor (update physics)
 class CollisionEngine(GameObject):
     """
     A specialised (non-scalable) collision engine that handles collisions
@@ -19,6 +20,8 @@ class CollisionEngine(GameObject):
         :param scene: Scene Class, representing a level.
         """
         self.scene = scene
+        self.audio = AudioComponent(self, enableAutoPlay=False)
+        self.audio.add("explosion", SFX_RESOURCES["character_coop_jump"])
 
     def __str__(self):
         return "collision_engine"
@@ -34,6 +37,7 @@ class CollisionEngine(GameObject):
                 p2Jump = p2.keybinds["coop_jump"]
                 if event.key == p1Jump or event.key == p2Jump:
                     self.resolvePlayerCollisions(30)
+                    self.audio.state = "explosion"
             except ValueError:
                 pass
 
@@ -49,7 +53,8 @@ class CollisionEngine(GameObject):
         self.resolveBossCollisions()
         self.resolveBoundaryCollision()
 
-    # TODO: Refactor physics code
+        self.audio.update()
+
     def resolvePlayerCollisions(self, explosionSpeed):
         """
         Resolves any collisions between players.
@@ -60,16 +65,15 @@ class CollisionEngine(GameObject):
         try:
             p1, p2 = self.scene.players
             if pg.sprite.collide_rect(p1, p2):
+                p1.physics.addVelocityY("collision", -explosionSpeed)
+                p2.physics.addVelocityY("collision", -explosionSpeed)
+
                 if p2.rect.x > p1.rect.x:
-                    p1.physics.addVelocityY("collision", -explosionSpeed)
                     p1.physics.addVelocityX("collision", -explosionSpeed)
-                    p2.physics.addVelocityY("collision", -explosionSpeed)
                     p2.physics.addVelocityX("collision", explosionSpeed)
 
                 else:
-                    p1.physics.addVelocityY("collision", -explosionSpeed)
                     p1.physics.addVelocityX("collision", explosionSpeed)
-                    p2.physics.addVelocityY("collision", -explosionSpeed)
                     p2.physics.addVelocityX("collision", -explosionSpeed)
 
         except ValueError:
@@ -165,7 +169,6 @@ class CollisionEngine(GameObject):
             if hits:
                 self.messageScene("death", player.num)
 
-    #TODO: Complete
     def resolveBoundaryCollision(self):
         """
         Checks if the players have 'fallen' out of the level.
