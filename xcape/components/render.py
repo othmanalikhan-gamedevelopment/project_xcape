@@ -438,6 +438,8 @@ class Dialogue(GameObject):
         elif len(self.allBubbles) > value >= 0:
             self._index = value
             self.bubble = self.allBubbles[value]
+            # Need immediate update to initialise image variable of bubble
+            self.bubble.update()
         else:
             raise IndexError("There is no speech bubble with index {}!"
                              .format(value))
@@ -466,7 +468,7 @@ class _Bubble(GameObject):
         self.screen = screen
 
     def __str__(self):
-        return "Bubble: " + self.text
+        return "Bubble: '{}'".format(self.text)
 
     def update(self):
         self.render.update()

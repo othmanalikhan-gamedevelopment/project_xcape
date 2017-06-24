@@ -566,8 +566,8 @@ class SoloUIMenu(BaseMenu):
         self.y = 50
         self.dx = 30
 
-        self._maxLife = None
-        self._currentLife = None
+        self._HP = None
+        self._maxHP = None
         self._lives = []
 
         self._audio = AudioComponent(self, enableAutoPlay=False, enableRepeat=True)
@@ -593,11 +593,22 @@ class SoloUIMenu(BaseMenu):
 
     def draw(self, camera=None):
         for live in self._lives:
-            live.render.draw()
+            live.render.draw(camera)
+
+    @property
+    def currentLife(self):
+        return self._HP
+
+    @currentLife.setter
+    def currentLife(self, value):
+        for heart in self._lives:
+            heart.render.state = "no_life"
+        for heart in range(value):
+            self._lives[heart].render.state = "life"
 
     @property
     def maxLife(self):
-        return self._maxLife
+        return self._maxHP
 
     @maxLife.setter
     def maxLife(self, value):
@@ -608,17 +619,6 @@ class SoloUIMenu(BaseMenu):
             label.render.add("life", assets["life_gray"])
             label.render.state = "life"
             self._lives.append(label)
-
-    @property
-    def currentLife(self):
-        return self._currentLife
-
-    @currentLife.setter
-    def currentLife(self, value):
-        for heart in self._lives:
-            heart.render.state = "no_life"
-        for heart in range(value):
-            self._lives[heart].render.state = "life"
 
     @property
     def audio(self):
@@ -634,7 +634,6 @@ class SoloUIMenu(BaseMenu):
             self._audio.state = "danger"
 
 
-# TODO: Refactor
 class CoopUIMenu(BaseMenu):
     """
     The mutliplayer UI in a scene.
@@ -663,71 +662,109 @@ class CoopUIMenu(BaseMenu):
                                 self.y2 + 4,
                                 self.screen)
 
-        self.livesP1 = []
-        self.livesP2 = []
+        self._p1HP = None
+        self._p1MaxHP = None
+        self._p1Lives = []
+        self._p2HP = None
+        self._p2MaxHP = None
+        self._p2Lives = []
+
+        self._audio = AudioComponent(self, enableAutoPlay=False, enableRepeat=True)
+        self._audio.add("healthy", SFX_RESOURCES["menu_heartbeat_healthy"])
+        self._audio.add("injured", SFX_RESOURCES["menu_heartbeat_injured"])
+        self._audio.add("danger", SFX_RESOURCES["menu_heartbeat_danger"])
+
+    def __str__(self):
+        return "coop_ui_menu"
 
     def handleEvent(self, event):
         if event.type == self.MENU_EVENT:
             if event.category == "max_health":
                 p1HP, p2HP = event.data
-                self.setMaxLives(p1HP, p2HP)
+                self.p1MaxHP = p1HP
+                self.p2MaxHP = p2HP
 
             if event.category == "health":
                 p1HP, p2HP = event.data
-
-                for heart in self.livesP1:
-                    heart.state = "no_life"
-                for i in range(p1HP):
-                    self.livesP1[i].state = "life"
-
-                for heart in self.livesP2:
-                    heart.state = "no_life"
-                for i in range(p2HP):
-                    self.livesP2[i].state = "life"
+                self.p1HP = p1HP
+                self.p2HP = p2HP
+                self.audio = min(p1HP, p2HP)
 
     def update(self):
-        [l.animation.update() for l in self.livesP1]
-        [l.animation.update() for l in self.livesP2]
+        self.audio.update()
+        [l.render.update() for l in self._p1Lives]
+        [l.render.update() for l in self._p2Lives]
+        self.p1Text.update()
+        self.p2Text.update()
 
     def draw(self, camera=None):
-        [l.animation.draw() for l in self.livesP1]
-        [l.animation.draw() for l in self.livesP2]
-
+        [l.render.draw(camera) for l in self._p1Lives]
+        [l.render.draw(camera) for l in self._p2Lives]
         self.p1Text.draw()
         self.p2Text.draw()
 
-    def setMaxLives(self, livesP1, livesP2):
-        """
-        Sets the maximum number of hearts on the health bar.
+    @property
+    def p1HP(self):
+        return self._p1HP
 
-        :param livesP1: Integer, the max number of lives for player 1.
-        :param livesP2: Integer, the max number of lives for player 2.
-        """
+    @p1HP.setter
+    def p1HP(self, value):
+        for heart in self._p1Lives:
+            heart.render.state = "no_life"
+        for i in range(value):
+            self._p1Lives[i].render.state = "life"
+
+    @property
+    def p1MaxHP(self):
+        return self._p1MaxHP
+
+    @p1MaxHP.setter
+    def p1MaxHP(self, value):
         assets = MENU_RESOURCES["assets"]
+        for i in range(value):
+            label = ImageLabel(None, self.x1+i*self.spacing, self.y1, self.screen)
+            label.render.add("no_life", assets["life_empty"])
+            label.render.add("life", assets["life_orange"])
+            label.render.state = "life"
+            self._p1Lives.append(label)
 
-        for i in range(livesP1):
-            label = ImageLabel(self.x1 + i*self.spacing, self.y1,
-                               None, self.screen)
-            label.state = "life"
-            label.render.add("no_life",
-                             [assets["life_empty.png"]],
-                             float('inf'))
-            label.render.add("life",
-                             [assets["life_orange.png"]],
-                             float('inf'))
-            self.livesP1.append(label)
+    @property
+    def p2HP(self):
+        return self._p2HP
 
-        for i in range(livesP2):
-            label = ImageLabel(self.x2 + i*self.spacing, self.y2,
-                               None, self.screen)
-            label.state = "life"
-            label.render.add("no_life",
-                             [assets["life_empty.png"]],
-                             float('inf'))
-            label.render.add("life",
-                             [assets["life_blue.png"]],
-                             float('inf'))
-            self.livesP2.append(label)
+    @p2HP.setter
+    def p2HP(self, value):
+        for heart in self._p2Lives:
+            heart.render.state = "no_life"
+        for i in range(value):
+            self._p2Lives[i].render.state = "life"
+
+    @property
+    def p2MaxHP(self):
+        return self._p2MaxHP
+
+    @p2MaxHP.setter
+    def p2MaxHP(self, value):
+        assets = MENU_RESOURCES["assets"]
+        for i in range(value):
+            label = ImageLabel(None, self.x2+i*self.spacing, self.y2, self.screen)
+            label.render.add("no_life", assets["life_empty"])
+            label.render.add("life", assets["life_blue"])
+            label.render.state = "life"
+            self._p2Lives.append(label)
+
+    @property
+    def audio(self):
+        return self._audio
+
+    @audio.setter
+    def audio(self, value):
+        if value > 3:
+            self._audio.state = "healthy"
+        elif value > 1:
+            self._audio.state = "injured"
+        elif value == 1:
+            self._audio.state = "danger"
 
 
 class _SettingsLabel(GameObject):

@@ -52,7 +52,6 @@ class SceneEngine(GameObject):
             self.mode.draw()
 
 
-# TODO: Refactor
 class SinglePlayer(GameObject):
 
     def __init__(self, screen):
@@ -100,19 +99,7 @@ class SinglePlayer(GameObject):
 
         if event.type == self.SCENE_EVENT:
             if event.category == "transition":
-                try:
-                    self._loadScene(self.nameToScene[event.data])
-                except KeyError:
-                    try:
-                        self._loadScene(self.numToScene[event.data])
-                    except KeyError:
-                        self.messageMenu("transition", "win_menu")
-
-            if event.category == "complete":
-                if event.sender == "death_menu":
-                    self._loadUI(self.maxLives, self.lives)
-                    self._restartScene()
-                    self.pause = False
+                self._handleTransition(event)
 
             if event.category == "death":
                 self.lives -= 1
@@ -122,6 +109,12 @@ class SinglePlayer(GameObject):
                     pg.mixer.stop()
                     self.pause = True
                     self.messageMenu("transition", "death_menu")
+
+            if event.category == "complete":
+                if event.sender == "death_menu":
+                    self._loadUI(self.maxLives, self.lives)
+                    self._restartScene()
+                    self.pause = False
 
     def update(self):
         if not self.pause and self.scene:
@@ -138,6 +131,13 @@ class SinglePlayer(GameObject):
         Starts a new game.
         """
         self._loadScene(self.nameToScene["scene_01"])
+
+    def _restartScene(self):
+        """
+        Restarts the current scene.
+        """
+        levelNum = self.scene.levelNum
+        self._loadScene(self.numToScene[levelNum])
 
     def _loadScene(self, Scene):
         """
@@ -163,13 +163,6 @@ class SinglePlayer(GameObject):
         self.messageMenu("max_health", maxHealth)
         self.messageMenu("health", currentHealth)
 
-    def _restartScene(self):
-        """
-        Restarts the current scene.
-        """
-        levelNum = self.scene.levelNum
-        self._loadScene(self.numToScene[levelNum])
-
     def _showLoseMenu(self):
         """
         Pauses the game and triggers the game over screen.
@@ -188,8 +181,22 @@ class SinglePlayer(GameObject):
             self.messageMenu("transition", "blank_menu")
             self._loadUI(self.maxLives, self.lives)
 
+    def _handleTransition(self, event):
+        """
+        Transitions to the specified level given by the event, or to the win
+        menu if no level can be found.
 
-# TODO: Refactor
+        :param event: pygame.Event object, containing the level to transition.
+        """
+        try:
+            self._loadScene(self.nameToScene[event.data])
+        except KeyError:
+            try:
+                self._loadScene(self.numToScene[event.data])
+            except KeyError:
+                self.messageMenu("transition", "win_menu")
+
+
 class MultiPlayer(GameObject):
 
     def __init__(self, screen):
@@ -239,29 +246,24 @@ class MultiPlayer(GameObject):
 
         if event.type == self.SCENE_EVENT:
             if event.category == "transition":
-                try:
-                    self._loadScene(self.nameToScene[event.data])
-                except KeyError:
-                    try:
-                        self._loadScene(self.numToScene[event.data])
-                    except KeyError:
-                        self.messageMenu("transition", "win_menu")
-
-            if event.category == "complete":
-                if event.sender == "death_menu":
-                    self._loadUI(self.maxLives, self.lives)
-                    self._restartScene()
-                    self.pause = False
+                self._handleTransition(event)
 
             if event.category == "death":
                 playerNum = event.data
                 self.lives[playerNum-1] -= 1
                 isAlive = all([live != 0 for live in self.lives])
                 if not isAlive:
-                    self._showGameOver()
+                    self._showLoseMenu()
                 else:
+                    pg.mixer.stop()
                     self.pause = True
                     self.messageMenu("transition", "death_menu")
+
+            if event.category == "complete":
+                if event.sender == "death_menu":
+                    self._loadUI(self.maxLives, self.lives)
+                    self._restartScene()
+                    self.pause = False
 
     def update(self):
         if not self.pause and self.scene:
@@ -278,6 +280,13 @@ class MultiPlayer(GameObject):
         Starts a new game.
         """
         self._loadScene(self.nameToScene["scene_01"])
+
+    def _restartScene(self):
+        """
+        Restarts the current scene.
+        """
+        levelNum = self.scene.levelNum
+        self._loadScene(self.numToScene[levelNum])
 
     def _loadScene(self, Scene):
         """
@@ -303,14 +312,7 @@ class MultiPlayer(GameObject):
         self.messageMenu("max_health", maxHealth)
         self.messageMenu("health", health)
 
-    def _restartScene(self):
-        """
-        Restarts the current scene.
-        """
-        levelNum = self.scene.levelNum
-        self._loadScene(self.numToScene[levelNum])
-
-    def _showGameOver(self):
+    def _showLoseMenu(self):
         """
         Pauses the game and triggers the game over screen.
         """
@@ -327,3 +329,18 @@ class MultiPlayer(GameObject):
         else:
             self.messageMenu("transition", "blank_menu")
             self._loadUI(self.maxLives, self.lives)
+
+    def _handleTransition(self, event):
+        """
+        Transitions to the specified level given by the event, or to the win
+        menu if no level can be found.
+
+        :param event: pygame.Event object, containing the level to transition.
+        """
+        try:
+            self._loadScene(self.nameToScene[event.data])
+        except KeyError:
+            try:
+                self._loadScene(self.numToScene[event.data])
+            except KeyError:
+                self.messageMenu("transition", "win_menu")

@@ -428,6 +428,9 @@ class SoloScene03(BaseScene):
         self.dialogue.add(dialogue.SCENE_SOLO_3, 10, 410, "caption")
         self.dialogue.index = 0
 
+    def __str__(self):
+        return "solo_scene_03"
+
     def handleEvent(self, event):
         [p.handleEvent(event) for p in self.players]
 
@@ -576,6 +579,9 @@ class SoloScene04(BaseScene):
         self.dialogue.add(dialogue.SCENE_SOLO_1, 10, 410, "caption")
         self.dialogue.index = 0
 
+    def __str__(self):
+        return "solo_scene_04"
+
     def handleEvent(self, event):
         [p.handleEvent(event) for p in self.players]
 
@@ -721,19 +727,13 @@ class SoloScene04(BaseScene):
         return decorations
 
 
-# TODO: Refactor
 class CoopScene01(BaseScene):
 
     def __init__(self, screen):
         super().__init__(screen)
         self.levelNum = 1
 
-        self.image = SCENE_RESOURCES["levels"]["scene_01"]
-        self.rect = pg.Rect(0, 0, 0, 0)
-        self.rect.size = self.image.get_size()
-
         self.players = self.addPlayers()
-
         self.walls = self.addWalls()
         self.dPlatforms = self.addDPlatforms()
         self.switches = self.addSwitches()
@@ -742,26 +742,41 @@ class CoopScene01(BaseScene):
 
         self.elapsed = 0
         self.origin = pg.time.get_ticks()
+
         self.dialogue = Dialogue(self.screen)
         self.dialogue.add(dialogue.SCENE_COOP_1A, 10, 410, "caption")
         self.dialogue.add(dialogue.SCENE_COOP_1B, 10, 410, "caption")
+        self.dialogue.index = 0
+
+        image = SCENE_RESOURCES["levels"]["scene_01"]
+        self.render = RenderComponent(self)
+        self.render.add("idle", image)
+        self.render.state = "idle"
+
+    def __str__(self):
+        return "coop_scene_01"
 
     def handleEvent(self, event):
         [p.handleEvent(event) for p in self.players]
 
-        if event.type == self.MENU_EVENT:
+        if event.type == self.SCENE_EVENT:
             [d.handleEvent(event) for d in self.doors]
 
     def update(self):
         self.elapsed = pg.time.get_ticks() - self.origin
+        self.render.update()
+        self.dialogue.update()
 
-        [s.update() for s in self.switches]
+        [w.update() for w in self.walls]
+        [d.update() for d in self.decorations]
         [d.update() for d in self.doors]
+        [s.update() for s in self.switches]
+        [p.update() for p in self.dPlatforms]
         [p.update() for p in self.players]
 
     def draw(self, camera=None):
         self.screen.fill(settings.COLOURS["black_red"])
-        self.screen.blit(self.image, camera.apply(self))
+        self.render.draw(camera)
 
         [w.draw(camera) for w in self.walls]
         [d.draw(camera) for d in self.decorations]
@@ -792,25 +807,25 @@ class CoopScene01(BaseScene):
 
         boundaries = \
         [
-            Wall(0, 10, 8, "v", [wall["boundary_left"]], self.screen),
-            Wall(19, 478, 3, "h", [wall["boundary_bot"]], self.screen),
-            Wall(0, 478, 1, "h", [wall["inner_corner_left"]], self.screen),
-            Wall(170, 260, 4, "v", [wall["boundary_right"]], self.screen),
-            Wall(170, 478, 1, "h", [wall["inner_corner_right"]], self.screen),
+            Wall(0, 10, 8, "v", wall["boundary_left"], self.screen),
+            Wall(19, 478, 3, "h", wall["boundary_bot"], self.screen),
+            Wall(0, 478, 1, "h", wall["inner_corner_left"], self.screen),
+            Wall(170, 260, 4, "v", wall["boundary_right"], self.screen),
+            Wall(170, 478, 1, "h", wall["inner_corner_right"], self.screen),
 
-            Wall(520, 478, 2, "h", [wall["boundary_bot"]], self.screen),
-            Wall(628, 138, 6, "v", [wall["boundary_right"]], self.screen),
-            Wall(164, 138, 8, "h", [wall["boundary_top"]], self.screen),
-            Wall(160, 138, 1, "v", [wall["corner_top_left"]], self.screen),
-            Wall(160, 10, 2, "v", [wall["boundary_right"]], self.screen),
-            Wall(628, 138, 1, "v", [wall["upper_corner_right"]], self.screen),
-            Wall(628, 478, 1, "h", [wall["inner_corner_right"]], self.screen),
+            Wall(520, 478, 2, "h", wall["boundary_bot"], self.screen),
+            Wall(628, 138, 6, "v", wall["boundary_right"], self.screen),
+            Wall(164, 138, 8, "h", wall["boundary_top"], self.screen),
+            Wall(160, 138, 1, "v", wall["corner_top_left"], self.screen),
+            Wall(160, 10, 2, "v", wall["boundary_right"], self.screen),
+            Wall(628, 138, 1, "v", wall["upper_corner_right"], self.screen),
+            Wall(628, 478, 1, "h", wall["inner_corner_right"], self.screen),
         ]
 
         obstacles = \
         [
-            Wall(48, 418, 1, "h", [wall["block_left"]], self.screen),
-            Wall(108, 418, 1, "h", [wall["block_right"]], self.screen),
+            Wall(48, 418, 1, "h", wall["block_left"], self.screen),
+            Wall(108, 418, 1, "h", wall["block_right"], self.screen),
         ]
         return boundaries + obstacles
 
@@ -843,16 +858,16 @@ class CoopScene01(BaseScene):
 
     def addDoors(self):
         door1 = Door(547, 370, 1, self.screen)
-        door1.waitForSwitches([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+        door1.switchesWaiting = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
         return [door1]
 
     def addDecorations(self):
         deco = SCENE_RESOURCES["decorations"]
         decorations = \
         [
-            Decoration(70, 393, deco["skull"], self.screen),
-            Decoration(90, 393, deco["skull"], self.screen),
-            Decoration(175, 236, deco["skull"], self.screen),
+            Decoration(70, 393, deco["skull"][0], self.screen),
+            Decoration(90, 393, deco["skull"][0], self.screen),
+            Decoration(175, 236, deco["skull"][0], self.screen),
         ]
         return decorations
 
@@ -883,6 +898,9 @@ class CoopScene02(BaseScene):
         self.dialogue = Dialogue(self.screen)
         self.dialogue.add(dialogue.SCENE_COOP_2, 10, 410, "caption")
         self.dialogue.index = 0
+
+    def __str__(self):
+        return "coop_scene_01"
 
     def handleEvent(self, event):
         [p.handleEvent(event) for p in self.players]
@@ -1052,6 +1070,9 @@ class CoopScene03(BaseScene):
         self.dialogue = Dialogue(self.screen)
         self.dialogue.add(dialogue.SCENE_SOLO_3, 10, 410, "caption")
         self.dialogue.index = 0
+
+    def __str__(self):
+        return "coop_scene_03"
 
     def handleEvent(self, event):
         [p.handleEvent(event) for p in self.players]
@@ -1243,5 +1264,6 @@ class CoopScene03(BaseScene):
                 Decoration(1200, 730, deco["skull"], self.screen),
             ]
         return decorations
+
 
 
