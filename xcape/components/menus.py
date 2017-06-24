@@ -341,7 +341,6 @@ class DeathMenu(BaseMenu):
         self.effect.draw()
 
 
-# TODO: Refactor
 class LoseMenu(BaseMenu):
     """
     The game over menu of the game.
@@ -349,11 +348,6 @@ class LoseMenu(BaseMenu):
 
     def __init__(self, screen):
         super().__init__(screen)
-
-        self.image = MENU_RESOURCES["screens"]["lose"][0]
-        self.rect = pg.Rect(0, 0, 0, 0)
-        self.rect.size = self.image.get_size()
-
         self.fontSize = 18
         self.fontColour = "white"
         self.x = 150
@@ -366,6 +360,18 @@ class LoseMenu(BaseMenu):
                                    self.y,
                                    self.screen)
 
+        image = MENU_RESOURCES["screens"]["lose"][0]
+        self.render = RenderComponent(self)
+        self.render.add("idle", image)
+        self.render.state = "idle"
+
+        self.audio = AudioComponent(self, enableAutoPlay=False)
+        self.audio.add("meow", SFX_RESOURCES["menu_lose"])
+        self.audio.state = "meow"
+
+    def __str__(self):
+        return "lose_menu"
+
     def handleEvent(self, event):
         if event.type == pg.KEYDOWN:
             if event.key == pg.K_RETURN:
@@ -374,9 +380,11 @@ class LoseMenu(BaseMenu):
 
     def update(self):
         self.render.update()
+        self.audio.update()
+        self.enterText.update()
 
     def draw(self, camera=None):
-        self.screen.blit(self.image, self.rect)
+        self.render.draw()
         self.enterText.draw()
 
 

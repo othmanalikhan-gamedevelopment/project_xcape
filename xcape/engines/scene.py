@@ -67,7 +67,7 @@ class SinglePlayer(GameObject):
         self.pause = False
 
         self.maxLives = 5
-        self.lives = 5
+        self.lives = 1
         self._loadUI(self.maxLives, self.lives)
 
         self.nameToScene = \
