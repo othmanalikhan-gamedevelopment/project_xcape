@@ -9,6 +9,7 @@ import xcape.components.dialogue as dialogue
 from xcape.common.loader import SCENE_RESOURCES
 from xcape.common.scene import BaseScene
 from xcape.components.render import RenderComponent, Dialogue
+from xcape.entities.bosses import PigBoss
 from xcape.entities.players import PlayerOne
 from xcape.entities.scene import (
     Wall, SPlatform, DPlatform, MPlatform, Switch, Door, Spike, Decoration
@@ -443,13 +444,16 @@ class SoloScene04(BaseScene):
         self.levelNum = 4
 
         self.players = self.addPlayers()
+        self.bosses = self.addBosses()
+        self.bosses[0].target(self.players)
+
         self.walls = self.addWalls()
         self.mPlatforms = self.addMPlatforms()
         self.switches = self.addSwitches()
         self.doors = self.addDoors()
         self.spikes = self.addSpikes()
         self.dPlatforms = self.addDPlatforms()
-        # self.decorations = self.addDecorations()
+        self.decorations = self.addDecorations()
 
         self.elapsed = 0
         self.origin = pg.time.get_ticks()
@@ -477,6 +481,7 @@ class SoloScene04(BaseScene):
         self.render.update()
         self.dialogue.update()
 
+        [d.update() for d in self.decorations]
         [w.update() for w in self.walls]
         [s.update() for s in self.switches]
         [d.update() for d in self.doors]
@@ -484,11 +489,13 @@ class SoloScene04(BaseScene):
         [p.update() for p in self.dPlatforms]
         [p.update() for p in self.mPlatforms]
         [p.update() for p in self.players]
+        [b.update() for b in self.bosses]
 
     def draw(self, camera=None):
         self.screen.fill(settings.COLOURS["black_red"])
         self.render.draw(camera)
 
+        [d.draw(camera) for d in self.decorations]
         [w.draw(camera) for w in self.walls]
         [s.draw(camera) for s in self.switches]
         [d.draw(camera) for d in self.doors]
@@ -496,20 +503,27 @@ class SoloScene04(BaseScene):
         [p.draw(camera) for p in self.dPlatforms]
         [p.draw(camera) for p in self.mPlatforms]
         [p.draw(camera) for p in self.players]
+        [b.draw(camera) for b in self.bosses]
 
         if 5000 > self.elapsed >= 0:
             self.dialogue.draw()
 
     def addPlayers(self):
-        spawn = (145, 260)
+        spawn = (167, 200)
         player = [PlayerOne(self.screen)]
         player[0].rect.center = spawn
         return player
 
+    def addBosses(self):
+        b1Spawn = (670, 260)
+        b1 = PigBoss(self.screen)
+        b1.rect.center = b1Spawn
+        bosses = [b1]
+        return bosses
+
     def addWalls(self):
         wall = SCENE_RESOURCES["walls"]
         pillar = SCENE_RESOURCES["pillars"]
-
         pillarWall = [pillar["steel_top"][0],
                       pillar["steel_mid"][0],
                       pillar["steel_bot"][0]]
@@ -531,10 +545,10 @@ class SoloScene04(BaseScene):
         obstacles = \
             [
                 Wall(139, 288, 2, "h", blockWall, self.screen),
-                #Wall(199, 288, 2, "h", wall["block_mid"], self.screen),
-                #Wall(327, 288, 1, "h", wall["block_right"], self.screen),
+                Wall(3411, 304, 2, "h", blockWall, self.screen),
 
                 Wall(3, 167, 2, "v", pillarWall, self.screen),
+                Wall(3359, 217, 3, "v", pillarWall, self.screen),
 
                 Wall(494, 256, 1, "h", wall["block_small"], self.screen),
                 Wall(632, 169, 1, "h", wall["block_small"], self.screen),
@@ -542,6 +556,7 @@ class SoloScene04(BaseScene):
                 Wall(805, 304, 1, "h", wall["block_small"], self.screen),
                 Wall(1021, 230, 1, "h", wall["block_small"], self.screen),
                 Wall(974, 384, 1, "h", wall["block_small"], self.screen),
+                Wall(3347, 302, 1, "h", wall["block_small"], self.screen),
 
                 Wall(1692, 116, 2, "h", wall["boundary_bot"], self.screen),
                 Wall(1632, 168, 2, "v", wall["boundary_right"], self.screen),
@@ -565,10 +580,16 @@ class SoloScene04(BaseScene):
 
         platforms = \
             [
-                MPlatform((1187, 304), (1407, 325), 3, 0, self.screen, hImage),
+                MPlatform((1187, 304), (1407, 325), 4, 0, self.screen, hImage),
 
-                MPlatform((2309, 337), (2437, 325), 3, 0, self.screen, hImage),
-                MPlatform((2558, 304), (2686, 325), 3, 0, self.screen, hImage),
+                MPlatform((2309, 337), (2437, 325), 4, 0, self.screen, hImage),
+                MPlatform((2558, 304), (2686, 325), 4, 0, self.screen, hImage),
+                MPlatform((2696, 346), (2950, 325), 4, 0, self.screen, hImage),
+
+                MPlatform((3049, 232), (3049, 406), 0, 4, self.screen, vImage),
+                MPlatform((3144, 195), (3049, 344), 0, 4, self.screen, vImage),
+                MPlatform((3289, 195), (3049, 330), 0, 4, self.screen, vImage),
+
             ]
         return platforms
 
@@ -584,28 +605,33 @@ class SoloScene04(BaseScene):
     def addSwitches(self):
         switches = \
             [
-
+                Switch(822, 92, 1, self.screen),
+                Switch(822, 263, 2, self.screen),
+                Switch(992, 350, 3, self.screen),
+                Switch(1296, 250, 4, self.screen),
+                Switch(2610, 240, 5, self.screen),
+                Switch(3138, 143, 6, self.screen),
             ]
         return switches
 
     def addDoors(self):
-        door1 = Door(3502, 196, 1, self.screen)
-        door1.switchesWaiting = [1, 2]
+        door1 = Door(3579, 196, 1, self.screen)
+        door1.switchesWaiting = [1, 2, 3, 4, 5]
         return [door1]
 
     def addSpikes(self):
-        assets = SCENE_RESOURCES["spikes"]
+        spike = SCENE_RESOURCES["spikes"]
         spikes = \
             [
+                Spike(3362, 195, 2, "h", spike["up"][0], self.screen),
             ]
         return spikes
 
     def addDecorations(self):
-        assets = SCENE_RESOURCES["decorations"]
+        deco = SCENE_RESOURCES["decorations"]
         decorations = \
         [
-            Spike(420, 117, "h", assets["torch_1"], self.screen),
-            Spike(2176, 140, "h", assets["torch_2"], self.screen),
-
+            Decoration(416, 112, deco["torch"], self.screen),
+            Decoration(2176, 140, deco["torch"], self.screen),
         ]
         return decorations

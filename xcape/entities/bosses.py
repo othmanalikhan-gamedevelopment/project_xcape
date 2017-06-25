@@ -3,6 +3,7 @@ Contains the pig boss character.
 """
 
 import random
+from collections import OrderedDict
 
 import pygame as pg
 from pygame.math import Vector2
@@ -59,18 +60,30 @@ class PigBoss(GameObject, pg.sprite.Sprite):
         minVolume = 0.1
         scaleVolume = 0.5
 
-        p1, p2 = self.targets
-        x, y = self.rect.center
-        x1, y1 = p1.rect.center
-        x2, y2 = p2.rect.center
+        try:
+            p1, p2 = self.targets
+            x, y = self.rect.center
+            x1, y1 = p1.rect.center
+            x2, y2 = p2.rect.center
 
-        d1 = Vector2(x - x1, y - y1)
-        d2 = Vector2(x - x2, y - y2)
-        distance = min(d1.length(), d2.length(), maxDistance)
+            d1 = Vector2(x - x1, y - y1)
+            d2 = Vector2(x - x2, y - y2)
+            distance = min(d1.length(), d2.length(), maxDistance)
 
-        vol = max((minVolume, (1-(distance/maxDistance))*scaleVolume))
-        self.audio.sound.set_volume(vol)
-        self.audio.update()
+            vol = max((minVolume, (1-(distance/maxDistance))*scaleVolume))
+            self.audio.sound.set_volume(vol)
+            self.audio.update()
+        except ValueError:
+            p1, = self.targets
+            x, y = self.rect.center
+            x1, y1 = p1.rect.center
+
+            d1 = Vector2(x - x1, y - y1)
+            distance = min(d1.length(), maxDistance)
+
+            vol = max((minVolume, (1-(distance/maxDistance))*scaleVolume))
+            self.audio.sound.set_volume(vol)
+            self.audio.update()
 
     def updateRenderState(self):
         """
@@ -127,7 +140,8 @@ class PigBoss(GameObject, pg.sprite.Sprite):
                 self.AIState = "thinking"
 
         if self.AIState == "thinking":
-            isNear = self.isInRange(self.following.rect.center, self.chaseRadius)
+            isNear = self.isInRange(self.following.rect.center,
+                                    2*self.chaseRadius)
             isAttacking = self.attackLoci
 
             if not isNear and not isAttacking:
@@ -184,6 +198,8 @@ class PigBoss(GameObject, pg.sprite.Sprite):
         :param radius: Integer, the distance around the target to keep within.
         :param speed: Integer, the speed to chase at.
         """
+        superChaseRange = 600
+
         x, y = self.rect.center
         xf, yf = self.following.rect.center
 
@@ -191,7 +207,10 @@ class PigBoss(GameObject, pg.sprite.Sprite):
         v = d.normalize()
         v.scale_to_length(speed)
 
-        if d.length() > radius:
+        if d.length() > superChaseRange:
+            self.physics.fixVelocityX(-5*v.x)
+            self.physics.fixVelocityY(-5*v.y)
+        elif d.length() > radius:
             self.physics.fixVelocityX(-v.x)
             self.physics.fixVelocityY(-v.y)
         else:
@@ -250,11 +269,15 @@ class PigBoss(GameObject, pg.sprite.Sprite):
                                                         self.isSpiralPattern,
                                                         self.isSweepPattern,
                                                         self.isStompPattern)
+        try:
             p1, p2 = self.targets
             if self.following == p1:
                 self.following = p2
             elif self.following == p2:
                 self.following = p1
+        except ValueError:
+            print("'{}' is not switching targets as there is only a single "
+                  "target '{}'".format(self.__str__(), self.targets[0]))
 
         if not self.attackLoci:
             nameToSpeed = \
@@ -332,6 +355,10 @@ class PigBoss(GameObject, pg.sprite.Sprite):
             patterns.update(sweep)
         if isStomp:
             patterns.update(stomp)
+
+        patterns = list(patterns.items())
+        random.shuffle(patterns)
+        patterns = OrderedDict(patterns)
         return patterns
 
     def _initialiseRenderer(self):
