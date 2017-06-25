@@ -12,10 +12,11 @@ Prison XCape is a 2D platformer game that is made using a simple game engine
  
 Some game play footage is demonstrated below.
 
-<p align="center">
-  <img align="left" width=400 src="extra/gameplay_solo.gif">
-  <img align="right" width=400 src="extra/gameplay_coop.gif">
-</p>
+|          Single player        |               Coop             |
+:------------------------------:|:-------------------------------:
+![](extra/gameplay_solo.gif)    |  ![](extra/gameplay_coop.gif)  |
+------------------------------------------------------------------
+
 
 Prerequisites
 --------------
