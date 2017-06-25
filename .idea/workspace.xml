@@ -761,13 +761,6 @@
       <option name="presentableId" value="Default" />
       <updated>1495180644399</updated>
     </task>
-    <task id="LOCAL-00048" summary="Added working dialogue for the first boss">
-      <created>1497328444001</created>
-      <option name="number" value="00048" />
-      <option name="presentableId" value="LOCAL-00048" />
-      <option name="project" value="LOCAL" />
-      <updated>1497328444001</updated>
-    </task>
     <task id="LOCAL-00049" summary="Fixed a horrible moving platform physics bug (see comments)">
       <created>1497367478755</created>
       <option name="number" value="00049" />
@@ -1104,7 +1097,14 @@
       <option name="project" value="LOCAL" />
       <updated>1498374410908</updated>
     </task>
-    <option name="localTasksCounter" value="97" />
+    <task id="LOCAL-00097" summary="Translated dialogues into Spanish">
+      <created>1498407689264</created>
+      <option name="number" value="00097" />
+      <option name="presentableId" value="LOCAL-00097" />
+      <option name="project" value="LOCAL" />
+      <updated>1498407689264</updated>
+    </task>
+    <option name="localTasksCounter" value="98" />
     <servers />
   </component>
   <component name="TodoView" selected-index="2">
@@ -1202,7 +1202,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Added sound effects to the splash screen" />
     <MESSAGE value="Updated audio.py to allow repeating and autoplaying of sounds" />
     <MESSAGE value="Added sound effects to options menu" />
     <MESSAGE value="Updated Dialogue class to use @property to simplify code" />
@@ -1227,7 +1226,8 @@
     <MESSAGE value="Fixed alignment issues in README" />
     <MESSAGE value="Added SoloScene04 to single player" />
     <MESSAGE value="Tweaked spawn point of SoloScene04" />
-    <option name="LAST_COMMIT_MESSAGE" value="Tweaked spawn point of SoloScene04" />
+    <MESSAGE value="Translated dialogues into Spanish" />
+    <option name="LAST_COMMIT_MESSAGE" value="Translated dialogues into Spanish" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="XDebuggerManager">
