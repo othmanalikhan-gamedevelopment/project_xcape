@@ -65,8 +65,5 @@ Credits
 
 TODO
 ----
-- Translating boss dialogue
-- Translating coop scene dialogue 
 - Improving quality of cutscenes​ 
-- Adding sounds for cutscenes
 ​- Added a proper background for CoopScene03

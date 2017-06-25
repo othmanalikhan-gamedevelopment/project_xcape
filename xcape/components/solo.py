@@ -16,7 +16,7 @@ from xcape.entities.scene import (
 )
 
 
-class SoloScene01(BaseScene):
+class JailScene01(BaseScene):
 
     def __init__(self, screen):
         super().__init__(screen)
@@ -37,8 +37,7 @@ class SoloScene01(BaseScene):
         self.render.state = "background"
 
         self.dialogue = Dialogue(self.screen)
-        self.dialogue.add(dialogue.SCENE_SOLO_1, 10, 410, "caption")
-        self.dialogue.index = 0
+        self.dialogue.add(dialogue.JAIL_SOLO_1, 10, 410, "caption")
 
     def __str__(self):
         return "solo_scene_01"
@@ -52,13 +51,18 @@ class SoloScene01(BaseScene):
     def update(self):
         self.elapsed = pg.time.get_ticks() - self.origin
         self.render.update()
-        self.dialogue.update()
 
         [w.update() for w in self.walls]
         [d.update() for d in self.doors]
         [s.update() for s in self.switches]
         [p.update() for p in self.sPlatforms]
         [p.update() for p in self.players]
+
+        self.dialogue.update()
+        if 5000 > self.elapsed >= 0:
+            self.dialogue.index = 0
+        else:
+            self.dialogue.index = None
 
     def draw(self, camera=None):
         self.screen.fill(settings.COLOURS["black_red"])
@@ -69,9 +73,7 @@ class SoloScene01(BaseScene):
         [s.draw(camera) for s in self.switches]
         [p.draw(camera) for p in self.sPlatforms]
         [p.draw(camera) for p in self.players]
-
-        if 5000 > self.elapsed >= 0:
-            self.dialogue.draw()
+        self.dialogue.draw()
 
     def addPlayers(self):
         spawn = (100, 0)
@@ -130,7 +132,7 @@ class SoloScene01(BaseScene):
         return [door1]
 
 
-class SoloScene02(BaseScene):
+class JailScene02(BaseScene):
 
     def __init__(self, screen):
         super().__init__(screen)
@@ -154,8 +156,7 @@ class SoloScene02(BaseScene):
         self.render.state = "idle"
 
         self.dialogue = Dialogue(self.screen)
-        self.dialogue.add(dialogue.SCENE_SOLO_2, 10, 410, "caption")
-        self.dialogue.index = 0
+        self.dialogue.add(dialogue.JAIL_SOLO_2, 10, 410, "caption")
 
     def __str__(self):
         return "solo_scene_02"
@@ -169,7 +170,6 @@ class SoloScene02(BaseScene):
     def update(self):
         self.elapsed = pg.time.get_ticks() - self.origin
         self.render.update()
-        self.dialogue.update()
 
         [d.update() for d in self.decorations]
         [w.update() for w in self.walls]
@@ -179,6 +179,12 @@ class SoloScene02(BaseScene):
         [p.update() for p in self.mPlatforms]
         [p.update() for p in self.dPlatforms]
         [p.update() for p in self.players]
+
+        self.dialogue.update()
+        if 5000 > self.elapsed >= 0:
+            self.dialogue.index = 0
+        else:
+            self.dialogue.index = None
 
     def draw(self, camera=None):
         self.screen.fill(settings.COLOURS["black_red"])
@@ -192,9 +198,7 @@ class SoloScene02(BaseScene):
         [p.draw(camera) for p in self.mPlatforms]
         [p.draw(camera) for p in self.dPlatforms]
         [p.draw(camera) for p in self.players]
-
-        if 5000 > self.elapsed >= 0:
-            self.dialogue.draw()
+        self.dialogue.draw()
 
     def addPlayers(self):
         spawn = (70, 510)
@@ -288,7 +292,7 @@ class SoloScene02(BaseScene):
         return decorations
 
 
-class SoloScene03(BaseScene):
+class JailScene03(BaseScene):
 
     def __init__(self, screen):
         super().__init__(screen)
@@ -310,8 +314,7 @@ class SoloScene03(BaseScene):
         self.render.state = "idle"
 
         self.dialogue = Dialogue(self.screen)
-        self.dialogue.add(dialogue.SCENE_SOLO_3, 10, 410, "caption")
-        self.dialogue.index = 0
+        self.dialogue.add(dialogue.JAIL_SOLO_3, 10, 410, "caption")
 
     def __str__(self):
         return "solo_scene_03"
@@ -325,7 +328,6 @@ class SoloScene03(BaseScene):
     def update(self):
         self.elapsed = pg.time.get_ticks() - self.origin
         self.render.update()
-        self.dialogue.update()
 
         [w.update() for w in self.walls]
         [s.update() for s in self.switches]
@@ -333,6 +335,12 @@ class SoloScene03(BaseScene):
         [s.update() for s in self.spikes]
         [p.update() for p in self.mPlatforms]
         [p.update() for p in self.players]
+
+        self.dialogue.update()
+        if 5000 > self.elapsed >= 0:
+            self.dialogue.index = 0
+        else:
+            self.dialogue.index = None
 
     def draw(self, camera=None):
         self.screen.fill(settings.COLOURS["black_red"])
@@ -344,9 +352,7 @@ class SoloScene03(BaseScene):
         [s.draw(camera) for s in self.spikes]
         [p.draw(camera) for p in self.mPlatforms]
         [p.draw(camera) for p in self.players]
-
-        if 5000 > self.elapsed >= 0:
-            self.dialogue.draw()
+        self.dialogue.draw()
 
     def addPlayers(self):
         spawn = (315, 128)
@@ -437,7 +443,7 @@ class SoloScene03(BaseScene):
         return spikes
 
 
-class SoloScene04(BaseScene):
+class JailScene04(BaseScene):
 
     def __init__(self, screen):
         super().__init__(screen)
@@ -464,8 +470,7 @@ class SoloScene04(BaseScene):
         self.render.state = "background"
 
         self.dialogue = Dialogue(self.screen)
-        self.dialogue.add(dialogue.SCENE_SOLO_1, 10, 410, "caption")
-        self.dialogue.index = 0
+        self.dialogue.add(dialogue.JAIL_SOLO_1, 10, 410, "caption")
 
     def __str__(self):
         return "solo_scene_04"
@@ -479,7 +484,6 @@ class SoloScene04(BaseScene):
     def update(self):
         self.elapsed = pg.time.get_ticks() - self.origin
         self.render.update()
-        self.dialogue.update()
 
         [d.update() for d in self.decorations]
         [w.update() for w in self.walls]
@@ -490,6 +494,12 @@ class SoloScene04(BaseScene):
         [p.update() for p in self.mPlatforms]
         [p.update() for p in self.players]
         [b.update() for b in self.bosses]
+
+        self.dialogue.update()
+        if 5000 > self.elapsed >= 0:
+            self.dialogue.index = 0
+        else:
+            self.dialogue.index = None
 
     def draw(self, camera=None):
         self.screen.fill(settings.COLOURS["black_red"])
@@ -504,9 +514,7 @@ class SoloScene04(BaseScene):
         [p.draw(camera) for p in self.mPlatforms]
         [p.draw(camera) for p in self.players]
         [b.draw(camera) for b in self.bosses]
-
-        if 5000 > self.elapsed >= 0:
-            self.dialogue.draw()
+        self.dialogue.draw()
 
     def addPlayers(self):
         spawn = (250, 200)

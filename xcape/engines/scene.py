@@ -72,17 +72,17 @@ class SinglePlayer(GameObject):
 
         self.nameToScene = \
             {
-                "scene_01": solo.SoloScene01,
-                "scene_02": solo.SoloScene02,
-                "scene_03": solo.SoloScene03,
-                "scene_04": solo.SoloScene04,
+                "scene_01": solo.JailScene01,
+                "scene_02": solo.JailScene02,
+                "scene_03": solo.JailScene03,
+                "scene_04": solo.JailScene04,
             }
         self.numToScene = \
             {
-                1: solo.SoloScene01,
-                2: solo.SoloScene02,
-                3: solo.SoloScene03,
-                4: solo.SoloScene04,
+                1: solo.JailScene01,
+                2: solo.JailScene02,
+                3: solo.JailScene03,
+                4: solo.JailScene04,
             }
 
     def __str__(self):
@@ -217,15 +217,15 @@ class MultiPlayer(GameObject):
 
         self.nameToScene = \
             {
-                "scene_01": coop.CoopScene01,
-                "scene_02": coop.CoopScene02,
-                "scene_03": coop.CoopScene03,
+                "scene_01": coop.JailScene01,
+                "scene_02": coop.JailScene02,
+                "scene_03": coop.JailScene03,
             }
         self.numToScene = \
             {
-                1: coop.CoopScene01,
-                2: coop.CoopScene02,
-                3: coop.CoopScene03,
+                1: coop.JailScene01,
+                2: coop.JailScene02,
+                3: coop.JailScene03,
             }
 
     def handleEvent(self, event):

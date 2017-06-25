@@ -16,7 +16,7 @@ from xcape.entities.scene import (
 )
 
 
-class CoopScene01(BaseScene):
+class JailScene01(BaseScene):
 
     def __init__(self, screen):
         super().__init__(screen)
@@ -33,9 +33,9 @@ class CoopScene01(BaseScene):
         self.origin = pg.time.get_ticks()
 
         self.dialogue = Dialogue(self.screen)
-        self.dialogue.add(dialogue.SCENE_COOP_1A, 10, 410, "caption")
-        self.dialogue.add(dialogue.SCENE_COOP_1B, 10, 410, "caption")
-        self.dialogue.index = 0
+        self.dialogue.add(dialogue.JAIL_COOP_1A, 10, 410, "caption")
+        self.dialogue.add(dialogue.JAIL_COOP_1B, 10, 410, "caption")
+        self.dialogue.add(dialogue.JAIL_COOP_1C, 10, 410, "caption")
 
         image = SCENE_RESOURCES["levels"]["scene_01"]
         self.render = RenderComponent(self)
@@ -54,7 +54,6 @@ class CoopScene01(BaseScene):
     def update(self):
         self.elapsed = pg.time.get_ticks() - self.origin
         self.render.update()
-        self.dialogue.update()
 
         [w.update() for w in self.walls]
         [d.update() for d in self.decorations]
@@ -62,6 +61,16 @@ class CoopScene01(BaseScene):
         [s.update() for s in self.switches]
         [p.update() for p in self.dPlatforms]
         [p.update() for p in self.players]
+
+        self.dialogue.update()
+        if 5000 > self.elapsed >= 0:
+            self.dialogue.index = 0
+        elif 15000 > self.elapsed:
+            self.dialogue.index = 1
+        elif 25000 > self.elapsed:
+            self.dialogue.index = 2
+        else:
+            self.dialogue.index = None
 
     def draw(self, camera=None):
         self.screen.fill(settings.COLOURS["black_red"])
@@ -73,13 +82,7 @@ class CoopScene01(BaseScene):
         [s.draw(camera) for s in self.switches]
         [p.draw(camera) for p in self.dPlatforms]
         [p.draw(camera) for p in self.players]
-
-        if 5000 > self.elapsed >= 0:
-            self.dialogue.index = 0
-            self.dialogue.draw()
-        elif 15000 > self.elapsed:
-            self.dialogue.index = 1
-            self.dialogue.draw()
+        self.dialogue.draw()
 
     def addPlayers(self):
         p1Spawn = (100, 400)
@@ -161,7 +164,7 @@ class CoopScene01(BaseScene):
         return decorations
 
 
-class CoopScene02(BaseScene):
+class JailScene02(BaseScene):
 
     def __init__(self, screen):
         super().__init__(screen)
@@ -180,8 +183,7 @@ class CoopScene02(BaseScene):
         self.origin = pg.time.get_ticks()
 
         self.dialogue = Dialogue(self.screen)
-        self.dialogue.add(dialogue.SCENE_COOP_2, 10, 410, "caption")
-        self.dialogue.index = 0
+        self.dialogue.add(dialogue.JAIL_COOP_2, 10, 410, "caption")
 
         image = SCENE_RESOURCES["levels"]["scene_02"]
         self.render = RenderComponent(self)
@@ -200,7 +202,6 @@ class CoopScene02(BaseScene):
     def update(self):
         self.elapsed = pg.time.get_ticks() - self.origin
         self.render.update()
-        self.dialogue.update()
 
         [d.update() for d in self.decorations]
         [w.update() for w in self.walls]
@@ -210,6 +211,12 @@ class CoopScene02(BaseScene):
         [p.update() for p in self.mPlatforms]
         [p.update() for p in self.dPlatforms]
         [p.update() for p in self.players]
+
+        self.dialogue.update()
+        if 5000 > self.elapsed >= 0:
+            self.dialogue.index = 0
+        else:
+            self.dialogue.index = None
 
     def draw(self, camera=None):
         self.screen.fill(settings.COLOURS["black_red"])
@@ -223,9 +230,7 @@ class CoopScene02(BaseScene):
         [p.draw(camera) for p in self.mPlatforms]
         [p.draw(camera) for p in self.dPlatforms]
         [p.draw(camera) for p in self.players]
-
-        if 5000 > self.elapsed >= 0:
-            self.dialogue.draw()
+        self.dialogue.draw()
 
     def addPlayers(self):
         p1Spawn = (70, 510)
@@ -335,7 +340,7 @@ class CoopScene02(BaseScene):
         return decorations
 
 
-class CoopScene03(BaseScene):
+class JailScene03(BaseScene):
 
     def __init__(self, screen):
         super().__init__(screen)
@@ -357,8 +362,7 @@ class CoopScene03(BaseScene):
         self.origin = pg.time.get_ticks()
 
         self.dialogue = Dialogue(self.screen)
-        self.dialogue.add(dialogue.SCENE_SOLO_3, 10, 410, "caption")
-        self.dialogue.index = 0
+        self.dialogue.add(dialogue.JAIL_SOLO_3, 10, 410, "caption")
 
         image = SCENE_RESOURCES["levels"]["scene_01"]
         self.render = RenderComponent(self)
@@ -377,7 +381,6 @@ class CoopScene03(BaseScene):
     def update(self):
         self.elapsed = pg.time.get_ticks() - self.origin
         self.render.update()
-        self.dialogue.update()
 
         [w.update() for w in self.walls]
         [s.update() for s in self.switches]
@@ -389,6 +392,12 @@ class CoopScene03(BaseScene):
         [d.update() for d in self.decorations]
         [p.update() for p in self.players]
         [b.update() for b in self.bosses]
+
+        self.dialogue.update()
+        if 5000 > self.elapsed >= 0:
+            self.dialogue.index = 0
+        else:
+            self.dialogue.index = None
 
     def draw(self, camera=None):
         self.screen.fill(settings.COLOURS["black_red"])
@@ -404,9 +413,7 @@ class CoopScene03(BaseScene):
         [d.draw(camera) for d in self.decorations]
         [p.draw(camera) for p in self.players]
         [b.draw(camera) for b in self.bosses]
-
-        if 5000 > self.elapsed >= 0:
-            self.dialogue.draw()
+        self.dialogue.draw()
 
     def addPlayers(self):
         p1Spawn = (330, 210)
