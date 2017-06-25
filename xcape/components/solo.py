@@ -632,6 +632,9 @@ class SoloScene04(BaseScene):
         decorations = \
         [
             Decoration(416, 112, deco["torch"], self.screen),
-            Decoration(2176, 140, deco["torch"], self.screen),
+            # Decoration(2176, 140, deco["torch"], self.screen),
+            Decoration(1308, 143, deco["torch"], self.screen),
+            Decoration(2182, 143, deco["torch"], self.screen),
+            Decoration(3486, 143, deco["torch"], self.screen),
         ]
         return decorations
