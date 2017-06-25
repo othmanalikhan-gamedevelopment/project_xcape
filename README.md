@@ -8,19 +8,14 @@ Project Prison XCape
 
 Prison XCape is a 2D platformer game that is made using a simple game engine
  built on the PyGame framework. The game contains several features, see 
- [Key Game Features](#key-game-features) and [Key Code Features](#key-code-features)
+ [Key Game Features](#key-game-features) and [Key Code Features](#key-code-features).
  
-<br><br>
-<p align="center">
-  <img align="middle" width=500 src="extra/gameplay_solo.gif">
-</p>
-<br><br>
+Some game play footage is demonstrated below.
 
-<br><br>
 <p align="center">
-  <img align="middle" width=500 src="extra/gameplay_coop.gif">
+  <img align="left" width=400 src="extra/gameplay_solo.gif">
+  <img align="right" width=400 src="extra/gameplay_coop.gif">
 </p>
-<br><br>
 
 Prerequisites
 --------------
