@@ -509,7 +509,7 @@ class SoloScene04(BaseScene):
             self.dialogue.draw()
 
     def addPlayers(self):
-        spawn = (167, 200)
+        spawn = (250, 200)
         player = [PlayerOne(self.screen)]
         player[0].rect.center = spawn
         return player
@@ -616,7 +616,7 @@ class SoloScene04(BaseScene):
 
     def addDoors(self):
         door1 = Door(3579, 196, 1, self.screen)
-        door1.switchesWaiting = [1, 2, 3, 4, 5]
+        door1.switchesWaiting = [1, 2, 3, 4, 5, 6]
         return [door1]
 
     def addSpikes(self):
