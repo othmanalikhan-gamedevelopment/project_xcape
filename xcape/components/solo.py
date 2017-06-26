@@ -31,7 +31,7 @@ class JailScene01(BaseScene):
         self.elapsed = 0
         self.origin = pg.time.get_ticks()
 
-        image = SCENE_RESOURCES["levels"]["scene_01"][0]
+        image = SCENE_RESOURCES["levels"]["solo_jail_01"][0]
         self.render = RenderComponent(self)
         self.render.add("background", image)
         self.render.state = "background"
@@ -150,7 +150,7 @@ class JailScene02(BaseScene):
         self.elapsed = 0
         self.origin = pg.time.get_ticks()
 
-        image = SCENE_RESOURCES["levels"]["scene_02"][0]
+        image = SCENE_RESOURCES["levels"]["solo_jail_02"][0]
         self.render = RenderComponent(self)
         self.render.add("idle", image)
         self.render.state = "idle"
@@ -308,7 +308,7 @@ class JailScene03(BaseScene):
         self.elapsed = 0
         self.origin = pg.time.get_ticks()
 
-        image = SCENE_RESOURCES["levels"]["scene_03"][0]
+        image = SCENE_RESOURCES["levels"]["solo_jail_03"][0]
         self.render = RenderComponent(self)
         self.render.add("idle", image)
         self.render.state = "idle"
@@ -464,7 +464,7 @@ class JailScene04(BaseScene):
         self.elapsed = 0
         self.origin = pg.time.get_ticks()
 
-        image = SCENE_RESOURCES["levels"]["scene_04"]
+        image = SCENE_RESOURCES["levels"]["solo_jail_04"]
         self.render = RenderComponent(self)
         self.render.add("background", image)
         self.render.state = "background"

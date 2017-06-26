@@ -36,7 +36,7 @@ class JailScene01(BaseScene):
         self.dialogue.add(dialogue.JAIL_COOP_1A, 10, 410, "caption")
         self.dialogue.add(dialogue.JAIL_COOP_1B, 10, 410, "caption")
 
-        image = SCENE_RESOURCES["levels"]["coopScene_01"]
+        image = SCENE_RESOURCES["levels"]["coop_jail_01"]
         self.render = RenderComponent(self)
         self.render.add("idle", image)
         self.render.state = "idle"
@@ -190,7 +190,7 @@ class JailScene02(BaseScene):
         self.dialogue = Dialogue(self.screen)
         self.dialogue.add(dialogue.JAIL_COOP_2, 10, 410, "caption")
 
-        image = SCENE_RESOURCES["levels"]["scene_02"]
+        image = SCENE_RESOURCES["levels"]["coop_jail_02"]
         self.render = RenderComponent(self)
         self.render.add("idle", image)
         self.render.state = "idle"
@@ -367,9 +367,9 @@ class JailScene03(BaseScene):
         self.origin = pg.time.get_ticks()
 
         self.dialogue = Dialogue(self.screen)
-        self.dialogue.add(dialogue.JAIL_SOLO_3, 10, 410, "caption")
+        self.dialogue.add(dialogue.JAIL_COOP_3, 10, 410, "caption")
 
-        image = SCENE_RESOURCES["levels"]["scene_01"]
+        image = SCENE_RESOURCES["levels"]["coop_jail_03"]
         self.render = RenderComponent(self)
         self.render.add("idle", image)
         self.render.state = "idle"
@@ -400,7 +400,7 @@ class JailScene03(BaseScene):
 
         self.dialogue.update()
         if 5000 > self.elapsed >= 0:
-            self.dialogue.index = 0
+            self.dialogue.draw()
         else:
             self.dialogue.index = None
 
@@ -445,7 +445,10 @@ class JailScene03(BaseScene):
 
         boundaries = \
             [
-                Wall(600, 0, 9, "v", wall["boundary_right"], self.screen),
+                #Wall(600, 0, 9, "v", wall["boundary_right"], self.screen),
+                Wall(600, 52, 1, "v", wall["plat_top"], self.screen),
+                Wall(600, 116, 7, "v", wall["plat_mid"], self.screen),
+                Wall(600, 564, 1, "v", wall["plat_bot"], self.screen),
 
                 Wall(0, 750, 20, "h", wall["boundary_bot"], self.screen),
                 Wall(0, 0, 12, "v", wall["boundary_left"], self.screen),
@@ -503,8 +506,8 @@ class JailScene03(BaseScene):
         [
             DPlatform(900, 660, 1, self.screen),
 
-            DPlatform(650, 460, 1, self.screen),
-            DPlatform(1150, 460, 1, self.screen),
+            DPlatform(664, 460, 1, self.screen),
+            DPlatform(1143, 460, 1, self.screen),
 
             DPlatform(700, 260, 1, self.screen),
             DPlatform(900, 360, 1, self.screen),
@@ -525,7 +528,7 @@ class JailScene03(BaseScene):
                 Switch(1200, 700, 7, self.screen),
                 Switch(940, 600, 8, self.screen),
                 Switch(940, 400, 9, self.screen),
-                Switch(650, 50, 10, self.screen),
+                Switch(660, 50, 10, self.screen),
             ]
         return switches
 
@@ -536,7 +539,7 @@ class JailScene03(BaseScene):
             Door(1115, 55, 2, self.screen),
         ]
         doors[0].render.state = "open"
-        doors[1].switchesWaiting = list(range(1, 10))
+        doors[1].switchesWaiting = list(range(1, 11))
         return doors
 
     def addSpikes(self):
@@ -554,6 +557,7 @@ class JailScene03(BaseScene):
 
     def addDecorations(self):
         skull = SCENE_RESOURCES["decorations"]["skull"][0]
+        deco = SCENE_RESOURCES["decorations"]
         decorations = \
             [
                 Decoration(500, 730, skull, self.screen),
@@ -575,5 +579,7 @@ class JailScene03(BaseScene):
                 Decoration(1090, 730, skull, self.screen),
 
                 Decoration(1200, 730, skull, self.screen),
+
+                Decoration(940, 513, deco["torch"], self.screen),
             ]
         return decorations
