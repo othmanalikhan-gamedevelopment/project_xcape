@@ -2,17 +2,19 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2942e340-afdc-4c22-9f9a-96926b7bcbcc" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/images/cutscenes/office/cat/1.png" afterPath="$PROJECT_DIR$/images/cutscenes/office/cat/1.png" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/images/cutscenes/office/cat/10.png" afterPath="$PROJECT_DIR$/images/cutscenes/office/cat/10.png" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/images/cutscenes/office/cat/2.png" afterPath="$PROJECT_DIR$/images/cutscenes/office/cat/2.png" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/images/cutscenes/office/cat/3.png" afterPath="$PROJECT_DIR$/images/cutscenes/office/cat/3.png" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/images/cutscenes/office/cat/4.png" afterPath="$PROJECT_DIR$/images/cutscenes/office/cat/4.png" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/images/cutscenes/office/cat/5.png" afterPath="$PROJECT_DIR$/images/cutscenes/office/cat/5.png" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/images/cutscenes/office/cat/6.png" afterPath="$PROJECT_DIR$/images/cutscenes/office/cat/6.png" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/images/cutscenes/office/cat/7.png" afterPath="$PROJECT_DIR$/images/cutscenes/office/cat/7.png" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/images/cutscenes/office/cat/8.png" afterPath="$PROJECT_DIR$/images/cutscenes/office/cat/8.png" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/images/cutscenes/office/cat/9.png" afterPath="$PROJECT_DIR$/images/cutscenes/office/cat/9.png" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/images/cutscenes/office/dog/1.png" afterPath="$PROJECT_DIR$/images/cutscenes/office/dog/1.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/images/cutscenes/telephone/hold/1.png" afterPath="$PROJECT_DIR$/images/cutscenes/telephone/hold/1.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/images/cutscenes/telephone/none/1.png" afterPath="$PROJECT_DIR$/images/cutscenes/telephone/none/1.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/images/cutscenes/telephone/pick/1.png" afterPath="$PROJECT_DIR$/images/cutscenes/telephone/pick/1.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/images/cutscenes/telephone/pick/2.png" afterPath="$PROJECT_DIR$/images/cutscenes/telephone/pick/2.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/images/cutscenes/telephone/pick/3.png" afterPath="$PROJECT_DIR$/images/cutscenes/telephone/pick/3.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/images/cutscenes/telephone/pick/4.png" afterPath="$PROJECT_DIR$/images/cutscenes/telephone/pick/4.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/images/cutscenes/telephone/pick/5.png" afterPath="$PROJECT_DIR$/images/cutscenes/telephone/pick/5.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/images/cutscenes/telephone/pick/6.png" afterPath="$PROJECT_DIR$/images/cutscenes/telephone/pick/6.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/images/cutscenes/telephone/put/1.png" afterPath="$PROJECT_DIR$/images/cutscenes/telephone/put/1.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/images/cutscenes/telephone/put/2.png" afterPath="$PROJECT_DIR$/images/cutscenes/telephone/put/2.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/images/cutscenes/telephone/put/3.png" afterPath="$PROJECT_DIR$/images/cutscenes/telephone/put/3.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/images/cutscenes/telephone/put/4.png" afterPath="$PROJECT_DIR$/images/cutscenes/telephone/put/4.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/images/cutscenes/telephone/put/5.png" afterPath="$PROJECT_DIR$/images/cutscenes/telephone/put/5.png" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/xcape/components/cutscenes.py" afterPath="$PROJECT_DIR$/xcape/components/cutscenes.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/xcape/engines/core.py" afterPath="$PROJECT_DIR$/xcape/engines/core.py" />
@@ -41,18 +43,18 @@
           <file leaf-file-name="core.py" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/xcape/engines/core.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="474">
-                  <caret line="47" column="0" lean-forward="true" selection-start-line="47" selection-start-column="0" selection-end-line="47" selection-end-column="0" />
+                <state relative-caret-position="457">
+                  <caret line="46" column="61" lean-forward="false" selection-start-line="46" selection-start-column="61" selection-end-line="46" selection-end-column="61" />
                   <folding>
                     <element signature="e#0#36#1" expanded="false" />
                     <element signature="e#38#57#0" expanded="true" />
                     <element signature="e#781#990#1" expanded="false" />
-                    <element signature="e#1545#1565#0" expanded="false" />
-                    <element signature="e#1605#2304#0" expanded="false" />
-                    <element signature="e#1753#1804#0" expanded="false" />
-                    <element signature="e#2336#2431#0" expanded="false" />
-                    <element signature="e#2474#2591#0" expanded="false" />
-                    <element signature="e#2620#2766#0" expanded="false" />
+                    <element signature="e#1548#1568#0" expanded="false" />
+                    <element signature="e#1608#2307#0" expanded="false" />
+                    <element signature="e#1756#1807#0" expanded="false" />
+                    <element signature="e#2339#2434#0" expanded="false" />
+                    <element signature="e#2477#2594#0" expanded="false" />
+                    <element signature="e#2623#2769#0" expanded="false" />
                   </folding>
                 </state>
               </provider>
@@ -241,8 +243,8 @@
           <file leaf-file-name="cutscenes.py" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/xcape/components/cutscenes.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="408">
-                  <caret line="53" column="0" lean-forward="true" selection-start-line="53" selection-start-column="0" selection-end-line="53" selection-end-column="0" />
+                <state relative-caret-position="229">
+                  <caret line="138" column="0" lean-forward="true" selection-start-line="138" selection-start-column="0" selection-end-line="138" selection-end-column="0" />
                   <folding>
                     <element signature="e#0#61#1" expanded="false" />
                     <element signature="e#373#748#0" expanded="false" />
@@ -252,6 +254,7 @@
                     <element signature="e#658#662#0" expanded="false" />
                     <element signature="e#694#698#0" expanded="false" />
                     <element signature="e#741#745#0" expanded="false" />
+                    <element signature="e#806#3273#0" expanded="false" />
                     <element signature="e#806#883#1" expanded="false" />
                     <element signature="e#1913#1937#0" expanded="false" />
                     <element signature="e#1981#2091#0" expanded="false" />
@@ -263,9 +266,7 @@
                     <element signature="e#3060#3273#0" expanded="false" />
                     <element signature="e#3060#3126#1" expanded="false" />
                     <element signature="e#3175#3270#0" expanded="false" />
-                    <element signature="e#3334#6127#0" expanded="false" />
                     <element signature="e#3334#3401#1" expanded="false" />
-                    <element signature="e#3443#4423#0" expanded="false" />
                     <element signature="e#4456#4483#0" expanded="false" />
                     <element signature="e#4527#4664#0" expanded="false" />
                     <element signature="e#4568#4664#0" expanded="false" />
@@ -985,13 +986,6 @@
       <option name="presentableId" value="Default" />
       <updated>1495180644399</updated>
     </task>
-    <task id="LOCAL-00054" summary="Added death screen that flashes red upon dying">
-      <created>1497463042342</created>
-      <option name="number" value="00054" />
-      <option name="presentableId" value="LOCAL-00054" />
-      <option name="project" value="LOCAL" />
-      <updated>1497463042342</updated>
-    </task>
     <task id="LOCAL-00055" summary="Updated wall entities to construct as a single object">
       <created>1497466449911</created>
       <option name="number" value="00055" />
@@ -1328,7 +1322,14 @@
       <option name="project" value="LOCAL" />
       <updated>1498446173591</updated>
     </task>
-    <option name="localTasksCounter" value="103" />
+    <task id="LOCAL-00103" summary="Improved the quality of the artwork for the office cutscene">
+      <created>1498494237055</created>
+      <option name="number" value="00103" />
+      <option name="presentableId" value="LOCAL-00103" />
+      <option name="project" value="LOCAL" />
+      <updated>1498494237055</updated>
+    </task>
+    <option name="localTasksCounter" value="104" />
     <servers />
   </component>
   <component name="TodoView" selected-index="2">
@@ -1426,7 +1427,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Added audio for main character" />
     <MESSAGE value="Updated audio component to use python @property" />
     <MESSAGE value="Added heartbeat sound effect to solo ui menu" />
     <MESSAGE value="Improved heartbeat sound effects for solo ui menu" />
@@ -1451,7 +1451,8 @@
     <MESSAGE value="Added missing dialogue to JailScene04 of single player" />
     <MESSAGE value="Updated Coop JailScene01 with minor details; new artwork" />
     <MESSAGE value="Added new backgrounds for coop scenes" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added new backgrounds for coop scenes" />
+    <MESSAGE value="Improved the quality of the artwork for the office cutscene" />
+    <option name="LAST_COMMIT_MESSAGE" value="Improved the quality of the artwork for the office cutscene" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="XDebuggerManager">
@@ -2417,24 +2418,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/xcape/engines/core.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="474">
-          <caret line="47" column="0" lean-forward="true" selection-start-line="47" selection-start-column="0" selection-end-line="47" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#36#1" expanded="false" />
-            <element signature="e#38#57#0" expanded="true" />
-            <element signature="e#781#990#1" expanded="false" />
-            <element signature="e#1545#1565#0" expanded="false" />
-            <element signature="e#1605#2304#0" expanded="false" />
-            <element signature="e#1753#1804#0" expanded="false" />
-            <element signature="e#2336#2431#0" expanded="false" />
-            <element signature="e#2474#2591#0" expanded="false" />
-            <element signature="e#2620#2766#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/README.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="FIRST">
@@ -2451,10 +2434,28 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/xcape/engines/core.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="457">
+          <caret line="46" column="61" lean-forward="false" selection-start-line="46" selection-start-column="61" selection-end-line="46" selection-end-column="61" />
+          <folding>
+            <element signature="e#0#36#1" expanded="false" />
+            <element signature="e#38#57#0" expanded="true" />
+            <element signature="e#781#990#1" expanded="false" />
+            <element signature="e#1548#1568#0" expanded="false" />
+            <element signature="e#1608#2307#0" expanded="false" />
+            <element signature="e#1756#1807#0" expanded="false" />
+            <element signature="e#2339#2434#0" expanded="false" />
+            <element signature="e#2477#2594#0" expanded="false" />
+            <element signature="e#2623#2769#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/xcape/components/cutscenes.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="408">
-          <caret line="53" column="0" lean-forward="true" selection-start-line="53" selection-start-column="0" selection-end-line="53" selection-end-column="0" />
+        <state relative-caret-position="229">
+          <caret line="138" column="0" lean-forward="true" selection-start-line="138" selection-start-column="0" selection-end-line="138" selection-end-column="0" />
           <folding>
             <element signature="e#0#61#1" expanded="false" />
             <element signature="e#373#748#0" expanded="false" />
@@ -2464,6 +2465,7 @@
             <element signature="e#658#662#0" expanded="false" />
             <element signature="e#694#698#0" expanded="false" />
             <element signature="e#741#745#0" expanded="false" />
+            <element signature="e#806#3273#0" expanded="false" />
             <element signature="e#806#883#1" expanded="false" />
             <element signature="e#1913#1937#0" expanded="false" />
             <element signature="e#1981#2091#0" expanded="false" />
@@ -2475,9 +2477,7 @@
             <element signature="e#3060#3273#0" expanded="false" />
             <element signature="e#3060#3126#1" expanded="false" />
             <element signature="e#3175#3270#0" expanded="false" />
-            <element signature="e#3334#6127#0" expanded="false" />
             <element signature="e#3334#3401#1" expanded="false" />
-            <element signature="e#3443#4423#0" expanded="false" />
             <element signature="e#4456#4483#0" expanded="false" />
             <element signature="e#4527#4664#0" expanded="false" />
             <element signature="e#4568#4664#0" expanded="false" />
