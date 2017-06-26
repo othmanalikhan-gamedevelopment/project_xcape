@@ -65,5 +65,5 @@ Credits
 
 TODO
 ----
-- Improving quality of cutscenes​ 
-​- Added a proper background for CoopScene03
+- Improve quality of the cutscenes​.
+- Add a proper background for JailScene03 of multiplayer.

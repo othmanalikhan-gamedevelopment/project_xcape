@@ -35,15 +35,14 @@ class JailScene01(BaseScene):
         self.dialogue = Dialogue(self.screen)
         self.dialogue.add(dialogue.JAIL_COOP_1A, 10, 410, "caption")
         self.dialogue.add(dialogue.JAIL_COOP_1B, 10, 410, "caption")
-        self.dialogue.add(dialogue.JAIL_COOP_1C, 10, 410, "caption")
 
-        image = SCENE_RESOURCES["levels"]["scene_01"]
+        image = SCENE_RESOURCES["levels"]["coopScene_01"]
         self.render = RenderComponent(self)
         self.render.add("idle", image)
         self.render.state = "idle"
 
     def __str__(self):
-        return "coop_scene_01"
+        return "jail_scene_01"
 
     def handleEvent(self, event):
         [p.handleEvent(event) for p in self.players]
@@ -67,8 +66,6 @@ class JailScene01(BaseScene):
             self.dialogue.index = 0
         elif 15000 > self.elapsed:
             self.dialogue.index = 1
-        elif 25000 > self.elapsed:
-            self.dialogue.index = 2
         else:
             self.dialogue.index = None
 
@@ -102,16 +99,24 @@ class JailScene01(BaseScene):
             Wall(0, 10, 8, "v", wall["boundary_left"], self.screen),
             Wall(19, 478, 3, "h", wall["boundary_bot"], self.screen),
             Wall(0, 478, 1, "h", wall["inner_corner_left"], self.screen),
-            Wall(170, 260, 4, "v", wall["boundary_right"], self.screen),
+            # Wall(170, 260, 4, "v", wall["boundary_right"], self.screen),
             Wall(170, 478, 1, "h", wall["inner_corner_right"], self.screen),
 
-            Wall(520, 478, 2, "h", wall["boundary_bot"], self.screen),
+            Wall(584, 478, 1, "h", wall["boundary_bot"], self.screen),
             Wall(628, 138, 6, "v", wall["boundary_right"], self.screen),
             Wall(164, 138, 8, "h", wall["boundary_top"], self.screen),
             Wall(160, 138, 1, "v", wall["corner_top_left"], self.screen),
             Wall(160, 10, 2, "v", wall["boundary_right"], self.screen),
             Wall(628, 138, 1, "v", wall["upper_corner_right"], self.screen),
             Wall(628, 478, 1, "h", wall["inner_corner_right"], self.screen),
+
+            Wall(170, 260, 1, "v", wall["plat_top"], self.screen),
+            Wall(170, 324, 3, "v", wall["plat_mid"], self.screen),
+            Wall(170, 470, 1, "v", wall["plat_bot"], self.screen),
+
+            Wall(106, 478, 1, "v", wall["bot_ending_right"], self.screen),
+            Wall(520, 478, 1, "v", wall["bot_ending_left"], self.screen),
+
         ]
 
         obstacles = \
@@ -191,7 +196,7 @@ class JailScene02(BaseScene):
         self.render.state = "idle"
 
     def __str__(self):
-        return "coop_scene_01"
+        return "jail_scene_01"
 
     def handleEvent(self, event):
         [p.handleEvent(event) for p in self.players]
@@ -370,7 +375,7 @@ class JailScene03(BaseScene):
         self.render.state = "idle"
 
     def __str__(self):
-        return "coop_scene_03"
+        return "jail_scene_03"
 
     def handleEvent(self, event):
         [p.handleEvent(event) for p in self.players]
