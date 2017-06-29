@@ -60,9 +60,33 @@ Credits
 -------
 - Sound assets, cat meows, http://soundbible.com
 - Sound assets, everything else, https://www.soundjay.com
-- Artwork assets, 
+- Artwork assets, ???
 
 
 TODO
 ----
-- Improve quality of the cutscenes​.
+
+Programming
+-----------
+- Add boss cutscene to SoloScene04 and CoopScene03
+- Add evasion move for player
+- Add disappearing platform
+- Moving platform attachable code 
+
+Artwork
+-------
+- Disappearing platform
+- Spear trap
+- Ball trap
+- New type of door
+
+Sounds
+------
+- Evade move
+- Disappearing platform
+- Spear trap
+- Ball trap
+
+Level Designing
+---------------
+- SoloScene05 (Zone 2)
