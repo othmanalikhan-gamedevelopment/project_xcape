@@ -101,21 +101,10 @@ class SinglePlayer(GameObject):
         if event.type == self.SCENE_EVENT:
             if event.category == "transition":
                 self._handleTransition(event)
-
             if event.category == "death":
-                self.lives -= 1
-                if self.lives == 0:
-                    self._showLoseMenu()
-                else:
-                    pg.mixer.stop()
-                    self.pause = True
-                    self.messageMenu("transition", "death_menu")
-
-            if event.category == "complete":
-                if event.sender == "death_menu":
-                    self._loadUI(self.maxLives, self.lives)
-                    self._restartScene()
-                    self.pause = False
+                self._handleDeath()
+            if event.category == "revive":
+                self._handleRevive()
 
     def update(self):
         if not self.pause and self.scene:
@@ -197,6 +186,26 @@ class SinglePlayer(GameObject):
             except KeyError:
                 self.messageMenu("transition", "win_menu")
 
+    def _handleDeath(self):
+        """
+        Pauses the level and transitions to either the death or game over menu.
+        """
+        self.lives -= 1
+        if self.lives == 0:
+            self._showLoseMenu()
+        else:
+            pg.mixer.stop()
+            self.pause = True
+            self.messageMenu("transition", "death_menu")
+
+    def _handleRevive(self):
+        """
+        Restarts the level and unpauses it.
+        """
+        self._loadUI(self.maxLives, self.lives)
+        self._restartScene()
+        self.pause = False
+
 
 class MultiPlayer(GameObject):
 
@@ -239,32 +248,15 @@ class MultiPlayer(GameObject):
             if event.key == pg.K_RETURN:
                 self.camera.duration = 0
             if event.key == pg.K_SPACE:
-                p1, p2 = self.scene.players
-                if self.camera.following == p1:
-                    self.camera.follow(p2)
-                else:
-                    self.camera.follow(p1)
+                self._swapCameraFollow()
 
         if event.type == self.SCENE_EVENT:
             if event.category == "transition":
                 self._handleTransition(event)
-
             if event.category == "death":
-                playerNum = event.data
-                self.lives[playerNum-1] -= 1
-                isAlive = all([live != 0 for live in self.lives])
-                if not isAlive:
-                    self._showLoseMenu()
-                else:
-                    pg.mixer.stop()
-                    self.pause = True
-                    self.messageMenu("transition", "death_menu")
-
-            if event.category == "complete":
-                if event.sender == "death_menu":
-                    self._loadUI(self.maxLives, self.lives)
-                    self._restartScene()
-                    self.pause = False
+                self._handleDeath(event)
+            if event.category == "revive":
+                self._handleRevive()
 
     def update(self):
         if not self.pause and self.scene:
@@ -346,3 +338,37 @@ class MultiPlayer(GameObject):
                 self._loadScene(self.numToScene[event.data])
             except KeyError:
                 self.messageMenu("transition", "win_menu")
+
+    def _handleDeath(self, event):
+        """
+        Pauses the level and transitions to either the death or game over menu.
+
+        :param event: pygame.Event object, representing a death event.
+        """
+        playerNum = event.data
+        self.lives[playerNum-1] -= 1
+        isAlive = all([live != 0 for live in self.lives])
+        if not isAlive:
+            self._showLoseMenu()
+        else:
+            pg.mixer.stop()
+            self.pause = True
+            self.messageMenu("transition", "death_menu")
+
+    def _handleRevive(self):
+        """
+        Restarts the level and unpauses it.
+        """
+        self._loadUI(self.maxLives, self.lives)
+        self._restartScene()
+        self.pause = False
+
+    def _swapCameraFollow(self):
+        """
+        Toggles the camera to follow between the two players.
+        """
+        p1, p2 = self.scene.players
+        if self.camera.following == p1:
+            self.camera.follow(p2)
+        else:
+            self.camera.follow(p1)

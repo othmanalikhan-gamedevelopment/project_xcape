@@ -27,11 +27,11 @@ class GameObject:
         "screen",
         "transition",
         "start_game",
-        "complete",
         "no_mode",
         "switch",
         "door",
-        "death"
+        "death",
+        "revive"
     ]
     CATEGORIES_CUTSCENE = [
         "screen",

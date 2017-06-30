@@ -398,7 +398,7 @@ class DeathMenu(BaseMenu):
         self.effect.update()
 
         if self.effect.isComplete:
-            self.messageScene("complete")
+            self.messageScene("revive")
 
     def draw(self, camera=None):
         self.render.draw()
