@@ -18,9 +18,10 @@ from xcape.entities.scene import (
 
 class JailScene01(BaseScene):
 
+    LEVEL_NUM = 1
+
     def __init__(self, screen):
         super().__init__(screen)
-        self.levelNum = 1
 
         self.players = self.addPlayers()
         self.walls = self.addWalls()
@@ -42,7 +43,7 @@ class JailScene01(BaseScene):
         self.render.state = "idle"
 
     def __str__(self):
-        return "jail_scene_01"
+        return "coop_jail_scene_01"
 
     def handleEvent(self, event):
         [p.handleEvent(event) for p in self.players]
@@ -171,6 +172,8 @@ class JailScene01(BaseScene):
 
 class JailScene02(BaseScene):
 
+    LEVEL_NUM = 2
+
     def __init__(self, screen):
         super().__init__(screen)
         self.levelNum = 2
@@ -196,7 +199,7 @@ class JailScene02(BaseScene):
         self.render.state = "idle"
 
     def __str__(self):
-        return "jail_scene_01"
+        return "coop_jail_scene_02"
 
     def handleEvent(self, event):
         [p.handleEvent(event) for p in self.players]
@@ -347,6 +350,8 @@ class JailScene02(BaseScene):
 
 class JailScene03(BaseScene):
 
+    LEVEL_NUM = 3
+
     def __init__(self, screen):
         super().__init__(screen)
         self.levelNum = 3
@@ -375,7 +380,7 @@ class JailScene03(BaseScene):
         self.render.state = "idle"
 
     def __str__(self):
-        return "jail_scene_03"
+        return "coop_jail_scene_03"
 
     def handleEvent(self, event):
         [p.handleEvent(event) for p in self.players]

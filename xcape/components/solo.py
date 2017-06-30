@@ -18,9 +18,10 @@ from xcape.entities.scene import (
 
 class JailScene01(BaseScene):
 
+    LEVEL_NUM = 1
+
     def __init__(self, screen):
         super().__init__(screen)
-        self.levelNum = 1
 
         self.players = self.addPlayers()
         self.walls = self.addWalls()
@@ -40,7 +41,7 @@ class JailScene01(BaseScene):
         self.dialogue.add(dialogue.JAIL_SOLO_1, 10, 410, "caption")
 
     def __str__(self):
-        return "solo_scene_01"
+        return "solo_jail_scene_01"
 
     def handleEvent(self, event):
         [p.handleEvent(event) for p in self.players]
@@ -134,9 +135,10 @@ class JailScene01(BaseScene):
 
 class JailScene02(BaseScene):
 
+    LEVEL_NUM = 2
+
     def __init__(self, screen):
         super().__init__(screen)
-        self.levelNum = 2
 
         self.players = self.addPlayers()
         self.walls = self.addWalls()
@@ -159,7 +161,7 @@ class JailScene02(BaseScene):
         self.dialogue.add(dialogue.JAIL_SOLO_2, 10, 410, "caption")
 
     def __str__(self):
-        return "solo_scene_02"
+        return "solo_jail_scene_02"
 
     def handleEvent(self, event):
         [p.handleEvent(event) for p in self.players]
@@ -294,9 +296,10 @@ class JailScene02(BaseScene):
 
 class JailScene03(BaseScene):
 
+    LEVEL_NUM = 3
+
     def __init__(self, screen):
         super().__init__(screen)
-        self.levelNum = 3
 
         self.players = self.addPlayers()
         self.walls = self.addWalls()
@@ -317,7 +320,7 @@ class JailScene03(BaseScene):
         self.dialogue.add(dialogue.JAIL_SOLO_3, 10, 410, "caption")
 
     def __str__(self):
-        return "solo_scene_03"
+        return "solo_jail_scene_03"
 
     def handleEvent(self, event):
         [p.handleEvent(event) for p in self.players]
@@ -445,9 +448,10 @@ class JailScene03(BaseScene):
 
 class JailScene04(BaseScene):
 
+    LEVEL_NUM = 4
+
     def __init__(self, screen):
         super().__init__(screen)
-        self.levelNum = 4
 
         self.players = self.addPlayers()
         self.bosses = self.addBosses()
@@ -473,7 +477,7 @@ class JailScene04(BaseScene):
         self.dialogue.add(dialogue.JAIL_SOLO_1, 10, 410, "caption")
 
     def __str__(self):
-        return "solo_scene_04"
+        return "solo_jail_scene_04"
 
     def handleEvent(self, event):
         [p.handleEvent(event) for p in self.players]

@@ -26,6 +26,7 @@ class GameObject:
     CATEGORIES_SCENE = [
         "screen",
         "transition",
+        "complete",
         "start_game",
         "no_mode",
         "switch",

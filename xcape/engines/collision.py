@@ -147,7 +147,7 @@ class CollisionEngine(GameObject):
             hits = pg.sprite.spritecollide(player, self.scene.doors, False)
             doorsClosed = [d for d in self.scene.doors if d.isClosed]
             if hits and not doorsClosed:
-                self.messageScene("transition", self.scene.levelNum + 1)
+                self.messageScene("complete")
 
     def resolveSpikeCollisions(self):
         """

@@ -70,13 +70,6 @@ class SinglePlayer(GameObject):
         self.lives = 5
         self._loadUI(self.maxLives, self.lives)
 
-        self.nameToScene = \
-            {
-                "scene_01": solo.JailScene01,
-                "scene_02": solo.JailScene02,
-                "scene_03": solo.JailScene03,
-                "scene_04": solo.JailScene04,
-            }
         self.numToScene = \
             {
                 1: solo.JailScene01,
@@ -99,6 +92,8 @@ class SinglePlayer(GameObject):
                 self.camera.duration = 0
 
         if event.type == self.SCENE_EVENT:
+            if event.category == "complete":
+                self._nextScene()
             if event.category == "transition":
                 self._handleTransition(event)
             if event.category == "death":
@@ -120,14 +115,21 @@ class SinglePlayer(GameObject):
         """
         Starts a new game.
         """
-        self._loadScene(self.nameToScene["scene_01"])
+        self._loadScene(self.numToScene[1])
 
     def _restartScene(self):
         """
         Restarts the current scene.
         """
-        levelNum = self.scene.levelNum
-        self._loadScene(self.numToScene[levelNum])
+        num = self.scene.__class__.LEVEL_NUM
+        self._loadScene(self.numToScene[num])
+
+    def _nextScene(self):
+        """
+        Loads the next scene.
+        """
+        num = self.scene.__class__.LEVEL_NUM + 1
+        self._loadScene(self.numToScene[num])
 
     def _loadScene(self, Scene):
         """
@@ -179,12 +181,9 @@ class SinglePlayer(GameObject):
         :param event: pygame.Event object, containing the level to transition.
         """
         try:
-            self._loadScene(self.nameToScene[event.data])
+            self._loadScene(self.numToScene[event.data])
         except KeyError:
-            try:
-                self._loadScene(self.numToScene[event.data])
-            except KeyError:
-                self.messageMenu("transition", "win_menu")
+            self.messageMenu("transition", "win_menu")
 
     def _handleDeath(self):
         """
@@ -224,12 +223,6 @@ class MultiPlayer(GameObject):
         self.lives = [5, 5]
         self._loadUI(self.maxLives, self.lives)
 
-        self.nameToScene = \
-            {
-                "scene_01": coop.JailScene01,
-                "scene_02": coop.JailScene02,
-                "scene_03": coop.JailScene03,
-            }
         self.numToScene = \
             {
                 1: coop.JailScene01,
@@ -251,6 +244,8 @@ class MultiPlayer(GameObject):
                 self._swapCameraFollow()
 
         if event.type == self.SCENE_EVENT:
+            if event.category == "complete":
+                self._nextScene()
             if event.category == "transition":
                 self._handleTransition(event)
             if event.category == "death":
@@ -272,14 +267,21 @@ class MultiPlayer(GameObject):
         """
         Starts a new game.
         """
-        self._loadScene(self.nameToScene["scene_01"])
+        self._loadScene(self.numToScene[1])
+
+    def _nextScene(self):
+        """
+        Loads the next scene.
+        """
+        num = self.scene.__class__.LEVEL_NUM + 1
+        self._loadScene(self.numToScene[num])
 
     def _restartScene(self):
         """
         Restarts the current scene.
         """
-        levelNum = self.scene.levelNum
-        self._loadScene(self.numToScene[levelNum])
+        num = self.scene.__class__.LEVEL_NUM
+        self._loadScene(self.numToScene[num])
 
     def _loadScene(self, Scene):
         """
@@ -332,12 +334,9 @@ class MultiPlayer(GameObject):
         :param event: pygame.Event object, containing the level to transition.
         """
         try:
-            self._loadScene(self.nameToScene[event.data])
+            self._loadScene(self.numToScene[event.data])
         except KeyError:
-            try:
-                self._loadScene(self.numToScene[event.data])
-            except KeyError:
-                self.messageMenu("transition", "win_menu")
+            self.messageMenu("transition", "win_menu")
 
     def _handleDeath(self, event):
         """
