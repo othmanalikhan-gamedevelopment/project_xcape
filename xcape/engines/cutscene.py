@@ -27,7 +27,8 @@ class CutSceneEngine(GameObject):
                 "blank_cutscene": None,
                 "office_cutscene": cutscenes.OfficeCutscene,
                 "telephone_cutscene": cutscenes.TelephoneCutscene,
-                "jail_cutscene": cutscenes.JailCutscene
+                "jail_cutscene": cutscenes.JailCutscene,
+                "pig_cutscene": cutscenes.PigCutscene,
             }
 
     def handleEvent(self, event):

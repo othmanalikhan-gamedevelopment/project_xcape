@@ -5,7 +5,7 @@ Responsible for containing all the cutscenes in game.
 import pygame as pg
 
 import xcape.components.dialogue as dialogue
-from xcape.common.loader import CUTSCENE_RESOURCES
+from xcape.common.loader import CUTSCENE_RESOURCES, SFX_RESOURCES
 from xcape.common.object import GameObject
 from xcape.components.audio import AudioComponent
 from xcape.components.render import RenderComponent, Dialogue
@@ -283,3 +283,67 @@ class JailCutscene(BaseCutscene):
         """
         self.messageCutScene("transition", "blank_cutscene")
         self.messageScene("start_game", "solo")
+
+
+class PigCutscene(BaseCutscene):
+    """
+    The cutscene where the pig boss appears.
+    """
+
+    def __init__(self, screen):
+        super().__init__(screen)
+        self.rect = pg.Rect(0, 0, 0, 0)
+        pig = CUTSCENE_RESOURCES["pig"]
+
+        self.origin = pg.time.get_ticks()       # milliseconds
+        self.elapsed = 0                        # milliseconds
+        self._isComplete = False
+
+        self.render = RenderComponent(self, enableRepeat=False)
+        self.render.add("appear", pig["appear"], 3000)
+
+        self.audio = AudioComponent(self)
+        self.audio.add("machine", SFX_RESOURCES["pig_machine"])
+        self.audio.state = "machine"
+
+        self.dialogue = Dialogue(self.screen)
+
+        speed = 1
+        ts = [3000]
+        self.timings = [speed*t for t in ts]
+
+    def __str__(self):
+        return "pig_cutscene"
+
+    def handleEvent(self, event):
+        if event.type == pg.KEYDOWN:
+            if event.key == pg.K_RETURN:
+                self._messageStart()
+
+    def update(self):
+        self.elapsed = pg.time.get_ticks() - self.origin
+
+        if self.timings[0] > self.elapsed:
+            self.render.state = "appear"
+            self.dialogue.index = None
+        else:
+            if not self._isComplete:
+                self._isComplete = True
+                self._messageStart()
+
+        self.dialogue.update()
+        self.render.update()
+        self.audio.update()
+
+    def draw(self, camera=None):
+        self.render.draw(camera)
+        self.render.draw()
+        self.dialogue.draw()
+
+    def _messageStart(self):
+        """
+        Sends out events to end the cutscene and start playing the game.
+        """
+        self.messageCutScene("transition", "blank_cutscene")
+        self.messageScene("start_game", "solo")
+        pg.mixer.stop()
