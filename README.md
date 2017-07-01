@@ -68,7 +68,6 @@ TODO
 
 Programming
 -----------
-- Add boss cutscene to SoloScene04 and CoopScene03
 - Add evasion move for player
 - Add disappearing platform
 - Moving platform attachable code 
@@ -76,15 +75,12 @@ Programming
 Artwork
 -------
 - Disappearing platform
-- Spear trap
-- Ball trap
 - New type of door
 
 Sounds
 ------
 - Evade move
 - Disappearing platform
-- Spear trap
 - Ball trap
 
 Level Designing
