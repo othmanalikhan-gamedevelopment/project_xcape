@@ -277,11 +277,11 @@ class JailScene02(BaseScene):
         return [door1]
 
     def addSpikes(self):
-        spike = SCENE_RESOURCES["spikes"]
+        assets = SCENE_RESOURCES["traps"]
         spikes = \
         [
-            Spike(325, 525, 5, "h", spike["up"][0], self.screen),
-            Spike(550, 525, 5, "h", spike["up"][0], self.screen),
+            Spike(325, 525, 5, "h", assets["spike_up"][0], self.screen),
+            Spike(550, 525, 5, "h", assets["spike_down"][0], self.screen),
         ]
         return spikes
 
@@ -434,14 +434,14 @@ class JailScene03(BaseScene):
         return [door1]
 
     def addSpikes(self):
-        spike = SCENE_RESOURCES["spikes"]
+        assets = SCENE_RESOURCES["traps"]
         spikes = \
             [
-                Spike(415, 190, 2, "v", spike["left"][0], self.screen),
-                Spike(711, 190, 2, "v", spike["right"][0], self.screen),
+                Spike(415, 190, 2, "v", assets["spike_left"][0], self.screen),
+                Spike(711, 190, 2, "v", assets["spike_right"][0], self.screen),
 
-                Spike(45, 590, 16, "h", spike["up"][0], self.screen),
-                Spike(765, 590, 16, "h", spike["up"][0], self.screen),
+                Spike(45, 590, 16, "h", assets["spike_up"][0], self.screen),
+                Spike(765, 590, 16, "h", assets["spike_up"][0], self.screen),
             ]
         return spikes
 
@@ -632,10 +632,10 @@ class JailScene04(BaseScene):
         return [door1]
 
     def addSpikes(self):
-        spike = SCENE_RESOURCES["spikes"]
+        spike = SCENE_RESOURCES["traps"]
         spikes = \
             [
-                Spike(3362, 195, 2, "h", spike["up"][0], self.screen),
+                Spike(3362, 195, 2, "h", spike["spike_up"][0], self.screen),
             ]
         return spikes
 
