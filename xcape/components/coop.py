@@ -33,14 +33,14 @@ class JailScene01(BaseScene):
         self.elapsed = 0
         self.origin = pg.time.get_ticks()
 
-        self.dialogue = Dialogue(self.screen)
-        self.dialogue.add(dialogue.JAIL_COOP_1A, 10, 410, "caption")
-        self.dialogue.add(dialogue.JAIL_COOP_1B, 10, 410, "caption")
-
         image = SCENE_RESOURCES["levels"]["coop_jail_01"]
         self.render = RenderComponent(self)
         self.render.add("idle", image)
         self.render.state = "idle"
+
+        self.dialogue = Dialogue(self.screen)
+        self.dialogue.add(dialogue.JAIL_COOP_1A, 10, 410, "caption")
+        self.dialogue.add(dialogue.JAIL_COOP_1B, 10, 410, "caption")
 
     def __str__(self):
         return "coop_jail_scene_01"
@@ -190,13 +190,13 @@ class JailScene02(BaseScene):
         self.elapsed = 0
         self.origin = pg.time.get_ticks()
 
-        self.dialogue = Dialogue(self.screen)
-        self.dialogue.add(dialogue.JAIL_COOP_2, 10, 410, "caption")
-
         image = SCENE_RESOURCES["levels"]["coop_jail_02"]
         self.render = RenderComponent(self)
         self.render.add("idle", image)
         self.render.state = "idle"
+
+        self.dialogue = Dialogue(self.screen)
+        self.dialogue.add(dialogue.JAIL_COOP_2, 10, 410, "caption")
 
     def __str__(self):
         return "coop_jail_scene_02"
@@ -371,13 +371,16 @@ class JailScene03(BaseScene):
         self.elapsed = 0
         self.origin = pg.time.get_ticks()
 
-        self.dialogue = Dialogue(self.screen)
-        self.dialogue.add(dialogue.JAIL_COOP_3, 10, 410, "caption")
-
         image = SCENE_RESOURCES["levels"]["coop_jail_03"]
         self.render = RenderComponent(self)
         self.render.add("idle", image)
         self.render.state = "idle"
+
+        self.dialogue = Dialogue(self.screen)
+        self.dialogue.add(dialogue.JAIL_COOP_3, 10, 410, "caption")
+
+        self.messageCutScene("transition", "pig_cutscene")
+        self.messageMenu("transition", "blank_menu")
 
     def __str__(self):
         return "coop_jail_scene_03"

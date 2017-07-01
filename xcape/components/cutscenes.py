@@ -8,7 +8,7 @@ import xcape.components.dialogue as dialogue
 from xcape.common.loader import CUTSCENE_RESOURCES, SFX_RESOURCES
 from xcape.common.object import GameObject
 from xcape.components.audio import AudioComponent
-from xcape.components.render import RenderComponent, Dialogue
+from xcape.components.render import RenderComponent, Dialogue, addBackground
 
 
 class BaseCutscene(GameObject):
@@ -293,14 +293,15 @@ class PigCutscene(BaseCutscene):
     def __init__(self, screen):
         super().__init__(screen)
         self.rect = pg.Rect(0, 0, 0, 0)
-        pig = CUTSCENE_RESOURCES["pig"]
+        pig = CUTSCENE_RESOURCES["pig"]["appear"]
+        pig = [addBackground(p) for p in pig]
 
         self.origin = pg.time.get_ticks()       # milliseconds
         self.elapsed = 0                        # milliseconds
         self._isComplete = False
 
         self.render = RenderComponent(self, enableRepeat=False)
-        self.render.add("appear", pig["appear"], 3000)
+        self.render.add("appear", pig, 3000)
 
         self.audio = AudioComponent(self)
         self.audio.add("machine", SFX_RESOURCES["pig_machine"])
@@ -345,5 +346,5 @@ class PigCutscene(BaseCutscene):
         Sends out events to end the cutscene and start playing the game.
         """
         self.messageCutScene("transition", "blank_cutscene")
-        self.messageScene("start_game", "solo")
+        self.messageScene("unpause")
         pg.mixer.stop()

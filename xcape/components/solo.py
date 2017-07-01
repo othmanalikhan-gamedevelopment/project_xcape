@@ -476,6 +476,9 @@ class JailScene04(BaseScene):
         self.dialogue = Dialogue(self.screen)
         self.dialogue.add(dialogue.JAIL_SOLO_1, 10, 410, "caption")
 
+        self.messageCutScene("transition", "pig_cutscene")
+        self.messageMenu("transition", "blank_menu")
+
     def __str__(self):
         return "solo_jail_scene_04"
 

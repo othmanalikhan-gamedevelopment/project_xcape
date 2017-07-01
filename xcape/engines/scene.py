@@ -76,7 +76,6 @@ class SinglePlayer(GameObject):
 
         self.maxLives = 5
         self.lives = 5
-        self._loadUI(self.maxLives, self.lives)
 
         self.numToScene = \
             {
@@ -151,6 +150,9 @@ class SinglePlayer(GameObject):
 
         :param Scene: BaseScene inheritor, representing a scene class.
         """
+        # Need to loadUI first otherwise in level cutscenes SFX doesn't work
+        # properly. Namely, the UI SFX plays during cutscenes a bit.
+        self._loadUI(self.maxLives, self.lives)
         self.scene = Scene(self.screen)
         self.collisionEngine = CollisionEngine(self.scene)
 
