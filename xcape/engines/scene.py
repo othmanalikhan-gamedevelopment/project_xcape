@@ -24,10 +24,19 @@ class SceneEngine(GameObject):
         """
         self.screen = screen
         self.mode = None
+        self.pause = False
 
     def handleEvent(self, event):
         if self.mode:
             self.mode.handleEvent(event)
+
+        if event.type == pg.KEYDOWN:
+            if event.key == pg.K_ESCAPE:
+                self.pause = not self.pause
+                if self.pause:
+                    self.messageScene("pause")
+                else:
+                    self.messageScene("unpause")
 
         if event.type == self.SCENE_EVENT:
             if event.category == "start_game":
@@ -40,16 +49,15 @@ class SceneEngine(GameObject):
 
             if event.category == "no_mode":
                 self.mode = None
-
             if event.category == "screen":
                 self.screen = pg.display.get_surface()
 
     def update(self):
-        if self.mode:
+        if self.mode and not self.pause:
             self.mode.update()
 
     def draw(self, camera=None):
-        if self.mode:
+        if self.mode and not self.pause:
             self.mode.draw()
 
 
@@ -86,8 +94,6 @@ class SinglePlayer(GameObject):
         self.scene.handleEvent(event)
 
         if event.type == pg.KEYDOWN:
-            if event.key == pg.K_ESCAPE and self.lives != 0:
-                self._togglePauseMenu()
             if event.key == pg.K_RETURN:
                 self.camera.duration = 0
 
@@ -101,14 +107,22 @@ class SinglePlayer(GameObject):
             if event.category == "revive":
                 self._handleRevive()
 
+            if event.category == "pause":
+                if self.lives != 0:
+                    self.pause = True
+                    self.messageMenu("transition", "pause_menu")
+            if event.category == "unpause":
+                self.pause = False
+                self._loadUI(self.maxLives, self.lives)
+
     def update(self):
-        if not self.pause and self.scene:
+        if self.scene and not self.pause:
             self.scene.update()
             self.collisionEngine.update()
             self.camera.update()
 
     def draw(self, camera=None):
-        if self.scene:
+        if self.scene and not self.pause:
             self.scene.draw(self.camera)
 
     def startGame(self):
@@ -161,17 +175,6 @@ class SinglePlayer(GameObject):
         """
         self.pause = True
         self.messageMenu("transition", "lose_menu")
-
-    def _togglePauseMenu(self):
-        """
-        Pauses the game and triggers the pause menu and vice-versa.
-        """
-        self.pause = not self.pause
-        if self.pause:
-            self.messageMenu("transition", "pause_menu")
-        else:
-            self.messageMenu("transition", "blank_menu")
-            self._loadUI(self.maxLives, self.lives)
 
     def _handleTransition(self, event):
         """
@@ -235,9 +238,6 @@ class MultiPlayer(GameObject):
         self.scene.handleEvent(event)
 
         if event.type == pg.KEYDOWN:
-            isAlive = all([live != 0 for live in self.lives])
-            if event.key == pg.K_ESCAPE and isAlive:
-                self._togglePauseMenu()
             if event.key == pg.K_RETURN:
                 self.camera.duration = 0
             if event.key == pg.K_SPACE:
@@ -248,19 +248,30 @@ class MultiPlayer(GameObject):
                 self._nextScene()
             if event.category == "transition":
                 self._handleTransition(event)
+            if event.category == "unpause":
+                self._loadUI(self.maxLives, self.lives)
             if event.category == "death":
                 self._handleDeath(event)
             if event.category == "revive":
                 self._handleRevive()
 
+            if event.category == "pause":
+                isAlive = all([live != 0 for live in self.lives])
+                if isAlive:
+                    self.pause = True
+                    self.messageMenu("transition", "pause_menu")
+            if event.category == "unpause":
+                self.pause = False
+                self._loadUI(self.maxLives, self.lives)
+
     def update(self):
-        if not self.pause and self.scene:
+        if self.scene and not self.pause:
             self.scene.update()
             self.collisionEngine.update()
             self.camera.update()
 
     def draw(self, camera=None):
-        if self.scene:
+        if self.scene and not self.pause:
             self.scene.draw(self.camera)
 
     def startGame(self):
@@ -314,17 +325,6 @@ class MultiPlayer(GameObject):
         """
         self.pause = True
         self.messageMenu("transition", "lose_menu")
-
-    def _togglePauseMenu(self):
-        """
-        Pauses the game and triggers the pause menu and vice-versa.
-        """
-        self.pause = not self.pause
-        if self.pause:
-            self.messageMenu("transition", "pause_menu")
-        else:
-            self.messageMenu("transition", "blank_menu")
-            self._loadUI(self.maxLives, self.lives)
 
     def _handleTransition(self, event):
         """

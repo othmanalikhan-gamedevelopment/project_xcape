@@ -531,6 +531,13 @@ class PauseMenu(BaseMenu):
         self.audio.add("pause", SFX_RESOURCES["menu_pause"])
         self.audio.state = "pause"
 
+        # Need to draw once only otherwise it overrides what is already drawn
+        # by the Scene Engine
+        self.render.update()
+        self.pauseText.update()
+        self.pauseText.draw()
+        self.render.draw()
+
     def __str__(self):
         return "pause_menu"
 
@@ -540,13 +547,10 @@ class PauseMenu(BaseMenu):
                 self.audio.state = "pause"
 
     def update(self):
-        self.render.update()
         self.audio.update()
-        self.pauseText.update()
 
     def draw(self, camera=None):
-        self.render.draw(camera)
-        self.pauseText.draw()
+        pass
 
 
 class FadeEffect(BaseMenu):
