@@ -42,7 +42,7 @@ class CoreEngine(GameObject):
         self.cutsceneEngine = CutSceneEngine(self.screen)
 
         self.messageScene("start_game", "solo")
-        self.messageScene("transition", 4)
+        self.messageScene("transition", 5)
         # self.messageMenu("transition", "splash_menu")
         # self.messageCutScene("transition", "pig_cutscene")
 

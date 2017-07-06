@@ -17,6 +17,8 @@ JAIL_SOLO_2 = "Capítulo 2: Y... esto es... la prision?"
 JAIL_SOLO_3 = "Capítulo 3: Quién siquiera necesita escapar... cierto?"
 JAIL_SOLO_4 = "Capítulo 4: Aún estamos allí...?"
 
+FOREST_SOLO_1 = "Capítulo 1: The scent of freedom lingers..."
+
 JAIL_COOP_1A = "Capítulo 1: No me importa ser enterrado junto a ti..."
 JAIL_COOP_1B = "PISTA: Encuentra el salto coop en el teclado!"
 JAIL_COOP_1C = "PISTA: Una vez lo encuentres, abrásalo y úsalo!"

@@ -8,6 +8,8 @@ from pygame.math import Vector2
 from xcape.common.object import GameObject
 
 
+# Refactor: Merge methods that have two separate X and Y variations of
+# e.g. addDisplacementX and addDisplacementY should be just addDisplacement
 class PhysicsComponent(GameObject):
     """
     Represents the physics component that can apply physics to a game object.

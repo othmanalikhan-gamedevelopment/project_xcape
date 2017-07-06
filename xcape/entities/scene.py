@@ -4,7 +4,7 @@ Contains all the entities in a scene (excluding the players and bosses).
 
 import pygame as pg
 
-from xcape.common.loader import SCENE_RESOURCES, SFX_RESOURCES
+from xcape.common.loader import ZONE1_RESOURCES, ZONE2_RESOURCES, SFX_RESOURCES
 from xcape.common.object import GameObject
 from xcape.components.audio import AudioComponent
 from xcape.components.physics import PhysicsComponent
@@ -83,18 +83,27 @@ class SPlatform(GameObject):
     A static platform entity that the player can stand on.
     """
 
-    def __init__(self, x, y, blocks, screen):
+    def __init__(self, x, y, blocks, screen, zoneArtwork=1):
         """
         :param x: Integer, the x-position of the wall.
         :param y: Integer, the y-position of the wall.
         :param blocks: Integer, the number of times to replicate the wall.
         :param screen: pygame.Surface, the screen to draw the wall onto.
+        :param zoneArtwork: Integer, choosing the image based on zone.
         """
         self.screen = screen
 
-        left = SCENE_RESOURCES["platforms"]["platform_1"][0]
-        mid = SCENE_RESOURCES["platforms"]["platform_2"][0]
-        right = SCENE_RESOURCES["platforms"]["platform_3"][0]
+        # REFACTOR: Clumsy implementation to change image of the renderer.
+        # - Causes instantiating argument to be needlessly long.
+        # - The code below does not scale well.
+        if zoneArtwork == 1:
+            left = ZONE1_RESOURCES["platforms"]["platform_1"][0]
+            mid = ZONE1_RESOURCES["platforms"]["platform_2"][0]
+            right = ZONE1_RESOURCES["platforms"]["platform_3"][0]
+        if zoneArtwork == 2:
+            left = ZONE2_RESOURCES["platforms"]["platform_1"][0]
+            mid = ZONE2_RESOURCES["platforms"]["platform_2"][0]
+            right = ZONE2_RESOURCES["platforms"]["platform_3"][0]
         image = buildParts(blocks, "h", [left, mid, right])
 
         self.render = RenderComponent(self)
@@ -118,18 +127,27 @@ class DPlatform(GameObject):
     to pass through.
     """
 
-    def __init__(self, x, y, blocks, screen):
+    def __init__(self, x, y, blocks, screen, zoneArtwork=1):
         """
         :param x: Integer, the x-position of the wall.
         :param y: Integer, the y-position of the wall.
         :param blocks: Integer, the number of times to replicate the wall.
         :param screen: pygame.Surface, the screen to draw the wall onto.
+        :param zoneArtwork: Integer, choosing the image based on zone.
         """
         self.screen = screen
 
-        left = SCENE_RESOURCES["platforms"]["platform_1"][0]
-        mid = SCENE_RESOURCES["platforms"]["platform_2"][0]
-        right = SCENE_RESOURCES["platforms"]["platform_3"][0]
+        # REFACTOR: Clumsy implementation to change image of the renderer.
+        # - Causes instantiating argument to be needlessly long.
+        # - The code below does not scale well.
+        if zoneArtwork == 1:
+            left = ZONE1_RESOURCES["platforms"]["platform_1"][0]
+            mid = ZONE1_RESOURCES["platforms"]["platform_2"][0]
+            right = ZONE1_RESOURCES["platforms"]["platform_3"][0]
+        if zoneArtwork == 2:
+            left = ZONE2_RESOURCES["platforms"]["platform_1"][0]
+            mid = ZONE2_RESOURCES["platforms"]["platform_2"][0]
+            right = ZONE2_RESOURCES["platforms"]["platform_3"][0]
         image = buildParts(blocks, "h", [left, mid, right])
 
         self.render = RenderComponent(self)
@@ -219,18 +237,25 @@ class Switch(GameObject):
     A switch entity that the player can turn on and off.
     """
 
-    def __init__(self, x, y, switchNum, screen):
+    def __init__(self, x, y, switchNum, screen, zoneArtwork=1):
         """
         :param x: Integer, the x-position of the wall.
         :param y: Integer, the y-position of the wall.
         :param switchNum: Integer, identifying the number of the button.
         :param screen: pygame.Surface, the screen to draw the wall onto.
+        :param zoneArtwork: Integer, choosing the image based on zone.
         """
         self.screen = screen
         self.num = switchNum
         self.isOn = True
 
-        button = SCENE_RESOURCES["buttons"]
+        # REFACTOR: Clumsy implementation to change image of the renderer
+        # - Causes instantiating argument to be needlessly long.
+        # - The code below does not scale well.
+        if zoneArtwork == 1:
+            button = ZONE1_RESOURCES["buttons"]
+        if zoneArtwork == 2:
+            button = ZONE2_RESOURCES["buttons"]
         self.render = RenderComponent(self, enableRepeat=False)
         self.render.add("on", [button["switch"][0]])
         self.render.add("off", button["switch"], 500)
@@ -265,19 +290,27 @@ class Door(GameObject):
     A door entity that the player can enter.
     """
 
-    def __init__(self, x, y, num, screen):
+    def __init__(self, x, y, num, screen, zoneArtwork=1):
         """
         :param x: Integer, the x-position of the wall.
         :param y: Integer, the y-position of the wall.
         :param num: Integer, identifying the number of the button.
         :param screen: pygame.Surface, the screen to draw the wall onto.
+        :param zoneArtwork: Integer, choosing the image based on zone.
         """
         self.screen = screen
         self.num = num
         self.switchesWaiting = []
         self.isClosed = True
 
-        door = SCENE_RESOURCES["doors"]
+        # REFACTOR: Clumsy implementation to change image of the renderer.
+        # - Causes instantiating argument to be needlessly long.
+        # - The code below does not scale well.
+        if zoneArtwork == 1:
+            door = ZONE1_RESOURCES["doors"]
+        if zoneArtwork == 2:
+            door = ZONE2_RESOURCES["doors"]
+
         self.render = RenderComponent(self, enableRepeat=False)
         self.render.add("open", door["open"])
         self.render.add("closed", door["close"])

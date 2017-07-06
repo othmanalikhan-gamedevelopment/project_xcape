@@ -6,7 +6,7 @@ import pygame as pg
 
 import xcape.common.settings as settings
 import xcape.components.dialogue as dialogue
-from xcape.common.loader import SCENE_RESOURCES
+from xcape.common.loader import ZONE1_RESOURCES
 from xcape.common.scene import BaseScene
 from xcape.components.render import RenderComponent, Dialogue
 from xcape.entities.bosses import PigBoss
@@ -33,7 +33,7 @@ class JailScene01(BaseScene):
         self.elapsed = 0
         self.origin = pg.time.get_ticks()
 
-        image = SCENE_RESOURCES["levels"]["coop_jail_01"]
+        image = ZONE1_RESOURCES["levels"]["coop_jail_01"]
         self.render = RenderComponent(self)
         self.render.add("idle", image)
         self.render.state = "idle"
@@ -93,7 +93,7 @@ class JailScene01(BaseScene):
         return players
 
     def addWalls(self):
-        wall = SCENE_RESOURCES["walls"]
+        wall = ZONE1_RESOURCES["walls"]
 
         boundaries = \
         [
@@ -160,7 +160,7 @@ class JailScene01(BaseScene):
         return [door1]
 
     def addDecorations(self):
-        deco = SCENE_RESOURCES["decorations"]
+        deco = ZONE1_RESOURCES["decorations"]
         decorations = \
         [
             Decoration(70, 393, deco["skull"][0], self.screen),
@@ -190,7 +190,7 @@ class JailScene02(BaseScene):
         self.elapsed = 0
         self.origin = pg.time.get_ticks()
 
-        image = SCENE_RESOURCES["levels"]["coop_jail_02"]
+        image = ZONE1_RESOURCES["levels"]["coop_jail_02"]
         self.render = RenderComponent(self)
         self.render.add("idle", image)
         self.render.state = "idle"
@@ -251,7 +251,7 @@ class JailScene02(BaseScene):
         return players
 
     def addWalls(self):
-        wall = SCENE_RESOURCES["walls"]
+        wall = ZONE1_RESOURCES["walls"]
         platWall = [wall["plat_top"][0],
                     wall["plat_mid"][0],
                     wall["plat_bot"][0]]
@@ -291,8 +291,8 @@ class JailScene02(BaseScene):
         return platforms
 
     def addMPlatforms(self):
-        vImage = SCENE_RESOURCES["platforms"]["moving_vertical"]
-        hImage = SCENE_RESOURCES["platforms"]["moving_horizontal"]
+        vImage = ZONE1_RESOURCES["platforms"]["moving_vertical"]
+        hImage = ZONE1_RESOURCES["platforms"]["moving_horizontal"]
 
         platforms = \
             [
@@ -327,7 +327,7 @@ class JailScene02(BaseScene):
         return [door1]
 
     def addSpikes(self):
-        assets = SCENE_RESOURCES["traps"]
+        assets = ZONE1_RESOURCES["traps"]
         spikes = \
             [
                 # Floor
@@ -340,7 +340,7 @@ class JailScene02(BaseScene):
         return spikes
 
     def addDecorations(self):
-        deco = SCENE_RESOURCES["decorations"]
+        deco = ZONE1_RESOURCES["decorations"]
         decorations = \
             [
                 Decoration(778, 81, deco["skull"][0], self.screen)
@@ -371,7 +371,7 @@ class JailScene03(BaseScene):
         self.elapsed = 0
         self.origin = pg.time.get_ticks()
 
-        image = SCENE_RESOURCES["levels"]["coop_jail_03"]
+        image = ZONE1_RESOURCES["levels"]["coop_jail_03"]
         self.render = RenderComponent(self)
         self.render.add("idle", image)
         self.render.state = "idle"
@@ -446,7 +446,7 @@ class JailScene03(BaseScene):
         return bosses
 
     def addWalls(self):
-        wall = SCENE_RESOURCES["walls"]
+        wall = ZONE1_RESOURCES["walls"]
         blockWall = [wall["block_left"][0],
                      wall["block_mid"][0],
                      wall["block_right"][0]]
@@ -486,8 +486,8 @@ class JailScene03(BaseScene):
         return platforms
 
     def addMPlatforms(self):
-        vImage = SCENE_RESOURCES["platforms"]["moving_vertical"]
-        hImage = SCENE_RESOURCES["platforms"]["moving_horizontal"]
+        vImage = ZONE1_RESOURCES["platforms"]["moving_vertical"]
+        hImage = ZONE1_RESOURCES["platforms"]["moving_horizontal"]
 
         platforms = \
             [
@@ -551,7 +551,7 @@ class JailScene03(BaseScene):
         return doors
 
     def addSpikes(self):
-        assets = SCENE_RESOURCES["traps"]
+        assets = ZONE1_RESOURCES["traps"]
         spikes = \
             [
                 Spike(50, 50, 26, "h", assets["spike_down"][0], self.screen),
@@ -564,8 +564,8 @@ class JailScene03(BaseScene):
         return spikes
 
     def addDecorations(self):
-        skull = SCENE_RESOURCES["decorations"]["skull"][0]
-        deco = SCENE_RESOURCES["decorations"]
+        skull = ZONE1_RESOURCES["decorations"]["skull"][0]
+        deco = ZONE1_RESOURCES["decorations"]
         decorations = \
             [
                 Decoration(500, 730, skull, self.screen),

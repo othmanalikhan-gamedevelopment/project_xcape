@@ -68,7 +68,6 @@ TODO
 
 Programming
 -----------
-- Add evasion move for player
 - Add disappearing platform
 - Moving platform attachable code 
 
@@ -79,10 +78,18 @@ Artwork
 
 Sounds
 ------
-- Evade move
 - Disappearing platform
 - Ball trap
 
 Level Designing
 ---------------
 - SoloScene05 (Zone 2)
+
+Docs
+----
+- Add references
+- Update README
+
+Refactor
+--------
+- Complete all REFACTOR and TODO tasks

@@ -6,7 +6,7 @@ import pygame as pg
 
 import xcape.common.settings as settings
 import xcape.components.dialogue as dialogue
-from xcape.common.loader import SCENE_RESOURCES
+from xcape.common.loader import ZONE1_RESOURCES, ZONE2_RESOURCES
 from xcape.common.scene import BaseScene
 from xcape.components.render import RenderComponent, Dialogue
 from xcape.entities.bosses import PigBoss
@@ -32,7 +32,7 @@ class JailScene01(BaseScene):
         self.elapsed = 0
         self.origin = pg.time.get_ticks()
 
-        image = SCENE_RESOURCES["levels"]["solo_jail_01"][0]
+        image = ZONE1_RESOURCES["levels"]["solo_jail_01"][0]
         self.render = RenderComponent(self)
         self.render.add("background", image)
         self.render.state = "background"
@@ -83,7 +83,7 @@ class JailScene01(BaseScene):
         return player
 
     def addWalls(self):
-        assets = SCENE_RESOURCES["walls"]
+        assets = ZONE1_RESOURCES["walls"]
         boundaries = \
         [
             Wall(0, 10, 8, "v", assets["boundary_left"], self.screen),
@@ -152,7 +152,7 @@ class JailScene02(BaseScene):
         self.elapsed = 0
         self.origin = pg.time.get_ticks()
 
-        image = SCENE_RESOURCES["levels"]["solo_jail_02"][0]
+        image = ZONE1_RESOURCES["levels"]["solo_jail_02"][0]
         self.render = RenderComponent(self)
         self.render.add("idle", image)
         self.render.state = "idle"
@@ -209,7 +209,7 @@ class JailScene02(BaseScene):
         return player
 
     def addWalls(self):
-        wall = SCENE_RESOURCES["walls"]
+        wall = ZONE1_RESOURCES["walls"]
         platWall = [wall["plat_top"][0],
                     wall["plat_mid"][0],
                     wall["plat_bot"][0]]
@@ -248,8 +248,8 @@ class JailScene02(BaseScene):
         return platforms
 
     def addMPlatforms(self):
-        vImage = SCENE_RESOURCES["platforms"]["moving_vertical"]
-        hImage = SCENE_RESOURCES["platforms"]["moving_horizontal"]
+        vImage = ZONE1_RESOURCES["platforms"]["moving_vertical"]
+        hImage = ZONE1_RESOURCES["platforms"]["moving_horizontal"]
 
         platforms = \
         [
@@ -277,16 +277,16 @@ class JailScene02(BaseScene):
         return [door1]
 
     def addSpikes(self):
-        assets = SCENE_RESOURCES["traps"]
+        assets = ZONE1_RESOURCES["traps"]
         spikes = \
         [
             Spike(325, 525, 5, "h", assets["spike_up"][0], self.screen),
-            Spike(550, 525, 5, "h", assets["spike_down"][0], self.screen),
+            Spike(550, 525, 5, "h", assets["spike_up"][0], self.screen),
         ]
         return spikes
 
     def addDecorations(self):
-        deco = SCENE_RESOURCES["decorations"]
+        deco = ZONE1_RESOURCES["decorations"]
         decorations = \
         [
             Decoration(778, 81, deco["skull"][0], self.screen)
@@ -311,7 +311,7 @@ class JailScene03(BaseScene):
         self.elapsed = 0
         self.origin = pg.time.get_ticks()
 
-        image = SCENE_RESOURCES["levels"]["solo_jail_03"][0]
+        image = ZONE1_RESOURCES["levels"]["solo_jail_03"][0]
         self.render = RenderComponent(self)
         self.render.add("idle", image)
         self.render.state = "idle"
@@ -364,8 +364,8 @@ class JailScene03(BaseScene):
         return player
 
     def addWalls(self):
-        wall = SCENE_RESOURCES["walls"]
-        pillar = SCENE_RESOURCES["pillars"]
+        wall = ZONE1_RESOURCES["walls"]
+        pillar = ZONE1_RESOURCES["pillars"]
 
         pillarWall = [pillar["steel_top"][0],
                       pillar["steel_mid"][0],
@@ -407,8 +407,8 @@ class JailScene03(BaseScene):
         return boundaries + obstacles
 
     def addMPlatforms(self):
-        vImage = SCENE_RESOURCES["platforms"]["moving_vertical"][0]
-        hImage = SCENE_RESOURCES["platforms"]["moving_horizontal"][0]
+        vImage = ZONE1_RESOURCES["platforms"]["moving_vertical"][0]
+        hImage = ZONE1_RESOURCES["platforms"]["moving_horizontal"][0]
 
         platforms = \
             [
@@ -434,7 +434,7 @@ class JailScene03(BaseScene):
         return [door1]
 
     def addSpikes(self):
-        assets = SCENE_RESOURCES["traps"]
+        assets = ZONE1_RESOURCES["traps"]
         spikes = \
             [
                 Spike(415, 190, 2, "v", assets["spike_left"][0], self.screen),
@@ -468,7 +468,7 @@ class JailScene04(BaseScene):
         self.elapsed = 0
         self.origin = pg.time.get_ticks()
 
-        image = SCENE_RESOURCES["levels"]["solo_jail_04"]
+        image = ZONE1_RESOURCES["levels"]["solo_jail_04"]
         self.render = RenderComponent(self)
         self.render.add("background", image)
         self.render.state = "background"
@@ -537,8 +537,8 @@ class JailScene04(BaseScene):
         return bosses
 
     def addWalls(self):
-        wall = SCENE_RESOURCES["walls"]
-        pillar = SCENE_RESOURCES["pillars"]
+        wall = ZONE1_RESOURCES["walls"]
+        pillar = ZONE1_RESOURCES["pillars"]
         pillarWall = [pillar["steel_top"][0],
                       pillar["steel_mid"][0],
                       pillar["steel_bot"][0]]
@@ -590,8 +590,8 @@ class JailScene04(BaseScene):
         return boundaries + obstacles
 
     def addMPlatforms(self):
-        vImage = SCENE_RESOURCES["platforms"]["moving_vertical"]
-        hImage = SCENE_RESOURCES["platforms"]["moving_horizontal"]
+        vImage = ZONE1_RESOURCES["platforms"]["moving_vertical"]
+        hImage = ZONE1_RESOURCES["platforms"]["moving_horizontal"]
 
         platforms = \
             [
@@ -635,7 +635,7 @@ class JailScene04(BaseScene):
         return [door1]
 
     def addSpikes(self):
-        spike = SCENE_RESOURCES["traps"]
+        spike = ZONE1_RESOURCES["traps"]
         spikes = \
             [
                 Spike(3362, 195, 2, "h", spike["spike_up"][0], self.screen),
@@ -643,7 +643,7 @@ class JailScene04(BaseScene):
         return spikes
 
     def addDecorations(self):
-        deco = SCENE_RESOURCES["decorations"]
+        deco = ZONE1_RESOURCES["decorations"]
         decorations = \
         [
             Decoration(416, 112, deco["torch"], self.screen),
@@ -651,5 +651,169 @@ class JailScene04(BaseScene):
             Decoration(1308, 143, deco["torch"], self.screen),
             Decoration(2182, 143, deco["torch"], self.screen),
             Decoration(3486, 143, deco["torch"], self.screen),
+        ]
+        return decorations
+
+
+class ForestScene01(BaseScene):
+
+    LEVEL_NUM = 5
+
+    def __init__(self, screen):
+        super().__init__(screen)
+
+        self.players = self.addPlayers()
+
+        self.walls = self.addWalls()
+        self.mPlatforms = self.addMPlatforms()
+        self.switches = self.addSwitches()
+        self.doors = self.addDoors()
+        self.spikes = self.addSpikes()
+        self.dPlatforms = self.addDPlatforms()
+        self.decorations = self.addDecorations()
+
+        self.elapsed = 0
+        self.origin = pg.time.get_ticks()
+
+        image = ZONE2_RESOURCES["levels"]["solo_forest_01"]
+        self.render = RenderComponent(self)
+        self.render.add("background", image)
+        self.render.state = "background"
+
+        self.dialogue = Dialogue(self.screen)
+        self.dialogue.add(dialogue.JAIL_SOLO_1, 10, 410, "caption")
+
+    def __str__(self):
+        return "solo_forest_scene_01"
+
+    def handleEvent(self, event):
+        [p.handleEvent(event) for p in self.players]
+
+        if event.type == self.SCENE_EVENT:
+            [d.handleEvent(event) for d in self.doors]
+
+    def update(self):
+        self.elapsed = pg.time.get_ticks() - self.origin
+        self.render.update()
+
+        [d.update() for d in self.decorations]
+        [w.update() for w in self.walls]
+        [s.update() for s in self.switches]
+        [d.update() for d in self.doors]
+        [s.update() for s in self.spikes]
+        [p.update() for p in self.dPlatforms]
+        [p.update() for p in self.mPlatforms]
+        [p.update() for p in self.players]
+        [b.update() for b in self.bosses]
+
+        self.dialogue.update()
+        if 5000 > self.elapsed >= 0:
+            self.dialogue.index = 0
+        else:
+            self.dialogue.index = None
+
+    def draw(self, camera=None):
+        self.screen.fill(settings.COLOURS["black_red"])
+        self.render.draw(camera)
+
+        [d.draw(camera) for d in self.decorations]
+        [w.draw(camera) for w in self.walls]
+        [s.draw(camera) for s in self.switches]
+        [d.draw(camera) for d in self.doors]
+        [s.draw(camera) for s in self.spikes]
+        [p.draw(camera) for p in self.dPlatforms]
+        [p.draw(camera) for p in self.mPlatforms]
+        [p.draw(camera) for p in self.players]
+        [b.draw(camera) for b in self.bosses]
+        self.dialogue.draw()
+
+    def addPlayers(self):
+        spawn = (70, 510)
+        player = [PlayerOne(self.screen)]
+        player[0].rect.center = spawn
+        return player
+
+    def addWalls(self):
+        wall = ZONE2_RESOURCES["walls"]
+        platWall = [wall["plat_top"][0],
+                    wall["plat_mid"][0],
+                    wall["plat_bot"][0]]
+
+        boundaries = \
+        [
+            Wall(0, 50, 8, "v", wall["boundary_left"], self.screen),
+            Wall(0, 548, 15, "h", wall["boundary_bot"], self.screen),
+            Wall(0, 548, 1, "h", wall["inner_corner_left"], self.screen),
+            Wall(952, 50, 8, "v", wall["boundary_right"], self.screen),
+            Wall(952, 548, 1, "h", wall["inner_corner_right"], self.screen)
+        ]
+
+        obstacles = \
+        [
+            Wall(210, 300, 1, "h", wall["block_left"], self.screen),
+            Wall(265, 300, 1, "h", wall["block_right"], self.screen),
+
+            Wall(435, 490, 1, "h", wall["block_left"], self.screen),
+            Wall(490, 490, 1, "h", wall["block_right"], self.screen),
+
+            Wall(655, 300, 1, "h", wall["block_left"], self.screen),
+            Wall(710, 300, 1, "h", wall["block_right"], self.screen),
+
+            Wall(770, 105, 2, "v", platWall, self.screen),
+        ]
+
+        return boundaries + obstacles
+
+    def addDPlatforms(self):
+        platforms = \
+        [
+            DPlatform(170, 450, 1, self.screen, zoneArtwork=2),
+            DPlatform(60, 330, 0, self.screen, zoneArtwork=2),
+        ]
+        return platforms
+
+    def addMPlatforms(self):
+        vImage = ZONE2_RESOURCES["platforms"]["moving_vertical"]
+        hImage = ZONE2_RESOURCES["platforms"]["moving_horizontal"]
+
+        platforms = \
+        [
+            # MPlatform((150, 260), (350, 260), 10, 0, self.screen, hImage),
+            MPlatform((340, 450), (600, 450), 8, 0, self.screen, hImage),
+            MPlatform((340, 300), (600, 300), 8, 0, self.screen, hImage),
+            MPlatform((660, 350), (660, 435), 0, 0, self.screen, vImage),
+            MPlatform((660, 435), (660, 530), 0, 0, self.screen, vImage),
+        ]
+        return platforms
+
+    def addSwitches(self):
+        switches = \
+        [
+            Switch(250, 200, 1, self.screen, zoneArtwork=2),
+            Switch(480, 200, 2, self.screen, zoneArtwork=2),
+            Switch(480, 430, 3, self.screen, zoneArtwork=2),
+            Switch(700, 200, 4, self.screen, zoneArtwork=2),
+        ]
+        return switches
+
+    def addDoors(self):
+        door1 = Door(865, 440, 1, self.screen, zoneArtwork=2)
+        door1.switchesWaiting = [1, 2, 3, 4]
+        return [door1]
+
+    def addSpikes(self):
+        assets = ZONE2_RESOURCES["traps"]
+        spikes = \
+        [
+            Spike(325, 525, 5, "h", assets["spike_up"][0], self.screen),
+            Spike(550, 525, 5, "h", assets["spike_up"][0], self.screen),
+        ]
+        return spikes
+
+    def addDecorations(self):
+        deco = ZONE2_RESOURCES["decorations"]
+        decorations = \
+        [
+            Decoration(778, 81, deco["skull"][0], self.screen)
         ]
         return decorations

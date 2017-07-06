@@ -83,6 +83,7 @@ class SinglePlayer(GameObject):
                 2: solo.JailScene02,
                 3: solo.JailScene03,
                 4: solo.JailScene04,
+                5: solo.ForestScene01,
             }
 
     def __str__(self):
