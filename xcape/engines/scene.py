@@ -83,7 +83,6 @@ class SinglePlayer(GameObject):
                 2: solo.JailScene02,
                 3: solo.JailScene03,
                 4: solo.JailScene04,
-                5: solo.ForestScene01,
             }
 
     def __str__(self):
@@ -142,9 +141,15 @@ class SinglePlayer(GameObject):
         """
         Loads the next scene.
         """
-        num = self.scene.__class__.LEVEL_NUM + 1
-        self._loadScene(self.numToScene[num])
+        try:
+            num = self.scene.__class__.LEVEL_NUM + 1
+            self._loadScene(self.numToScene[num])
+        except KeyError:
+            self.messageMenu("transition", "win_menu")
 
+    # REFACTOR: Should input scene number instead, so that try-except
+    # handling of the win menu is done within this method and not by the
+    # caller who shouldn't be responsibile for it.
     def _loadScene(self, Scene):
         """
         Loads the given scene.
@@ -287,8 +292,11 @@ class MultiPlayer(GameObject):
         """
         Loads the next scene.
         """
-        num = self.scene.__class__.LEVEL_NUM + 1
-        self._loadScene(self.numToScene[num])
+        try:
+            num = self.scene.__class__.LEVEL_NUM + 1
+            self._loadScene(self.numToScene[num])
+        except KeyError:
+            self.messageMenu("transition", "win_menu")
 
     def _restartScene(self):
         """
@@ -297,6 +305,9 @@ class MultiPlayer(GameObject):
         num = self.scene.__class__.LEVEL_NUM
         self._loadScene(self.numToScene[num])
 
+    # REFACTOR: Should input scene number instead, so that try-except
+    # handling of the win menu is done within this method and not by the
+    # caller who shouldn't be responsibile for it.
     def _loadScene(self, Scene):
         """
         Loads the given scene.

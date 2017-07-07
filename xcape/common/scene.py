@@ -30,6 +30,7 @@ class BaseScene(GameObject):
         self.switches = []
         self.doors = []
         self.spikes = []
+        self.spears = []
         self.decorations = []
 
     def handleEvent(self, event):
@@ -116,6 +117,14 @@ class BaseScene(GameObject):
     def addDecorations(self):
         """
         Adds decorations to the scene.
+
+        :return: List, containing decoration entities.
+        """
+        raise NotImplementedError
+
+    def addSpears(self):
+        """
+        Adds spears to the scene.
 
         :return: List, containing enemy entities.
         """

@@ -12,7 +12,8 @@ from xcape.components.render import RenderComponent, Dialogue
 from xcape.entities.bosses import PigBoss
 from xcape.entities.players import PlayerOne
 from xcape.entities.scene import (
-    Wall, SPlatform, DPlatform, MPlatform, Switch, Door, Spike, Decoration
+    Wall, SPlatform, DPlatform, MPlatform, Switch, Door, Spike, Decoration,
+    Spear
 )
 
 
@@ -655,6 +656,7 @@ class JailScene04(BaseScene):
         return decorations
 
 
+#TODO: Complete the development of ForestScene01.
 class ForestScene01(BaseScene):
 
     LEVEL_NUM = 5
@@ -669,6 +671,7 @@ class ForestScene01(BaseScene):
         self.switches = self.addSwitches()
         self.doors = self.addDoors()
         self.spikes = self.addSpikes()
+        self.spikes = self.addSpears()
         self.dPlatforms = self.addDPlatforms()
         self.decorations = self.addDecorations()
 
@@ -701,6 +704,7 @@ class ForestScene01(BaseScene):
         [s.update() for s in self.switches]
         [d.update() for d in self.doors]
         [s.update() for s in self.spikes]
+        [s.update() for s in self.spears]
         [p.update() for p in self.dPlatforms]
         [p.update() for p in self.mPlatforms]
         [p.update() for p in self.players]
@@ -721,6 +725,7 @@ class ForestScene01(BaseScene):
         [s.draw(camera) for s in self.switches]
         [d.draw(camera) for d in self.doors]
         [s.draw(camera) for s in self.spikes]
+        [s.draw(camera) for s in self.spears]
         [p.draw(camera) for p in self.dPlatforms]
         [p.draw(camera) for p in self.mPlatforms]
         [p.draw(camera) for p in self.players]
@@ -735,18 +740,20 @@ class ForestScene01(BaseScene):
 
     def addWalls(self):
         wall = ZONE2_RESOURCES["walls"]
+        pillar = ZONE2_RESOURCES["pillars"]
         platWall = [wall["plat_top"][0],
                     wall["plat_mid"][0],
                     wall["plat_bot"][0]]
+        pillarWall = [pillar["steel_top"][0],
+                      pillar["steel_mid"][0],
+                      pillar["steel_bot"][0]]
 
         boundaries = \
         [
-            Wall(0, 50, 8, "v", wall["boundary_left"], self.screen),
-            Wall(0, 548, 15, "h", wall["boundary_bot"], self.screen),
-            Wall(0, 548, 1, "h", wall["inner_corner_left"], self.screen),
-            Wall(952, 50, 8, "v", wall["boundary_right"], self.screen),
-            Wall(952, 548, 1, "h", wall["inner_corner_right"], self.screen)
+            Wall(0, 548, 15, "h", wall["ground"], self.screen),
+            # Wall(0, 500, 6, "v", pillarWall, self.screen),
         ]
+        boundaries[0].render.shrinkBy = (0, -50)
 
         obstacles = \
         [
@@ -798,7 +805,7 @@ class ForestScene01(BaseScene):
 
     def addDoors(self):
         door1 = Door(865, 440, 1, self.screen, zoneArtwork=2)
-        door1.switchesWaiting = [1, 2, 3, 4]
+        door1.switchesWaiting = [1]
         return [door1]
 
     def addSpikes(self):
@@ -817,3 +824,11 @@ class ForestScene01(BaseScene):
             Decoration(778, 81, deco["skull"][0], self.screen)
         ]
         return decorations
+
+    def addSpears(self):
+        spears = \
+        [
+            Spear(0, 425, self.screen),
+        ]
+        return spears
+

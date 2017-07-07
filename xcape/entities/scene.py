@@ -380,3 +380,29 @@ class Spike(GameObject):
 
     def draw(self, camera=None):
         self.render.draw(camera)
+
+
+class Spear(GameObject):
+    """
+    A spear entity that kills the player.
+    """
+
+    def __init__(self, x, y, screen):
+        """
+        :param x: Integer, the x-position of the wall.
+        :param y: Integer, the y-position of the wall.
+        :param screen: pygame.Surface, the screen to draw the wall onto.
+        """
+        self.screen = screen
+
+        assets = ZONE2_RESOURCES["traps"]["spear"]
+        self.render = RenderComponent(self)
+        self.render.add("idle", assets)
+        self.render.state = "idle"
+        self.rect = pg.Rect(x, y, 0, 0)
+
+    def update(self):
+        self.render.update()
+
+    def draw(self, camera=None):
+        self.render.draw(camera)
