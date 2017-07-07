@@ -49,8 +49,8 @@ executables = [
 ]
 
 setup(name='xcape',
-      version='1.0',
-      description='',
+      version='2.1',
+      description='A game (platformer) made using a simple engine built on pygame',
       options=dict(build_exe=buildOptions),
       executables=executables
 )
