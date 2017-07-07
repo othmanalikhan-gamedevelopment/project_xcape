@@ -62,7 +62,7 @@ class OfficeCutscene(BaseCutscene):
         self.dialogue.add(dialogue.OFFICE_4, 370, 100)
 
         speed = 1
-        ts = [0, 1000, 1500, 4600, 8200, 11800, 15400]
+        ts = [0, 4000, 8000, 12000, 16000]
         self.timings = [speed*t for t in ts]
 
     def __str__(self):
@@ -76,7 +76,7 @@ class OfficeCutscene(BaseCutscene):
     def update(self):
         self.elapsed = pg.time.get_ticks() - self.origin
 
-        if self.timings[0] > self.elapsed:
+        if self.timings[0] >= self.elapsed:
             self.render.state = "office_dog"
             self.dialogue.index = None
 
