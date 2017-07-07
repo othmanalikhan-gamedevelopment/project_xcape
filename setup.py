@@ -45,7 +45,7 @@ executables = [
     Executable('main.py',
                targetName="xcape.exe",
                base=base,
-               icon=os.path.join("images", "icons", "assets", "red", "1.ico"))
+               icon=os.path.join("images", "icons", "assets", "ico", "1.ico"))
 ]
 
 setup(name='xcape',
