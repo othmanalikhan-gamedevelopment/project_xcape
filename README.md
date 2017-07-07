@@ -18,16 +18,17 @@ Some game play footage is demonstrated below.
 ------------------------------------------------------------------
 
 
-Prerequisites
---------------
-- Python 3.6.0
-- PyGame 1.9.3
-
 
 How to Use
 ----------
-1. Download or clone the repository
-2. Run main.py using a python interpreter 
+There are two ways to run the game, the first being easier the second.
+
+### Running the Pre-Compiled Game (Easier)
+1. Download the latest executable release and run it.
+
+### Running Directly from Source Code (Harder)
+1. Download or clone the repository.
+2. Run main.py using Python 3.6+ (see requirements.txt).
 
 
 Key Game Features

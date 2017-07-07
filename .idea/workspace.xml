@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="2942e340-afdc-4c22-9f9a-96926b7bcbcc" name="Default" comment="">
+    <list default="true" id="2942e340-afdc-4c22-9f9a-96926b7bcbcc" name="Default" comment="Updated README (included requirements.txt_">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/README.md" afterPath="$PROJECT_DIR$/README.md" />
     </list>
     <list id="9b4ef605-73b2-44f8-8130-6d62affc6833" name="artwork" comment="Added cat evade artwork to images" />
     <list id="3ac681e7-b5e3-42ff-b5df-0fcd622f2872" name="docs" comment="Added more TODO tasks in README" />
@@ -29,8 +30,8 @@
         <entry file="file://$PROJECT_DIR$/README.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
             <state split_layout="FIRST">
-              <first_editor relative-caret-position="1054">
-                <caret line="62" column="4" lean-forward="false" selection-start-line="62" selection-start-column="4" selection-end-line="62" selection-end-column="4" />
+              <first_editor relative-caret-position="510">
+                <caret line="30" column="55" lean-forward="false" selection-start-line="30" selection-start-column="55" selection-end-line="30" selection-end-column="55" />
                 <folding />
               </first_editor>
               <second_editor />
@@ -458,13 +459,6 @@
       <option name="presentableId" value="Default" />
       <updated>1495180644399</updated>
     </task>
-    <task id="LOCAL-00072" summary="Added sound effects to the splash screen">
-      <created>1497932302005</created>
-      <option name="number" value="00072" />
-      <option name="presentableId" value="LOCAL-00072" />
-      <option name="project" value="LOCAL" />
-      <updated>1497932302005</updated>
-    </task>
     <task id="LOCAL-00073" summary="Updated audio.py to allow repeating and autoplaying of sounds">
       <created>1497974846602</created>
       <option name="number" value="00073" />
@@ -801,7 +795,14 @@
       <option name="project" value="LOCAL" />
       <updated>1499435477061</updated>
     </task>
-    <option name="localTasksCounter" value="121" />
+    <task id="LOCAL-00121" summary="Updated README (included requirements.txt_">
+      <created>1499436959311</created>
+      <option name="number" value="00121" />
+      <option name="presentableId" value="LOCAL-00121" />
+      <option name="project" value="LOCAL" />
+      <updated>1499436959311</updated>
+    </task>
+    <option name="localTasksCounter" value="122" />
     <servers />
   </component>
   <component name="TodoView" selected-index="2">
@@ -899,7 +900,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <confirmRemoveEmptyChangelist value="1" />
-    <MESSAGE value="Tweaked spawn point of SoloScene04" />
     <MESSAGE value="Translated dialogues into Spanish" />
     <MESSAGE value="Updated background of SoloScene04" />
     <MESSAGE value="Added more torches to SoloScene04" />
@@ -924,7 +924,8 @@
     <MESSAGE value="Added setup.py and hence a built binary of the game" />
     <MESSAGE value="Included missing built game (play it!)" />
     <MESSAGE value="Removed compiled game (uploaded as a release instead on GitHub)" />
-    <option name="LAST_COMMIT_MESSAGE" value="Removed compiled game (uploaded as a release instead on GitHub)" />
+    <MESSAGE value="Updated README (included requirements.txt_" />
+    <option name="LAST_COMMIT_MESSAGE" value="Updated README (included requirements.txt_" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
@@ -1234,8 +1235,8 @@
     <entry file="file://$PROJECT_DIR$/README.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="FIRST">
-          <first_editor relative-caret-position="1054">
-            <caret line="62" column="4" lean-forward="false" selection-start-line="62" selection-start-column="4" selection-end-line="62" selection-end-column="4" />
+          <first_editor relative-caret-position="510">
+            <caret line="30" column="55" lean-forward="false" selection-start-line="30" selection-start-column="55" selection-end-line="30" selection-end-column="55" />
             <folding />
           </first_editor>
           <second_editor />
