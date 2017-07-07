@@ -58,6 +58,6 @@ Authors
 
 Credits
 -------
-- Sound assets, cat meows, http://soundbible.com
-- Sound assets, everything else, https://www.soundjay.com
-- Artwork assets, ???
+- Sound assets, all cat meows, http://soundbible.com.
+- Sound assets, everything else, https://www.soundjay.com.
+- Artwork assets, some original pieces while others secondary (links lost).

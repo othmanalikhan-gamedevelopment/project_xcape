@@ -3,8 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="2942e340-afdc-4c22-9f9a-96926b7bcbcc" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/xcape/components/cutscenes.py" afterPath="$PROJECT_DIR$/xcape/components/cutscenes.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/xcape/engines/core.py" afterPath="$PROJECT_DIR$/xcape/engines/core.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/README.md" afterPath="$PROJECT_DIR$/README.md" />
     </list>
     <list id="9b4ef605-73b2-44f8-8130-6d62affc6833" name="artwork" comment="Added cat evade artwork to images" />
     <list id="3ac681e7-b5e3-42ff-b5df-0fcd622f2872" name="docs" comment="Added more TODO tasks in README" />
@@ -32,13 +31,14 @@
           <file leaf-file-name="core.py" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/xcape/engines/core.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="494">
-                  <caret line="44" column="40" lean-forward="false" selection-start-line="44" selection-start-column="40" selection-end-line="44" selection-end-column="40" />
+                <state relative-caret-position="340">
+                  <caret line="25" column="29" lean-forward="false" selection-start-line="25" selection-start-column="29" selection-end-line="25" selection-end-column="29" />
                   <folding>
                     <element signature="e#0#36#1" expanded="false" />
-                    <element signature="e#38#57#0" expanded="true" />
                     <element signature="e#101#146#0" expanded="false" />
+                    <element signature="e#781#2757#0" expanded="false" />
                     <element signature="e#781#990#1" expanded="false" />
+                    <element signature="e#1024#1503#0" expanded="false" />
                     <element signature="e#1536#1556#0" expanded="false" />
                     <element signature="e#1596#2295#0" expanded="false" />
                     <element signature="e#1638#2295#0" expanded="false" />
@@ -66,87 +66,15 @@
       </split-first>
       <split-second>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file leaf-file-name="README.md" pinned="false" current-in-tab="false">
+          <file leaf-file-name="README.md" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/README.md">
               <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
                 <state split_layout="FIRST">
-                  <first_editor relative-caret-position="513">
-                    <caret line="49" column="0" lean-forward="true" selection-start-line="49" selection-start-column="0" selection-end-line="49" selection-end-column="0" />
+                  <first_editor relative-caret-position="241">
+                    <caret line="48" column="0" lean-forward="true" selection-start-line="48" selection-start-column="0" selection-end-line="48" selection-end-column="0" />
                     <folding />
                   </first_editor>
                   <second_editor />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="cutscenes.py" pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/xcape/components/cutscenes.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="153">
-                  <caret line="36" column="35" lean-forward="false" selection-start-line="36" selection-start-column="35" selection-end-line="36" selection-end-column="35" />
-                  <folding>
-                    <element signature="e#0#61#1" expanded="false" />
-                    <element signature="e#403#778#0" expanded="false" />
-                    <element signature="e#403#454#1" expanded="false" />
-                    <element signature="e#496#644#0" expanded="false" />
-                    <element signature="e#496#575#1" expanded="false" />
-                    <element signature="e#688#692#0" expanded="false" />
-                    <element signature="e#724#728#0" expanded="false" />
-                    <element signature="e#771#775#0" expanded="false" />
-                    <element signature="e#836#3292#0" expanded="false" />
-                    <element signature="e#836#913#1" expanded="false" />
-                    <element signature="e#1931#1955#0" expanded="false" />
-                    <element signature="e#2040#2109#0" expanded="false" />
-                    <element signature="e#2377#2445#0" expanded="false" />
-                    <element signature="e#2504#2572#0" expanded="false" />
-                    <element signature="e#2631#2699#0" expanded="false" />
-                    <element signature="e#2759#2827#0" expanded="false" />
-                    <element signature="e#2983#3036#0" expanded="false" />
-                    <element signature="e#3079#3292#0" expanded="false" />
-                    <element signature="e#3079#3145#1" expanded="false" />
-                    <element signature="e#3194#3289#0" expanded="false" />
-                    <element signature="e#3353#6146#0" expanded="false" />
-                    <element signature="e#3353#3420#1" expanded="false" />
-                    <element signature="e#3462#4442#0" expanded="false" />
-                    <element signature="e#4475#4502#0" expanded="false" />
-                    <element signature="e#4546#4683#0" expanded="false" />
-                    <element signature="e#4587#4683#0" expanded="false" />
-                    <element signature="e#4715#6047#0" expanded="false" />
-                    <element signature="e#4820#4895#0" expanded="false" />
-                    <element signature="e#4954#5029#0" expanded="false" />
-                    <element signature="e#5088#5163#0" expanded="false" />
-                    <element signature="e#5222#5294#0" expanded="false" />
-                    <element signature="e#5353#5425#0" expanded="false" />
-                    <element signature="e#5484#5559#0" expanded="false" />
-                    <element signature="e#5618#5692#0" expanded="false" />
-                    <element signature="e#5751#5826#0" expanded="false" />
-                    <element signature="e#5854#5986#0" expanded="false" />
-                    <element signature="e#5895#5986#0" expanded="false" />
-                    <element signature="e#6090#6143#0" expanded="false" />
-                    <element signature="e#6202#8668#0" expanded="false" />
-                    <element signature="e#6202#6271#1" expanded="false" />
-                    <element signature="e#6313#7215#0" expanded="false" />
-                    <element signature="e#7248#7270#0" expanded="false" />
-                    <element signature="e#7314#7420#0" expanded="false" />
-                    <element signature="e#7452#8336#0" expanded="false" />
-                    <element signature="e#7557#7625#0" expanded="false" />
-                    <element signature="e#7684#7757#0" expanded="false" />
-                    <element signature="e#7816#7887#0" expanded="false" />
-                    <element signature="e#7946#8016#0" expanded="false" />
-                    <element signature="e#8075#8146#0" expanded="false" />
-                    <element signature="e#8174#8275#0" expanded="false" />
-                    <element signature="e#8215#8275#0" expanded="false" />
-                    <element signature="e#8379#8432#0" expanded="false" />
-                    <element signature="e#8471#8559#1" expanded="false" />
-                    <element signature="e#8708#10508#0" expanded="false" />
-                    <element signature="e#8708#8764#1" expanded="false" />
-                    <element signature="e#9544#9565#0" expanded="false" />
-                    <element signature="e#9609#9715#0" expanded="false" />
-                    <element signature="e#9747#10136#0" expanded="false" />
-                    <element signature="e#10179#10259#0" expanded="false" />
-                    <element signature="e#10298#10508#0" expanded="false" />
-                    <element signature="e#10298#10386#1" expanded="false" />
-                  </folding>
                 </state>
               </provider>
             </entry>
@@ -275,9 +203,9 @@
         <option value="$PROJECT_DIR$/xcape/components/render.py" />
         <option value="$PROJECT_DIR$/xcape/components/solo.py" />
         <option value="$PROJECT_DIR$/xcape/engines/scene.py" />
-        <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/xcape/components/cutscenes.py" />
         <option value="$PROJECT_DIR$/xcape/engines/core.py" />
+        <option value="$PROJECT_DIR$/README.md" />
       </list>
     </option>
   </component>
@@ -319,38 +247,6 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="prison_xcape" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="prison_xcape" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="prison_xcape" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="xcape" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="prison_xcape" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="prison_xcape" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="xcape" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="components" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -583,13 +479,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1495180644399</updated>
-    </task>
-    <task id="LOCAL-00066" summary="Changed boss AI logic to be simpler yet more flexible">
-      <created>1497759702712</created>
-      <option name="number" value="00066" />
-      <option name="presentableId" value="LOCAL-00066" />
-      <option name="project" value="LOCAL" />
-      <updated>1497759702712</updated>
     </task>
     <task id="LOCAL-00067" summary="Updated boss attack AI to follow a given loci">
       <created>1497812853460</created>
@@ -927,7 +816,14 @@
       <option name="project" value="LOCAL" />
       <updated>1499389894628</updated>
     </task>
-    <option name="localTasksCounter" value="115" />
+    <task id="LOCAL-00115" summary="Adjusted timing of dialogues in Office cutscene to be slower">
+      <created>1499390451712</created>
+      <option name="number" value="00115" />
+      <option name="presentableId" value="LOCAL-00115" />
+      <option name="project" value="LOCAL" />
+      <updated>1499390451712</updated>
+    </task>
+    <option name="localTasksCounter" value="116" />
     <servers />
   </component>
   <component name="TodoView" selected-index="2">
@@ -941,11 +837,12 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="54" y="-8" width="1874" height="1096" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32157677" sideWeight="0.51157665" order="11" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32157677" sideWeight="0.4829107" order="5" side_tool="true" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32676348" sideWeight="0.45093715" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32676348" sideWeight="0.54906285" order="6" side_tool="true" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32676348" sideWeight="0.54906285" order="6" side_tool="true" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32987553" sideWeight="0.44046307" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.26244813" sideWeight="0.43605292" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.22271223" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -1039,7 +936,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <confirmRemoveEmptyChangelist value="1" />
-    <MESSAGE value="Added a menu between the splash and main menu for style" />
     <MESSAGE value="Updated README and LICENSE" />
     <MESSAGE value="Updated README" />
     <MESSAGE value="Updated the quality of the README gifs" />
@@ -1064,7 +960,8 @@
     <MESSAGE value="Updated pause handling of Scene Engine (and fixed a hidden bug)" />
     <MESSAGE value="Integrated pig cutscene into JailScene04 (solo) and JailScene03 (coop)" />
     <MESSAGE value="Added an incomplete ForestScene01 (wrapping up project)" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added an incomplete ForestScene01 (wrapping up project)" />
+    <MESSAGE value="Adjusted timing of dialogues in Office cutscene to be slower" />
+    <option name="LAST_COMMIT_MESSAGE" value="Adjusted timing of dialogues in Office cutscene to be slower" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
@@ -2202,22 +2099,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/README.md">
-      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
-        <state split_layout="FIRST">
-          <first_editor relative-caret-position="513">
-            <caret line="49" column="0" lean-forward="true" selection-start-line="49" selection-start-column="0" selection-end-line="49" selection-end-column="0" />
-            <folding />
-          </first_editor>
-          <second_editor />
-        </state>
-      </provider>
-      <provider editor-type-id="text-editor">
-        <state relative-caret-position="493">
-          <caret line="29" column="1" lean-forward="false" selection-start-line="29" selection-start-column="1" selection-end-line="29" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/xcape/engines/cutscene.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="170">
@@ -2248,7 +2129,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/xcape/components/cutscenes.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
+        <state relative-caret-position="255">
           <caret line="36" column="35" lean-forward="false" selection-start-line="36" selection-start-column="35" selection-end-line="36" selection-end-column="35" />
           <folding>
             <element signature="e#0#61#1" expanded="false" />
@@ -2318,13 +2199,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/xcape/engines/core.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="494">
-          <caret line="44" column="40" lean-forward="false" selection-start-line="44" selection-start-column="40" selection-end-line="44" selection-end-column="40" />
+        <state relative-caret-position="340">
+          <caret line="25" column="29" lean-forward="false" selection-start-line="25" selection-start-column="29" selection-end-line="25" selection-end-column="29" />
           <folding>
             <element signature="e#0#36#1" expanded="false" />
-            <element signature="e#38#57#0" expanded="true" />
             <element signature="e#101#146#0" expanded="false" />
+            <element signature="e#781#2757#0" expanded="false" />
             <element signature="e#781#990#1" expanded="false" />
+            <element signature="e#1024#1503#0" expanded="false" />
             <element signature="e#1536#1556#0" expanded="false" />
             <element signature="e#1596#2295#0" expanded="false" />
             <element signature="e#1638#2295#0" expanded="false" />
@@ -2334,6 +2216,22 @@
             <element signature="e#2611#2757#0" expanded="false" />
             <element signature="e#2643#2757#0" expanded="false" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/README.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="FIRST">
+          <first_editor relative-caret-position="241">
+            <caret line="48" column="0" lean-forward="true" selection-start-line="48" selection-start-column="0" selection-end-line="48" selection-end-column="0" />
+            <folding />
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+      <provider editor-type-id="text-editor">
+        <state relative-caret-position="493">
+          <caret line="29" column="1" lean-forward="false" selection-start-line="29" selection-start-column="1" selection-end-line="29" selection-end-column="1" />
         </state>
       </provider>
     </entry>
