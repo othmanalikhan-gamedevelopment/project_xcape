@@ -2,6 +2,8 @@
 The core engine of the game.
 """
 
+import sys
+
 import pygame as pg
 
 import xcape.common.settings as settings
@@ -53,7 +55,7 @@ class CoreEngine(GameObject):
         for event in pg.event.get():
 
             if event.type == pg.QUIT:
-                quit()
+                sys.exit()
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_F4:
                     quit()
