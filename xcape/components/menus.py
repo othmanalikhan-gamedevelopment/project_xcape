@@ -262,14 +262,14 @@ class OptionsMenu(BaseMenu):
         x, y = 230, 155
         dx, dy = 0, 50
 
-        self.backgroundSetting = _SettingsLabel("Background Flip: ",
+        self.backgroundSetting = _SettingsLabel("Orientación: ",
                                                 ["Vertical", "Horizontal"],
                                                 fontSize, fontColour,
                                                 x, y,
                                                 130,
                                                 screen)
         self.fullscreenSetting = _SettingsLabel("Full Screen: ",
-                                                ["Disable", "Enable"],
+                                                ["Desactivar", "Activar"],
                                                 fontSize, fontColour,
                                                 x, y+dy,
                                                 130,
@@ -471,6 +471,7 @@ class WinMenu(BaseMenu):
                                    self.x,
                                    self.y,
                                    self.screen)
+        self.Text2 = TextLabel("NIVEL 3 COMING SOON...", 32, self.fontColour, 100, 100, self.screen)
 
         image = MENU_RESOURCES["screens"]["fade"][0]
         self.render = RenderComponent(self)
@@ -496,10 +497,12 @@ class WinMenu(BaseMenu):
         self.render.update()
         self.audio.update()
         self.enterText.update()
+        self.Text2.update()
 
     def draw(self, camera=None):
         self.render.draw(camera)
         self.enterText.draw()
+        self.Text2.draw()
 
 
 class PauseMenu(BaseMenu):

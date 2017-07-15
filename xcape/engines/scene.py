@@ -74,8 +74,8 @@ class SinglePlayer(GameObject):
         self.collisionEngine = None
         self.pause = False
 
-        self.maxLives = 5
-        self.lives = 5
+        self.maxLives = 7
+        self.lives = 7
 
         self.numToScene = \
             {
@@ -83,6 +83,8 @@ class SinglePlayer(GameObject):
                 2: solo.JailScene02,
                 3: solo.JailScene03,
                 4: solo.JailScene04,
+                5: solo.ForestScene01,
+                6: solo.ForestScene02,
             }
 
     def __str__(self):

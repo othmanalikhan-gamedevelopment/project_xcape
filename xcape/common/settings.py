@@ -5,7 +5,7 @@ import pygame as pg
 
 WIDTH = 640
 HEIGHT = 480
-FPS = 60
+FPS = 70
 TITLE = "Prison Xcape"
 
 # Defaults to pygame's default font which supports various
@@ -25,6 +25,7 @@ COLOURS = {
     "dark_red": (125, 0, 0),
     "white": (255, 255, 255),
     "yellow": (255, 255, 0),
+    "dark_blue": (15, 17, 49)
 }
 
 KEYBINDS_P1 = \
