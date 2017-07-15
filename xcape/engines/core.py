@@ -58,7 +58,7 @@ class CoreEngine(GameObject):
                 sys.exit()
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_F4:
-                    quit()
+                    sys.exit()
 
             if (event.type == self.MENU_EVENT
                     or event.type == pg.KEYDOWN):
