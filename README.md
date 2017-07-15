@@ -55,6 +55,8 @@ Authors
 | -------------- |:-------------------------:| 
 | Othman Alikhan | oz.alikhan@gmail.com      | 
 | Gustavo León   | gustavol97_lp@hotmail.com |
+| Luis Flores    |             -             |
+| Jose Bruna     |             -             |
 
 
 Credits
